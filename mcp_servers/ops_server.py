@@ -394,7 +394,12 @@ async def web_search(
 
 
 if __name__ == "__main__":
+    import uvicorn
+
+    from app.observability.tracing import instrument_asgi_app
+
     host = os.getenv("MCP_OPS_HOST", "127.0.0.1")
     port = int(os.getenv("MCP_OPS_PORT", "8005"))
     logger.info(f"启动 Ops MCP Server: http://{host}:{port}/mcp")
-    mcp.run(transport="streamable-http", host=host, port=port)
+    app = mcp.http_app(path="/mcp", transport="streamable-http")
+    uvicorn.run(instrument_asgi_app(app), host=host, port=port)

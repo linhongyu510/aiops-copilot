@@ -11,6 +11,7 @@ from app.checkpointing import checkpoint_runtime
 from app.config import config
 from app.coordination import coordination_runtime
 from app.core.milvus_client import milvus_manager
+from app.observability.tracing import telemetry_status
 from app.reliability import dependency_guards
 
 router = APIRouter()
@@ -100,16 +101,23 @@ async def production_readiness():
             "detail": checkpoint_runtime.backend,
         },
         "distributed_metrics": {
-            "ok": False,
-            "detail": "process_local_registry",
+            "ok": (
+                config.metrics_backend.strip().lower() == "prometheus"
+                and bool(config.prometheus_url)
+            ),
+            "detail": (
+                config.prometheus_url
+                if config.metrics_backend.strip().lower() == "prometheus"
+                else "process_local_registry"
+            ),
         },
         "distributed_coordination": {
             "ok": coordination_runtime.backend == "redis",
             "detail": coordination_runtime.backend,
         },
         "distributed_tracing": {
-            "ok": config.otel_enabled,
-            "detail": "otlp" if config.otel_enabled else "disabled",
+            "ok": telemetry_status()["exporter_configured"],
+            "detail": telemetry_status()["endpoint"] or "disabled",
         },
     }
     blockers = [name for name, item in checks.items() if not item["ok"]]

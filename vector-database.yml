@@ -73,6 +73,3 @@ services:
     depends_on:
       standalone:
         condition: service_healthy # Wait for Milvus before starting Attu.
-networks:
-  default:
-    name: super-biz-agent-milvus

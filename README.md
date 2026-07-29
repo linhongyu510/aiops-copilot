@@ -9,7 +9,7 @@
 - **MCP 工具层**：统一发现并编排 17 个 MCP 工具与 2 个本地工具，接入 CLS 日志、CPU/内存监控、只读 MySQL、Tavily 联网检索和 WINDOS 只读诊断；MCP 调用支持错误分类、最多 3 次指数退避与随机抖动。
 - **RAG 链路**：Markdown 分层切分、开源 BGE 中文模型本地 Embedding、Milvus 检索、知识文档上传与自动索引；可按配置切换 BGE-M3 或 DashScope。
 - **可靠性与安全**：Agent 请求采用有界并发和快速过载保护；API Key 支持 viewer/operator/admin 角色，上传、索引与会话接口按最小权限控制，MySQL 查询限制只读语法、schema 与最大返回行数。
-- **可观测性**：为请求注入/透传 `X-Request-ID`，记录 HTTP 与工具调用次数、成功率、并发量以及平均/P50/P95 时延，同时提供 JSON 和 Prometheus 指标。
+- **可观测性**：为请求注入/透传 `X-Request-ID` 与 W3C Trace Context，记录 HTTP 与工具调用次数、成功率、并发量以及平均/P50/P95 时延；统一 Compose 提供 OTel Collector、Jaeger、Prometheus 和预置 Grafana 面板。
 - **评测体系**：600 条固定 RAG 查询按模板隔离为 train/dev/test，支持切分策略、Chunk Size、Overlap、Top-K 共 54 组对照、错误归因，以及 30 条端到端 Agent 任务。
 
 ## 架构
@@ -65,6 +65,18 @@ $env:MCP_CLS_PORT = 18003
 docker compose -f demo-mysql.yml up -d
 ```
 
+启动 PostgreSQL、Redis、Milvus、MCP、双 API 副本与完整可观测栈：
+
+```powershell
+docker compose -f compose.yml --profile full up -d --wait
+```
+
+只启动 OTel Collector、Jaeger、Prometheus 与 Grafana：
+
+```powershell
+docker compose -f compose.yml up -d jaeger otel-collector prometheus grafana
+```
+
 若 `mysql:8.4` 出现 `unexpected commit digest`，通常是多个第三方 registry mirror 的缓存 manifest 过期。本项目 Compose 使用已与 Docker Hub 官方 manifest 核验一致的 DaoCloud 代理并固定 digest；本机 Docker Engine 也应移除失效的全局 mirror 后重启 Docker Desktop。
 
 若 Windows 系统代理使 DaoCloud 层下载长期停在 `0B`，可在系统代理例外列表加入 `*.daocloud.io` 和 `*.daocloud.vip`。本机验证中，绕过本地代理后镜像可在数秒内完成续传。
@@ -86,6 +98,10 @@ make init
 - 生产就绪审计：<http://127.0.0.1:9900/production/readiness>
 - 工具指标：<http://127.0.0.1:9900/api/metrics/tools>
 - Prometheus 指标：<http://127.0.0.1:9900/api/metrics>
+- Trace 联动探针：<http://127.0.0.1:9900/api/observability/trace-probe>
+- Jaeger：<http://127.0.0.1:16686>
+- Prometheus：<http://127.0.0.1:9090>
+- Grafana：<http://127.0.0.1:3300>
 
 生产或共享演示环境应启用 API Key：
 

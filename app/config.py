@@ -58,9 +58,7 @@ class Settings(BaseSettings):
     chat_total_timeout_seconds: float = Field(
         300.0, validation_alias="AIOPS_CHAT_TOTAL_TIMEOUT_SECONDS"
     )
-    chat_recursion_limit: int = Field(
-        12, validation_alias="AIOPS_CHAT_RECURSION_LIMIT"
-    )
+    chat_recursion_limit: int = Field(12, validation_alias="AIOPS_CHAT_RECURSION_LIMIT")
 
     # HTTP 安全与部署配置
     cors_origins: str = Field(
@@ -73,66 +71,36 @@ class Settings(BaseSettings):
     milvus_required_on_startup: bool = Field(
         False, validation_alias="AIOPS_MILVUS_REQUIRED_ON_STARTUP"
     )
-    checkpoint_backend: str = Field(
-        "memory", validation_alias="AIOPS_CHECKPOINT_BACKEND"
-    )
-    checkpoint_postgres_dsn: str = Field(
-        "", validation_alias="AIOPS_CHECKPOINT_POSTGRES_DSN"
-    )
-    checkpoint_required: bool = Field(
-        False, validation_alias="AIOPS_CHECKPOINT_REQUIRED"
-    )
-    coordination_backend: str = Field(
-        "memory", validation_alias="AIOPS_COORDINATION_BACKEND"
-    )
-    redis_url: str = Field(
-        "redis://127.0.0.1:6389/0", validation_alias="AIOPS_REDIS_URL"
-    )
-    coordination_required: bool = Field(
-        False, validation_alias="AIOPS_COORDINATION_REQUIRED"
-    )
-    coordination_key_prefix: str = Field(
-        "aiops", validation_alias="AIOPS_COORDINATION_KEY_PREFIX"
-    )
+    checkpoint_backend: str = Field("memory", validation_alias="AIOPS_CHECKPOINT_BACKEND")
+    checkpoint_postgres_dsn: str = Field("", validation_alias="AIOPS_CHECKPOINT_POSTGRES_DSN")
+    checkpoint_required: bool = Field(False, validation_alias="AIOPS_CHECKPOINT_REQUIRED")
+    coordination_backend: str = Field("memory", validation_alias="AIOPS_COORDINATION_BACKEND")
+    redis_url: str = Field("redis://127.0.0.1:6389/0", validation_alias="AIOPS_REDIS_URL")
+    coordination_required: bool = Field(False, validation_alias="AIOPS_COORDINATION_REQUIRED")
+    coordination_key_prefix: str = Field("aiops", validation_alias="AIOPS_COORDINATION_KEY_PREFIX")
 
     # OpenTelemetry / SLO
     otel_enabled: bool = Field(False, validation_alias="AIOPS_OTEL_ENABLED")
-    otel_service_name: str = Field(
-        "aiops-copilot", validation_alias="OTEL_SERVICE_NAME"
-    )
-    otel_exporter_otlp_endpoint: str = Field(
-        "", validation_alias="OTEL_EXPORTER_OTLP_ENDPOINT"
-    )
-    tool_slo_success_rate: float = Field(
-        0.99, validation_alias="AIOPS_TOOL_SLO_SUCCESS_RATE"
-    )
-    tool_slo_p95_ms: float = Field(
-        5000.0, validation_alias="AIOPS_TOOL_SLO_P95_MS"
-    )
+    otel_service_name: str = Field("aiops-copilot", validation_alias="OTEL_SERVICE_NAME")
+    otel_exporter_otlp_endpoint: str = Field("", validation_alias="OTEL_EXPORTER_OTLP_ENDPOINT")
+    metrics_backend: str = Field("process", validation_alias="AIOPS_METRICS_BACKEND")
+    prometheus_url: str = Field("", validation_alias="AIOPS_PROMETHEUS_URL")
+    tool_slo_success_rate: float = Field(0.99, validation_alias="AIOPS_TOOL_SLO_SUCCESS_RATE")
+    tool_slo_p95_ms: float = Field(5000.0, validation_alias="AIOPS_TOOL_SLO_P95_MS")
 
     # Dependency isolation / circuit breaking
-    dependency_max_concurrency: int = Field(
-        8, validation_alias="AIOPS_DEPENDENCY_MAX_CONCURRENCY"
-    )
+    dependency_max_concurrency: int = Field(8, validation_alias="AIOPS_DEPENDENCY_MAX_CONCURRENCY")
     dependency_queue_timeout_seconds: float = Field(
         0.5, validation_alias="AIOPS_DEPENDENCY_QUEUE_TIMEOUT_SECONDS"
     )
-    circuit_failure_threshold: int = Field(
-        3, validation_alias="AIOPS_CIRCUIT_FAILURE_THRESHOLD"
-    )
+    circuit_failure_threshold: int = Field(3, validation_alias="AIOPS_CIRCUIT_FAILURE_THRESHOLD")
     circuit_recovery_timeout_seconds: float = Field(
         10.0, validation_alias="AIOPS_CIRCUIT_RECOVERY_TIMEOUT_SECONDS"
     )
-    sse_replay_events: int = Field(
-        256, validation_alias="AIOPS_SSE_REPLAY_EVENTS"
-    )
+    sse_replay_events: int = Field(256, validation_alias="AIOPS_SSE_REPLAY_EVENTS")
     # SSE 重放缓存治理：terminal key 超过 TTL 惰性删除，key 总数超限按最久未使用驱逐
-    sse_replay_ttl_seconds: float = Field(
-        600.0, validation_alias="AIOPS_SSE_REPLAY_TTL_SECONDS"
-    )
-    sse_replay_max_keys: int = Field(
-        1000, validation_alias="AIOPS_SSE_REPLAY_MAX_KEYS"
-    )
+    sse_replay_ttl_seconds: float = Field(600.0, validation_alias="AIOPS_SSE_REPLAY_TTL_SECONDS")
+    sse_replay_max_keys: int = Field(1000, validation_alias="AIOPS_SSE_REPLAY_MAX_KEYS")
 
     # 默认使用适合 CPU 演示的开源中文 BGE Small，DashScope 保留为可选后端。
     embedding_provider: str = "local"
@@ -168,9 +136,7 @@ class Settings(BaseSettings):
     mcp_ops_transport: str = "streamable-http"
     mcp_ops_url: str = "http://localhost:8005/mcp"
     # MCP 工具单次执行超时（秒），超时按失败处理并进入退避重试
-    mcp_tool_timeout_seconds: float = Field(
-        30.0, validation_alias="AIOPS_MCP_TOOL_TIMEOUT_SECONDS"
-    )
+    mcp_tool_timeout_seconds: float = Field(30.0, validation_alias="AIOPS_MCP_TOOL_TIMEOUT_SECONDS")
 
     # Ops MCP 工具配置。数据库账号应使用只读账号。
     mysql_dsn: str = ""

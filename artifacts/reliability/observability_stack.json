@@ -1,0 +1,42 @@
+{
+  "trace_id": "8d0aa531a1411002e94cdead8d770580",
+  "declared_path": [
+    "aiops-api",
+    "mcp-ops",
+    "windos"
+  ],
+  "services": [
+    "aiops-copilot",
+    "aiops-mcp-ops"
+  ],
+  "operations": [
+    "DELETE",
+    "DELETE /mcp",
+    "DELETE /mcp http send",
+    "GET",
+    "GET /api/observability/trace-probe",
+    "GET /api/observability/trace-probe http send",
+    "GET /mcp",
+    "GET /mcp http receive",
+    "GET /mcp http send",
+    "POST",
+    "POST /mcp",
+    "POST /mcp http receive",
+    "POST /mcp http send",
+    "mcp.windos_health",
+    "observability.trace_probe",
+    "windos.http"
+  ],
+  "span_count": 87,
+  "required_operations_present": [
+    "GET /api/observability/trace-probe",
+    "mcp.windos_health",
+    "windos.http"
+  ],
+  "prometheus_up_targets": [
+    "http://host.docker.internal:9900/api/metrics"
+  ],
+  "collector_status": "Server available",
+  "grafana_database": "ok",
+  "passed": true
+}

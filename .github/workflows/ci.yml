@@ -21,8 +21,41 @@ jobs:
             exit 1
           fi
       - name: Install
-        run: uv sync --frozen --extra dev
+        run: uv sync --frozen --extra dev --extra local-embeddings
+      - name: Verify lock file
+        run: uv lock --check
       - name: Lint
         run: uv run ruff check app mcp_servers evaluation tests
+      - name: Frontend syntax
+        run: node --check static/app.js
+      - name: Compose contract
+        run: docker compose -f compose.yml --profile full config --quiet
       - name: Test
-        run: uv run pytest tests -q --no-cov
+        run: >
+          uv run python -m pytest tests -q
+          --junitxml=artifacts/pytest.xml
+          --cov-report=json:artifacts/coverage.json
+          --cov-fail-under=70
+
+  infrastructure-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Install
+        run: uv sync --frozen --extra dev
+      - name: Start PostgreSQL and Redis
+        run: docker compose -f reliability-stack.yml up -d --wait
+      - name: Verify cross-instance state
+        env:
+          AIOPS_RUN_REDIS_INTEGRATION: "1"
+        run: |
+          uv run python -m pytest tests/test_coordination.py -q --no-cov
+          uv run python evaluation/checkpoint_consistency.py
+          uv run python evaluation/redis_coordination_check.py
+      - name: Stop infrastructure
+        if: always()
+        run: docker compose -f reliability-stack.yml down -v

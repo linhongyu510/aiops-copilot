@@ -465,7 +465,12 @@ def search_log(
 
 
 if __name__ == "__main__":
+    import uvicorn
+
+    from app.observability.tracing import instrument_asgi_app
+
     host = os.getenv("MCP_CLS_HOST", "127.0.0.1")
     port = int(os.getenv("MCP_CLS_PORT", "8003"))
     logger.info("启动 CLS MCP Server: http://%s:%s/mcp", host, port)
-    mcp.run(transport="streamable-http", host=host, port=port, path="/mcp")
+    app = mcp.http_app(path="/mcp", transport="streamable-http")
+    uvicorn.run(instrument_asgi_app(app), host=host, port=port)

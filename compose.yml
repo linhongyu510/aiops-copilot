@@ -1,0 +1,176 @@
+name: aiops-copilot
+
+include:
+  - path: reliability-stack.yml
+  - path: vector-database.yml
+
+x-aiops-image: &aiops-image
+  build:
+    context: .
+  image: aiops-copilot:local
+  restart: unless-stopped
+
+x-mcp-environment: &mcp-environment
+  MCP_CLS_HOST: 0.0.0.0
+  MCP_MONITOR_HOST: 0.0.0.0
+  MCP_OPS_HOST: 0.0.0.0
+  WINDOS_BASE_URL: ${WINDOS_BASE_URL:-http://host.docker.internal:8002}
+  WINDOS_API_KEY: ${WINDOS_API_KEY:-}
+  AIOPS_OTEL_ENABLED: "true"
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+
+x-api-environment: &api-environment
+  AIOPS_HOST: 0.0.0.0
+  AIOPS_PORT: 9900
+  AIOPS_MILVUS_REQUIRED_ON_STARTUP: "true"
+  AIOPS_CHECKPOINT_BACKEND: postgres
+  AIOPS_CHECKPOINT_POSTGRES_DSN: postgresql://aiops:aiops@checkpoint-postgres:5432/aiops
+  AIOPS_CHECKPOINT_REQUIRED: "true"
+  AIOPS_COORDINATION_BACKEND: redis
+  AIOPS_REDIS_URL: redis://redis:6379/0
+  AIOPS_COORDINATION_REQUIRED: "true"
+  AIOPS_METRICS_BACKEND: prometheus
+  AIOPS_PROMETHEUS_URL: http://prometheus:9090
+  AIOPS_OTEL_ENABLED: "true"
+  OTEL_SERVICE_NAME: aiops-copilot
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+  MILVUS_HOST: standalone
+  MILVUS_PORT: 19530
+  MCP_CLS_URL: http://mcp-cls:8003/mcp
+  MCP_MONITOR_URL: http://mcp-monitor:8004/mcp
+  MCP_OPS_URL: http://mcp-ops:8005/mcp
+
+services:
+  mcp-cls:
+    <<: *aiops-image
+    profiles: [full]
+    command: ["python", "-m", "mcp_servers.cls_server"]
+    environment:
+      <<: *mcp-environment
+      MCP_CLS_PORT: 8003
+      OTEL_SERVICE_NAME: aiops-mcp-cls
+
+  mcp-monitor:
+    <<: *aiops-image
+    profiles: [full]
+    command: ["python", "-m", "mcp_servers.monitor_server"]
+    environment:
+      <<: *mcp-environment
+      MCP_MONITOR_PORT: 8004
+      OTEL_SERVICE_NAME: aiops-mcp-monitor
+
+  mcp-ops:
+    <<: *aiops-image
+    profiles: [full]
+    command: ["python", "-m", "mcp_servers.ops_server"]
+    environment:
+      <<: *mcp-environment
+      MCP_OPS_PORT: 8005
+      OTEL_SERVICE_NAME: aiops-mcp-ops
+
+  api-1:
+    <<: *aiops-image
+    profiles: [full]
+    environment:
+      <<: *api-environment
+      AIOPS_COORDINATION_KEY_PREFIX: aiops
+    ports:
+      - "9900:9900"
+    depends_on:
+      checkpoint-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      standalone:
+        condition: service_healthy
+      otel-collector:
+        condition: service_healthy
+      mcp-cls:
+        condition: service_started
+      mcp-monitor:
+        condition: service_started
+      mcp-ops:
+        condition: service_started
+
+  api-2:
+    <<: *aiops-image
+    profiles: [full]
+    environment:
+      <<: *api-environment
+      AIOPS_COORDINATION_KEY_PREFIX: aiops
+    ports:
+      - "9901:9900"
+    depends_on:
+      checkpoint-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      standalone:
+        condition: service_healthy
+      otel-collector:
+        condition: service_healthy
+      mcp-cls:
+        condition: service_started
+      mcp-monitor:
+        condition: service_started
+      mcp-ops:
+        condition: service_started
+
+  jaeger:
+    image: cr.jaegertracing.io/jaegertracing/jaeger:2.20.0
+    restart: unless-stopped
+    ports:
+      - "16686:16686"
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.157.0
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol-contrib/config.yml"]
+    volumes:
+      - ./observability/otel-collector-config.yml:/etc/otelcol-contrib/config.yml:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "13133:13133"
+    depends_on:
+      - jaeger
+    healthcheck:
+      test: ["CMD", "/otelcol-contrib", "validate", "--config=/etc/otelcol-contrib/config.yml"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  prometheus:
+    image: prom/prometheus:v3.13.1
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:12.4.0
+    restart: unless-stopped
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-aiops-local-only}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3300:3000"
+    depends_on:
+      - prometheus
+      - jaeger
+
+volumes:
+  prometheus-data:
+  grafana-data:

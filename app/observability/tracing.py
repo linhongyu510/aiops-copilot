@@ -13,36 +13,75 @@ from opentelemetry import trace
 from app.config import config
 
 _configured = False
+_provider: Any | None = None
 
 
-def configure_telemetry(app: FastAPI) -> bool:
-    """Configure OTLP tracing once; remain a no-op when disabled."""
-    global _configured
+def _configure_provider() -> bool:
+    global _configured, _provider
     if _configured or not config.otel_enabled:
         return _configured
 
     from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-    from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
     from opentelemetry.sdk.resources import Resource
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-    provider = TracerProvider(
-        resource=Resource.create({"service.name": config.otel_service_name})
-    )
+    provider = TracerProvider(resource=Resource.create({"service.name": config.otel_service_name}))
     if config.otel_exporter_otlp_endpoint:
         endpoint = config.otel_exporter_otlp_endpoint.rstrip("/") + "/v1/traces"
         provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint)))
     trace.set_tracer_provider(provider)
+    _provider = provider
+    _configured = True
+    return True
+
+
+def configure_telemetry(app: FastAPI) -> bool:
+    """Configure OTLP tracing once; remain a no-op when disabled."""
+    if not _configure_provider():
+        return False
+
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+    from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+
     FastAPIInstrumentor.instrument_app(
         app,
         excluded_urls="/live,/ready,/health",
     )
     HTTPXClientInstrumentor().instrument()
-    _configured = True
     logger.info("OpenTelemetry tracing 已启用")
     return True
+
+
+def instrument_asgi_app(app: Any) -> Any:
+    """Wrap an MCP/Starlette ASGI app and propagate HTTP client context."""
+    if not _configure_provider():
+        return app
+
+    from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
+    from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+
+    HTTPXClientInstrumentor().instrument()
+    logger.info("OpenTelemetry ASGI/MCP tracing 已启用")
+    return OpenTelemetryMiddleware(app)
+
+
+def telemetry_status() -> dict[str, Any]:
+    """Return whether an OTLP exporter is configured for this process."""
+    return {
+        "enabled": _configured,
+        "exporter_configured": bool(_configured and config.otel_exporter_otlp_endpoint),
+        "endpoint": config.otel_exporter_otlp_endpoint or None,
+    }
+
+
+def shutdown_telemetry() -> None:
+    """Flush pending spans before process shutdown."""
+    global _configured, _provider
+    if _provider is not None:
+        _provider.shutdown()
+    _provider = None
+    _configured = False
 
 
 @contextmanager

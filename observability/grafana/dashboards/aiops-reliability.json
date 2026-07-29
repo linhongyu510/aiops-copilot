@@ -1,0 +1,67 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "reqps"}},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "id": 1,
+      "targets": [
+        {"expr": "sum(rate(aiops_http_requests_total[1m]))", "legendFormat": "requests/s"}
+      ],
+      "title": "HTTP Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "percentunit"}},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "id": 2,
+      "targets": [
+        {
+          "expr": "sum(rate(aiops_http_requests_total{outcome=\"error\"}[5m])) / clamp_min(sum(rate(aiops_http_requests_total[5m])), 0.000001)",
+          "legendFormat": "5xx ratio"
+        }
+      ],
+      "title": "HTTP Error Ratio",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "ms"}},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "id": 3,
+      "targets": [
+        {
+          "expr": "max by (path) (aiops_http_request_latency_milliseconds{quantile=\"0.95\"})",
+          "legendFormat": "{{path}}"
+        }
+      ],
+      "title": "HTTP P95 by Route",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "id": 4,
+      "targets": [
+        {"expr": "sum(aiops_http_requests_in_flight)", "legendFormat": "in flight"},
+        {"expr": "sum(rate(aiops_tool_errors_total[5m]))", "legendFormat": "tool errors/s"}
+      ],
+      "title": "In-flight and Tool Errors",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 41,
+  "tags": ["aiops", "reliability"],
+  "templating": {"list": []},
+  "time": {"from": "now-30m", "to": "now"},
+  "timezone": "browser",
+  "title": "AIOps Copilot Reliability",
+  "uid": "aiops-reliability",
+  "version": 1
+}

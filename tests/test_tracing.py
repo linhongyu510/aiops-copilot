@@ -6,9 +6,12 @@ from app.observability import tracing
 
 def test_configure_telemetry_is_noop_when_disabled(monkeypatch) -> None:
     monkeypatch.setattr(tracing, "_configured", False)
+    monkeypatch.setattr(tracing, "_provider", None)
     monkeypatch.setattr(config, "otel_enabled", False)
 
-    assert tracing.configure_telemetry(FastAPI()) is False
+    app = FastAPI()
+    assert tracing.configure_telemetry(app) is False
+    assert tracing.instrument_asgi_app(app) is app
 
 
 def test_configure_telemetry_instruments_fastapi_and_httpx(monkeypatch) -> None:
@@ -18,6 +21,7 @@ def test_configure_telemetry_instruments_fastapi_and_httpx(monkeypatch) -> None:
     app_calls = []
     httpx_calls = []
     monkeypatch.setattr(tracing, "_configured", False)
+    monkeypatch.setattr(tracing, "_provider", None)
     monkeypatch.setattr(config, "otel_enabled", True)
     monkeypatch.setattr(config, "otel_exporter_otlp_endpoint", "")
     monkeypatch.setattr(
@@ -34,3 +38,6 @@ def test_configure_telemetry_instruments_fastapi_and_httpx(monkeypatch) -> None:
     assert tracing.configure_telemetry(FastAPI()) is True
     assert app_calls
     assert httpx_calls
+    assert tracing.telemetry_status()["enabled"] is True
+    tracing.shutdown_telemetry()
+    assert tracing.telemetry_status()["enabled"] is False

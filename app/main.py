@@ -22,7 +22,7 @@ from app.config import config
 from app.coordination import coordination_runtime
 from app.core.milvus_client import milvus_manager
 from app.observability import request_metrics
-from app.observability.tracing import configure_telemetry
+from app.observability.tracing import configure_telemetry, shutdown_telemetry
 from app.security import required_role, resolve_identity, role_allows
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -64,6 +64,7 @@ async def lifespan(app: FastAPI):
         await coordination_runtime.close()
         await checkpoint_runtime.close()
         milvus_manager.close()
+        shutdown_telemetry()
         logger.info(f"👋 {config.app_name} 关闭")
 
 
@@ -116,6 +117,7 @@ async def operational_middleware(request: Request, call_next):
             status_code,
             (time.perf_counter() - started) * 1000,
         )
+
 
 # 注册路由
 app.include_router(health.router, tags=["健康检查"])

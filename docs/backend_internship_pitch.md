@@ -96,7 +96,7 @@ API 身份决定会话命名空间；viewer 只能读指标和状态，operator 
 ### P1：分布式状态已完成，集中观测仍需补齐
 
 - RAG 对话与诊断工作流已接入 PostgreSQL checkpoint；Redis 承载 SSE replay、幂等生产者租约和分布式 admission control，双客户端验证证据位于 `artifacts/reliability/`。
-- 接入 OpenTelemetry，把 AIOps 请求、MCP 调用与 WINDOS 请求串成同一 Trace。
+- OpenTelemetry 已通过 ASGI/HTTPX 与 W3C header 把 AIOps 只读探针、MCP `windos_health` 和 WINDOS HTTP 请求串成同一 Trace；Collector、Jaeger、Prometheus、Grafana 的实测证据位于 `artifacts/reliability/observability_stack.json`。
 - 为依赖增加熔断、半开探测和隔离舱；通过故障注入证明恢复过程。
 - 为 SSE 增加断线重连、事件 ID/游标和幂等语义。
 
