@@ -169,7 +169,7 @@ uv sync --extra dev --extra local-embeddings
 - MySQL 和 Tavily 工具在缺少配置时会明确返回不可用，不会伪造结果。
 - `evaluation/datasets/rag_queries.jsonl` 当前由规则种子生成；只有复核并将 `review_status` 改为 `approved` 后，才能表述为“人工标注评测集”。
 - Milvus 运行数据默认写入 `.runtime/`；旧的 `volumes/` 不会自动删除或迁移。
-- RAG 对话会话可切换 PostgreSQL checkpoint；Plan–Execute–Replan 诊断状态、SSE replay、指标、熔断与并发控制目前仍是单进程内存态。`/production/readiness` 会如实暴露这些阻断项，不把本机演示宣称为多副本生产系统。
+- RAG 对话与 Plan–Execute–Replan 诊断图可切换 PostgreSQL checkpoint；SSE replay、幂等生产者租约与 admission control 可切换 Redis，并已通过双客户端交叉验证。指标 registry 与熔断状态仍是单进程内存态，`/production/readiness` 会如实暴露这些阻断项，不把本机演示宣称为亿级生产系统。
 
 简历写法及证据清单见 [`docs/resume_project.md`](docs/resume_project.md)。
 针对抖音服务架构后端实习岗位的映射、演示路径与下一阶段计划见 [`docs/backend_internship_pitch.md`](docs/backend_internship_pitch.md)。

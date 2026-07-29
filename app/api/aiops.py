@@ -8,11 +8,11 @@ from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 from sse_starlette.sse import EventSourceResponse
 
-from app.capacity import AgentCapacityError, agent_capacity
+from app.capacity import AgentCapacityError, agent_capacity  # noqa: F401
+from app.coordination import coordination_runtime
 from app.models.aiops import AIOpsRequest
 from app.security import scoped_session_id
 from app.services.aiops_service import aiops_service
-from app.sse import sse_replay_store
 
 router = APIRouter()
 
@@ -138,8 +138,9 @@ async def diagnose_stream(payload: AIOpsRequest, request: Request):
         after_id = max(0, int(request.headers.get("Last-Event-ID", "0")))
     except ValueError:
         after_id = 0
-    replay = sse_replay_store.replay(stream_key, after_id)
-    if sse_replay_store.is_terminal(stream_key):
+    replay = await coordination_runtime.replay.replay(stream_key, after_id)
+    if await coordination_runtime.replay.is_terminal(stream_key):
+
         async def replay_generator():
             for stored in replay:
                 yield stored.as_sse()
@@ -147,7 +148,7 @@ async def diagnose_stream(payload: AIOpsRequest, request: Request):
         return EventSourceResponse(replay_generator())
     logger.info(f"[会话 {public_session_id}] 收到 AIOps 诊断请求（流式）")
     try:
-        await agent_capacity.acquire()
+        capacity_lease = await coordination_runtime.capacity.acquire()
     except AgentCapacityError as exc:
         raise HTTPException(
             status_code=429,
@@ -156,9 +157,11 @@ async def diagnose_stream(payload: AIOpsRequest, request: Request):
         ) from exc
 
     # 同一 stream_key 已有活跃 producer 时拒绝并发重连，避免重复执行整个诊断
-    if not sse_replay_store.try_acquire(stream_key):
-        agent_capacity.release()
+    producer_lease = await coordination_runtime.replay.try_acquire(stream_key)
+    if producer_lease is None:
+        await coordination_runtime.capacity.release(capacity_lease)
         raise HTTPException(status_code=409, detail="stream_already_active")
+
     async def event_generator():
         try:
             for stored in replay:
@@ -166,10 +169,12 @@ async def diagnose_stream(payload: AIOpsRequest, request: Request):
             async for event in aiops_service.diagnose(session_id=session_id):
                 # 发送事件
                 terminal = event.get("type") in ["complete", "error"]
-                yield sse_replay_store.publish(
-                    stream_key,
-                    json.dumps(event, ensure_ascii=False),
-                    terminal=terminal,
+                yield (
+                    await coordination_runtime.replay.publish(
+                        stream_key,
+                        json.dumps(event, ensure_ascii=False),
+                        terminal=terminal,
+                    )
                 ).as_sse()
 
                 # 如果是完成或错误事件，结束流
@@ -184,18 +189,20 @@ async def diagnose_stream(payload: AIOpsRequest, request: Request):
                 exc_info=True,
             )
             data = json.dumps(
-                    {"type": "error", "stage": "exception", "message": f"诊断异常: {str(e)}"},
-                    ensure_ascii=False,
-                )
-            yield sse_replay_store.publish(stream_key, data, terminal=True).as_sse()
+                {"type": "error", "stage": "exception", "message": f"诊断异常: {str(e)}"},
+                ensure_ascii=False,
+            )
+            yield (
+                await coordination_runtime.replay.publish(stream_key, data, terminal=True)
+            ).as_sse()
         finally:
-            agent_capacity.release()
-            sse_replay_store.release(stream_key)
+            await coordination_runtime.capacity.release(capacity_lease)
+            await coordination_runtime.replay.release(stream_key, producer_lease)
 
     try:
         return EventSourceResponse(event_generator())
     except Exception:
         # EventSourceResponse 创建失败时兜底释放，避免 producer 登记泄漏
-        sse_replay_store.release(stream_key)
-        agent_capacity.release()
+        await coordination_runtime.replay.release(stream_key, producer_lease)
+        await coordination_runtime.capacity.release(capacity_lease)
         raise

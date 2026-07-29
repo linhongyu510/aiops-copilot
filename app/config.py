@@ -82,6 +82,18 @@ class Settings(BaseSettings):
     checkpoint_required: bool = Field(
         False, validation_alias="AIOPS_CHECKPOINT_REQUIRED"
     )
+    coordination_backend: str = Field(
+        "memory", validation_alias="AIOPS_COORDINATION_BACKEND"
+    )
+    redis_url: str = Field(
+        "redis://127.0.0.1:6389/0", validation_alias="AIOPS_REDIS_URL"
+    )
+    coordination_required: bool = Field(
+        False, validation_alias="AIOPS_COORDINATION_REQUIRED"
+    )
+    coordination_key_prefix: str = Field(
+        "aiops", validation_alias="AIOPS_COORDINATION_KEY_PREFIX"
+    )
 
     # OpenTelemetry / SLO
     otel_enabled: bool = Field(False, validation_alias="AIOPS_OTEL_ENABLED")

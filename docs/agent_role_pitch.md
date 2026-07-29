@@ -54,8 +54,8 @@
 ### 1. LangGraph Plan–Execute–Replan 诊断工作流与 checkpoint
 
 - `app/agent/aiops/` 拆为 `planner.py`、`executor.py`、`replanner.py`、`state.py`：Planner 生成步骤计划，Executor 逐步执行并把结果写回状态，Replanner 根据证据决定继续、重规划或收敛输出。
-- RAG 会话默认 `MemorySaver`，可切换 PostgreSQL checkpoint；诊断工作流当前仍使用进程内 `MemorySaver`，并为每次请求生成独立 thread_id，避免跨请求状态污染。
-- 测试覆盖 Replanner、RAG checkpoint 生命周期及独立 PostgreSQL 双连接交叉读写；这不等价于诊断工作流已完成多副本恢复。
+- RAG 对话与诊断工作流默认使用 `MemorySaver`，可在应用生命周期统一切换到 PostgreSQL `AsyncPostgresSaver`；每次诊断使用独立 thread_id，避免跨请求状态污染。
+- 测试覆盖 Replanner、checkpoint 生命周期、诊断图 checkpointer 注入及独立 PostgreSQL 双连接交叉读写；该证据证明共享状态一致性，不等价于生产流量下的容量验证。
 
 ### 2. ReAct 对话 Agent
 
@@ -127,7 +127,7 @@ MCP 把工具发现、参数 schema 和调用协议统一了：Agent 启动时�
 
 ### Q8：429 准入控制解决什么问题？为什么不用普通限流？
 
-瓶颈是模型调用和 MCP 请求的连接占用时长，不是 QPS。入口用有界信号量约束在途重任务，等待超过队列超时（默认 1 秒）就快速返回 429 和 `Retry-After`，让调用方退避，避免慢模型/慢下游触发请求无限堆积和级联故障。这是 admission control 而非 rate limit：控制的是并发占用，不是请求速率。当前是单进程状态，多副本部署需要配合网关限流和全局队列。
+瓶颈是模型调用和 MCP 请求的连接占用时长，不是 QPS。入口用有界租约约束在途重任务，等待超过队列超时（默认 1 秒）就快速返回 429 和 `Retry-After`，让调用方退避，避免慢模型/慢下游触发请求无限堆积和级联故障。这是 admission control 而非 rate limit：控制的是并发占用，不是请求速率。单机默认使用信号量；多副本模式使用 Redis 有过期时间的 ZSET 租约，并已验证跨客户端拒绝和释放后恢复。
 
 ### Q9：Hit@5 提升 2.5 个百分点，幅度不大，怎么讲？
 
@@ -139,7 +139,7 @@ MCP 把工具发现、参数 schema 和调用协议统一了：Agent 启动时�
 
 ### Q11：项目最大的不足是什么？
 
-主动讲四点：知识库只有 10 份 Runbook，日志与监控是演示服务；600 条查询标签仍是 pending（规则生成、未经人工复核），只能叫“可复现离线查询集”；80% 成功率的 Agent 基线主要覆盖知识检索，新增 12 条故障场景还没形成同口径基线；指标、admission control 是单进程内存态，`/production/readiness` 会如实暴露这些阻断项。诚实闸门本身就是设计的一部分。
+主动讲四点：知识库只有 10 份 Runbook，日志与监控是演示服务；600 条查询标签仍是 pending（规则生成、未经人工复核），只能叫“可复现离线查询集”；80% 成功率的 Agent 基线主要覆盖知识检索，新增 12 条故障场景还没形成同口径基线；指标 registry 与熔断状态仍是单进程内存态，`/production/readiness` 会如实暴露这些阻断项。诚实闸门本身就是设计的一部分。
 
 ## 30 秒电梯陈述
 
@@ -150,7 +150,7 @@ MCP 把工具发现、参数 schema 和调用协议统一了：Agent 启动时�
 | 维度 | 套壳 Demo | 本项目 |
 |---|---|---|
 | 工作流 | 单次 prompt + function calling 循环 | LangGraph 状态图，Plan/Execute/Replan 分工，最大步骤数与强制收敛 |
-| 会话状态 | 内存 list 或没有 | RAG 会话可切换 PostgreSQL；诊断工作流当前仍为进程内 checkpoint |
+| 会话状态 | 内存 list 或没有 | 对话与诊断图可切换 PostgreSQL checkpoint；SSE 与准入状态可切换 Redis |
 | 工具层 | 硬编码几个函数 | MCP 协议统一发现 19 个工具，错误分类重试、指标集中在拦截器 |
 | 输出 | 一次性返回 | SSE 流式 + 事件 ID + Last-Event-ID 重放 + 幂等 + 取消传播 |
 | 效果证明 | 截几张对话图 | 600 条防泄漏数据集、54 组 dev 实验、held-out test、30 条任务 × 3 轮、失败归因 |
@@ -180,7 +180,7 @@ MCP 把工具发现、参数 schema 和调用协议统一了：Agent 启动时�
 - **不能写**“响应时间从小时级缩短到分钟级”：人工计时数据为空，只能写实测系统 P50/P95。
 - 新增 12 条故障场景属于 `synthetic_fault_fixture`，用于验证故障处理与报表归因，**不能**说成生产故障率或 SLA；其数字只有在保存完整运行报告后才能引用。
 - 80% 成功率只来自旧的 30 条知识检索任务，不能与新增故障任务混为同一基线。
-- 指标与 admission control 是单进程状态，跨进程熔断是下一阶段工作——被问到分布式部署时要主动说明。
+- 指标 registry 与熔断状态仍是单进程状态；SSE replay、幂等租约和 admission control 已可切换 Redis——被问到分布式部署时要区分已验证的一致性与尚未完成的生产容量验证。
 
 ## 证据索引
 

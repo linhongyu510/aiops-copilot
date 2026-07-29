@@ -11,13 +11,13 @@ from fastapi.responses import JSONResponse
 from loguru import logger
 from sse_starlette.sse import EventSourceResponse
 
-from app.capacity import AgentCapacityError, agent_capacity
+from app.capacity import AgentCapacityError, agent_capacity  # noqa: F401
 from app.config import config
+from app.coordination import coordination_runtime
 from app.models.request import ChatRequest, ClearRequest
 from app.models.response import ApiResponse, SessionInfoResponse
 from app.security import scoped_session_id
 from app.services.rag_agent_service import rag_agent_service
-from app.sse import sse_replay_store
 
 router = APIRouter()
 
@@ -41,10 +41,9 @@ async def chat(payload: ChatRequest, request: Request):
     Returns:
         统一格式的对话响应
     """
-    acquired = False
+    capacity_lease: str | None = None
     try:
-        await agent_capacity.acquire()
-        acquired = True
+        capacity_lease = await coordination_runtime.capacity.acquire()
         session_id = scoped_session_id(request, payload.id)
         logger.info(f"[会话 {payload.id}] 收到快速对话请求, chars={len(payload.question)}")
         # 为整个对话处理设置总时间预算，超时返回 504 而不是无限等待
@@ -96,8 +95,8 @@ async def chat(payload: ChatRequest, request: Request):
             },
         )
     finally:
-        if acquired:
-            agent_capacity.release()
+        if capacity_lease is not None:
+            await coordination_runtime.capacity.release(capacity_lease)
 
 
 @router.post("/chat_stream")
@@ -126,18 +125,18 @@ async def chat_stream(payload: ChatRequest, request: Request):
     """
     session_id = scoped_session_id(request, payload.id)
     operation_key = (
-        request.headers.get("X-Idempotency-Key")
-        or getattr(request.state, "request_id", payload.id)
+        request.headers.get("X-Idempotency-Key") or getattr(request.state, "request_id", payload.id)
     )[:128]
     stream_key = f"chat:{session_id}:{operation_key}"
     try:
         after_id = max(0, int(request.headers.get("Last-Event-ID", "0")))
     except ValueError:
         after_id = 0
-    replay = sse_replay_store.replay(stream_key, after_id)
-    terminal_replay = sse_replay_store.is_terminal(stream_key)
+    replay = await coordination_runtime.replay.replay(stream_key, after_id)
+    terminal_replay = await coordination_runtime.replay.is_terminal(stream_key)
     logger.info(f"[会话 {payload.id}] 收到流式对话请求, chars={len(payload.question)}")
     if terminal_replay:
+
         async def replay_generator():
             for stored in replay:
                 yield stored.as_sse()
@@ -145,7 +144,7 @@ async def chat_stream(payload: ChatRequest, request: Request):
         return EventSourceResponse(replay_generator())
 
     try:
-        await agent_capacity.acquire()
+        capacity_lease = await coordination_runtime.capacity.acquire()
     except AgentCapacityError as exc:
         raise HTTPException(
             status_code=429,
@@ -154,9 +153,11 @@ async def chat_stream(payload: ChatRequest, request: Request):
         ) from exc
 
     # 同一 stream_key 已有活跃 producer 时拒绝并发重连，避免重复执行整个 Agent
-    if not sse_replay_store.try_acquire(stream_key):
-        agent_capacity.release()
+    producer_lease = await coordination_runtime.replay.try_acquire(stream_key)
+    if producer_lease is None:
+        await coordination_runtime.capacity.release(capacity_lease)
         raise HTTPException(status_code=409, detail="stream_already_active")
+
     async def event_generator():
         try:
             for stored in replay:
@@ -181,40 +182,52 @@ async def chat_stream(payload: ChatRequest, request: Request):
                                 },
                                 ensure_ascii=False,
                             )
-                            yield sse_replay_store.publish(stream_key, data).as_sse()
+                            yield (
+                                await coordination_runtime.replay.publish(stream_key, data)
+                            ).as_sse()
                         elif chunk_type == "tool_call":
                             # 发送工具调用事件（可选，前端可以显示工具调用状态）
                             data = json.dumps(
                                 {"type": "tool_call", "data": chunk_data}, ensure_ascii=False
                             )
-                            yield sse_replay_store.publish(stream_key, data).as_sse()
+                            yield (
+                                await coordination_runtime.replay.publish(stream_key, data)
+                            ).as_sse()
                         elif chunk_type == "search_results":
                             # 发送检索结果（可选，前端可以忽略）
                             data = json.dumps(
                                 {"type": "search_results", "data": chunk_data}, ensure_ascii=False
                             )
-                            yield sse_replay_store.publish(stream_key, data).as_sse()
+                            yield (
+                                await coordination_runtime.replay.publish(stream_key, data)
+                            ).as_sse()
                         elif chunk_type == "content":
                             # 发送内容块 - 关键：data 必须是 JSON 字符串
                             data = json.dumps(
                                 {"type": "content", "data": chunk_data}, ensure_ascii=False
                             )
-                            yield sse_replay_store.publish(stream_key, data).as_sse()
+                            yield (
+                                await coordination_runtime.replay.publish(stream_key, data)
+                            ).as_sse()
                         elif chunk_type == "complete":
                             # 发送完成信号
                             data = json.dumps(
                                 {"type": "done", "data": chunk_data}, ensure_ascii=False
                             )
-                            yield sse_replay_store.publish(
-                                stream_key, data, terminal=True
+                            yield (
+                                await coordination_runtime.replay.publish(
+                                    stream_key, data, terminal=True
+                                )
                             ).as_sse()
                         elif chunk_type == "error":
                             # 发送错误信息
                             data = json.dumps(
                                 {"type": "error", "data": str(chunk_data)}, ensure_ascii=False
                             )
-                            yield sse_replay_store.publish(
-                                stream_key, data, terminal=True
+                            yield (
+                                await coordination_runtime.replay.publish(
+                                    stream_key, data, terminal=True
+                                )
                             ).as_sse()
 
                 logger.info(f"[会话 {payload.id}] 流式对话完成")
@@ -224,22 +237,26 @@ async def chat_stream(payload: ChatRequest, request: Request):
                     {"type": "error", "data": "对话处理超时，请缩小问题范围后重试"},
                     ensure_ascii=False,
                 )
-                yield sse_replay_store.publish(stream_key, data, terminal=True).as_sse()
+                yield (
+                    await coordination_runtime.replay.publish(stream_key, data, terminal=True)
+                ).as_sse()
 
         except Exception as e:
             logger.error(f"流式对话接口错误: {e}")
             data = json.dumps({"type": "error", "data": str(e)}, ensure_ascii=False)
-            yield sse_replay_store.publish(stream_key, data, terminal=True).as_sse()
+            yield (
+                await coordination_runtime.replay.publish(stream_key, data, terminal=True)
+            ).as_sse()
         finally:
-            agent_capacity.release()
-            sse_replay_store.release(stream_key)
+            await coordination_runtime.capacity.release(capacity_lease)
+            await coordination_runtime.replay.release(stream_key, producer_lease)
 
     try:
         return EventSourceResponse(event_generator())
     except Exception:
         # EventSourceResponse 创建失败时兜底释放，避免 producer 登记泄漏
-        sse_replay_store.release(stream_key)
-        agent_capacity.release()
+        await coordination_runtime.replay.release(stream_key, producer_lease)
+        await coordination_runtime.capacity.release(capacity_lease)
         raise
 
 

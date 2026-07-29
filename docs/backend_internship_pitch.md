@@ -83,7 +83,7 @@ API 身份决定会话命名空间；viewer 只能读指标和状态，operator 
 
 ### 为什么生产就绪仍会失败
 
-这是刻意的诚实闸门：会话 checkpoint 已支持 PostgreSQL 并通过双实例交叉读写验证，Tracing 与依赖级熔断/隔离也已接入；但指标 registry、admission control 仍是单进程状态，OTLP 后端默认未启用，Milvus 与 MCP 仍依赖本机服务。因此“测试通过”表示当前设计契约成立，不等于已经达到亿级生产容量。
+这是刻意的诚实闸门：对话与诊断图 checkpoint 已支持 PostgreSQL，SSE replay、幂等租约和 admission control 已支持 Redis，且均通过双客户端交叉验证；Tracing 与依赖级熔断/隔离也已接入。但指标 registry 与熔断状态仍是单进程状态，OTLP 后端默认未启用，Milvus 与 MCP 仍依赖本机服务。因此“测试通过”表示当前设计契约成立，不等于已经达到亿级生产容量。
 
 ## 后续优化优先级
 
@@ -93,9 +93,9 @@ API 身份决定会话命名空间；viewer 只能读指标和状态，operator 
 - 把简历里的测试数、覆盖率和工具数固定为本次全量验证结果，后续代码变化后重新生成。
 - 准备一个过载测试图：并发数、拒绝率、P95 与下游错误率，避免只讲实现没有效果数据。
 
-### P1：部分完成，跨实例状态仍需补齐
+### P1：分布式状态已完成，集中观测仍需补齐
 
-- RAG 会话已支持 PostgreSQL checkpoint，并完成独立双连接交叉读写；Redis 当前仅有基础容器，尚未承载 SSE、幂等或分布式准入状态。
+- RAG 对话与诊断工作流已接入 PostgreSQL checkpoint；Redis 承载 SSE replay、幂等生产者租约和分布式 admission control，双客户端验证证据位于 `artifacts/reliability/`。
 - 接入 OpenTelemetry，把 AIOps 请求、MCP 调用与 WINDOS 请求串成同一 Trace。
 - 为依赖增加熔断、半开探测和隔离舱；通过故障注入证明恢复过程。
 - 为 SSE 增加断线重连、事件 ID/游标和幂等语义。

@@ -19,6 +19,7 @@ from loguru import logger
 from app.api import aiops, chat, file, health, metrics
 from app.checkpointing import checkpoint_runtime
 from app.config import config
+from app.coordination import coordination_runtime
 from app.core.milvus_client import milvus_manager
 from app.observability import request_metrics
 from app.observability.tracing import configure_telemetry
@@ -41,6 +42,7 @@ async def lifespan(app: FastAPI):
     checkpointer = await checkpoint_runtime.start()
     chat.rag_agent_service.configure_checkpointer(checkpointer)
     aiops.aiops_service.configure_checkpointer(checkpointer)
+    await coordination_runtime.start()
 
     # 连接 Milvus
     logger.info("🔌 正在连接 Milvus...")
@@ -59,6 +61,7 @@ async def lifespan(app: FastAPI):
     finally:
         # 关闭时执行
         logger.info("🔌 正在关闭持久化与 Milvus 连接...")
+        await coordination_runtime.close()
         await checkpoint_runtime.close()
         milvus_manager.close()
         logger.info(f"👋 {config.app_name} 关闭")

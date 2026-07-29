@@ -19,11 +19,11 @@
 
 ## P1：持久化、追踪与故障恢复
 
-- PostgreSQL checkpoint：RAG 会话使用 LangGraph `AsyncPostgresSaver`；两个独立 saver 在测试图上交叉写读同一 thread，结果一致，证据为 `artifacts/reliability/checkpoint_consistency.json`。Plan–Execute–Replan 诊断图在本次记录时仍为进程内 checkpoint。
+- PostgreSQL checkpoint：RAG 对话与 Plan–Execute–Replan 诊断图在生命周期统一注入 LangGraph `AsyncPostgresSaver`；两个独立 saver 在测试图上交叉写读同一 thread，结果一致，证据为 `artifacts/reliability/checkpoint_consistency.json`。
 - Windows 兼容：`app.run` 强制 Uvicorn 使用 SelectorEventLoop，已在 PostgreSQL required 模式真实启动，生产就绪检查返回 `persistent_sessions=postgres`。
 - OpenTelemetry：FastAPI、HTTPX、MCP 和 WINDOS 依赖调用已接入 span 与 W3C header 传播；默认不配置 exporter，避免假称已部署集中式 Trace 后端。
 - 依赖保护：实现 CLOSED/OPEN/HALF_OPEN 熔断、单探针半开恢复、隔离舱和错误分类；测试覆盖开路、拒绝、恢复以及调用方错误不计入熔断。
-- SSE：服务端提供单调事件 ID、`Last-Event-ID` 游标回放、幂等键和有界 replay buffer；客户端保存并发送游标。终态重试不会再次执行 Agent。
+- Redis 协调：SSE 单调事件 ID、`Last-Event-ID` 游标回放、终态、幂等生产者租约与 admission control 可存入 Redis；双客户端验证了跨实例回放、重复拒绝和释放恢复，证据为 `artifacts/reliability/redis_coordination.json`。
 
 ## P2：规模、路由与错误预算
 

@@ -38,6 +38,7 @@ dependencies = [
     "opentelemetry-exporter-otlp-proto-http>=1.30.0,<2.0.0",
     "opentelemetry-instrumentation-fastapi>=0.51b0,<1.0.0",
     "opentelemetry-instrumentation-httpx>=0.51b0,<1.0.0",
+    "redis>=8.0.1,<9.0.0",
 ]
 
 [project.optional-dependencies]

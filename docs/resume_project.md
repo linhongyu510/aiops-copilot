@@ -89,7 +89,7 @@ MCP 把工具发现、参数 schema 和调用协议统一起来，Agent 不需�
 
 ### 项目最大的不足
 
-目前知识库只有 10 份 Runbook，日志与监控是模拟服务；600 条查询和新增故障样例仍待人工复核，旧的 30 条 Agent 基线主要覆盖知识检索；整体语句覆盖率为 73.16%，真实生产告警与人工排障计时尚未补齐。RAG 会话可切换 PostgreSQL checkpoint，但诊断图、SSE replay、指标与 admission control 仍是单进程状态，生产就绪接口会主动暴露这些阻断项。
+目前知识库只有 10 份 Runbook，日志与监控是模拟服务；600 条查询和新增故障样例仍待人工复核，旧的 30 条 Agent 基线主要覆盖知识检索；整体语句覆盖率为 73.16%，真实生产告警与人工排障计时尚未补齐。对话与诊断图可切换 PostgreSQL checkpoint，SSE replay、幂等租约和 admission control 可切换 Redis；指标 registry 与熔断状态仍是单进程状态，生产就绪接口会主动暴露这些阻断项。
 
 ## 针对岗位调整
 
