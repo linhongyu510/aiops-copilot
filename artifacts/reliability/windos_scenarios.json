@@ -1,0 +1,740 @@
+{
+  "captured_at": "2026-07-24T11:20:10.739316+00:00",
+  "scenarios": {
+    "normal_live": {
+      "system": "WINDOS",
+      "mode": "read_only_diagnosis",
+      "automatic_changes_permitted": false,
+      "evidence": {
+        "health": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/health",
+          "read_only": true,
+          "http_status": 200,
+          "ok": true,
+          "latency_ms": 257.2,
+          "data": {
+            "status": "ok"
+          }
+        },
+        "ready": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/ready",
+          "read_only": true,
+          "http_status": 200,
+          "ok": true,
+          "latency_ms": 90.31,
+          "data": {
+            "status": "ready",
+            "ready": true,
+            "mode": "advisory",
+            "config_version": "2026.07+caf2c46b",
+            "checks": {
+              "configuration": {
+                "ok": true,
+                "version": "2026.07+caf2c46b"
+              },
+              "authentication": {
+                "ok": true,
+                "required": false,
+                "mode": "api_key",
+                "registered_key_count": 0,
+                "oidc_configuration_ok": true,
+                "oidc_errors": []
+              },
+              "audit": {
+                "ok": false,
+                "enabled": false,
+                "detail": "audit_disabled"
+              },
+              "confirmation_store": {
+                "ok": true,
+                "detail": "ok"
+              },
+              "shared_state_database": {
+                "ok": true,
+                "backend": "sqlite",
+                "detail": "local_mode"
+              },
+              "shadow_trial_store": {
+                "ok": true,
+                "detail": "not_required_in_advisory_mode"
+              },
+              "integration_gateway": {
+                "ok": true,
+                "enabled": false,
+                "registered_key_count": 0,
+                "detail": "disabled"
+              },
+              "async_schedule_queue": {
+                "ok": true,
+                "enabled": false,
+                "active_workers": 0,
+                "detail": "disabled"
+              },
+              "production_deployment": {
+                "ok": true,
+                "enforced": false,
+                "detail": "not_ready",
+                "blockers": [
+                  "runtime_mode"
+                ]
+              }
+            },
+            "warnings": [
+              "authentication_disabled_outside_controlled_mode",
+              "audit_disabled_outside_controlled_mode",
+              "production_deployment_not_ready"
+            ]
+          }
+        },
+        "production_readiness": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/production/readiness",
+          "read_only": true,
+          "http_status": 200,
+          "ok": true,
+          "latency_ms": 98.83,
+          "data": {
+            "ready_for_production": false,
+            "enforced": false,
+            "mode": "advisory",
+            "replica_count": 1,
+            "storage_model": "single_replica_file_and_sqlite",
+            "config_version": "2026.07+caf2c46b",
+            "checks": [
+              {
+                "name": "runtime_mode",
+                "ok": false,
+                "blocking": true,
+                "detail": "mode=advisory; production should use shadow before controlled"
+              },
+              {
+                "name": "single_replica_local_state",
+                "ok": true,
+                "blocking": true,
+                "detail": "replica_count=1; backend=sqlite; shared_database=local_sqlite_state; migration=not_applicable_to_local_state"
+              },
+              {
+                "name": "shared_database",
+                "ok": false,
+                "blocking": false,
+                "detail": "backend=sqlite; detail=local_sqlite_state"
+              },
+              {
+                "name": "database_migrations",
+                "ok": false,
+                "blocking": false,
+                "detail": "migrations_applied=False; detail=not_applicable_to_local_state"
+              },
+              {
+                "name": "async_schedule_queue",
+                "ok": true,
+                "blocking": false,
+                "detail": "enabled=False; detail=disabled"
+              },
+              {
+                "name": "async_schedule_shared_database",
+                "ok": true,
+                "blocking": false,
+                "detail": "enabled=False; backend=sqlite"
+              },
+              {
+                "name": "async_schedule_workers",
+                "ok": true,
+                "blocking": false,
+                "detail": "enabled=False; active_workers=0"
+              },
+              {
+                "name": "database_tls",
+                "ok": false,
+                "blocking": false,
+                "detail": "database_tls_verified=False; sslmode=not_set"
+              },
+              {
+                "name": "database_backup_and_pitr",
+                "ok": false,
+                "blocking": false,
+                "detail": "database_backup_mode=not_set"
+              },
+              {
+                "name": "durable_persistence",
+                "ok": false,
+                "blocking": false,
+                "detail": "persistence_class=ephemeral"
+              },
+              {
+                "name": "tls_termination",
+                "ok": false,
+                "blocking": false,
+                "detail": "TLS must terminate at the ingress or API gateway"
+              },
+              {
+                "name": "cors_restricted",
+                "ok": false,
+                "blocking": false,
+                "detail": "cors_origins=['*']"
+              },
+              {
+                "name": "authentication_enabled",
+                "ok": false,
+                "blocking": false,
+                "detail": "auth_mode=api_key; registered_key_count=0; oidc_configuration_ok=True"
+              },
+              {
+                "name": "api_key_strength",
+                "ok": false,
+                "blocking": false,
+                "detail": "all API keys must contain at least 32 UTF-8 bytes"
+              },
+              {
+                "name": "oidc_configuration",
+                "ok": true,
+                "blocking": false,
+                "detail": "auth_mode=api_key; errors=[]"
+              },
+              {
+                "name": "audit_enabled",
+                "ok": false,
+                "blocking": false,
+                "detail": "audit_enabled=False"
+              },
+              {
+                "name": "metrics_enabled",
+                "ok": false,
+                "blocking": false,
+                "detail": "metrics_enabled=False"
+              },
+              {
+                "name": "backup_enabled",
+                "ok": false,
+                "blocking": false,
+                "detail": "local_backup_enabled=False; database_backup_mode=not_set"
+              },
+              {
+                "name": "clock_synchronization_declared",
+                "ok": false,
+                "blocking": false,
+                "detail": "time_synced=False; signed integrations require synchronized clocks"
+              },
+              {
+                "name": "audit_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "absolute_persistent_path"
+              },
+              {
+                "name": "confirmation_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "absolute_persistent_path"
+              },
+              {
+                "name": "trial_database_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "absolute_persistent_path"
+              },
+              {
+                "name": "integration_database_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "not_configured"
+              },
+              {
+                "name": "schedule_queue_database_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "not_configured"
+              }
+            ],
+            "blockers": [
+              "runtime_mode"
+            ],
+            "warnings": [
+              "shared_database",
+              "database_migrations",
+              "database_tls",
+              "database_backup_and_pitr",
+              "durable_persistence",
+              "tls_termination",
+              "cors_restricted",
+              "authentication_enabled",
+              "api_key_strength",
+              "audit_enabled",
+              "metrics_enabled",
+              "backup_enabled",
+              "clock_synchronization_declared"
+            ],
+            "ha_migration_required_for_replica_count_gt_1": true
+          }
+        },
+        "queue": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/schedule/queue/status",
+          "read_only": true,
+          "http_status": 503,
+          "ok": false,
+          "latency_ms": 121.01,
+          "data": {
+            "detail": "asynchronous_scheduling_disabled"
+          }
+        },
+        "agent_metrics": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/agent/metrics/tools",
+          "read_only": true,
+          "http_status": 200,
+          "ok": true,
+          "latency_ms": 103.52,
+          "data": {
+            "total_calls": 0,
+            "total_successes": 0,
+            "total_failures": 0,
+            "success_rate": 0.0,
+            "average_latency_ms": 0.0,
+            "p50_latency_ms": 0.0,
+            "p95_latency_ms": 0.0,
+            "tools": {}
+          }
+        },
+        "governance": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/governance/status",
+          "read_only": true,
+          "http_status": 200,
+          "ok": true,
+          "latency_ms": 108.67,
+          "data": {
+            "mode": "advisory",
+            "auth_enabled": false,
+            "auth_required": false,
+            "auth_mode": "api_key",
+            "audit_enabled": false,
+            "registered_key_count": 0,
+            "config_version": "2026.07+caf2c46b",
+            "execution_policy": "approval_record_only_no_external_dispatch",
+            "state_backend": "sqlite",
+            "shadow_trial_ledger": "sqlite_transactional_append_revision",
+            "integration": {
+              "enabled": false,
+              "registered_key_count": 0,
+              "allowed_target_count": 0,
+              "outbound_policy": "pull_only_reference_no_network_push_no_field_control"
+            },
+            "async_scheduling": {
+              "enabled": false
+            },
+            "production_readiness_enforced": false,
+            "supported_roles": [
+              "viewer",
+              "planner",
+              "approver",
+              "admin"
+            ]
+          }
+        }
+      }
+    },
+    "single_endpoint_503_fault_injection": {
+      "system": "WINDOS",
+      "mode": "read_only_diagnosis",
+      "automatic_changes_permitted": false,
+      "evidence": {
+        "health": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/health",
+          "read_only": true,
+          "http_status": 200,
+          "ok": true,
+          "latency_ms": 32.55,
+          "data": {
+            "status": "ok"
+          }
+        },
+        "ready": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/ready",
+          "read_only": true,
+          "http_status": 200,
+          "ok": true,
+          "latency_ms": 29.96,
+          "data": {
+            "status": "ready",
+            "ready": true,
+            "mode": "advisory",
+            "config_version": "2026.07+caf2c46b",
+            "checks": {
+              "configuration": {
+                "ok": true,
+                "version": "2026.07+caf2c46b"
+              },
+              "authentication": {
+                "ok": true,
+                "required": false,
+                "mode": "api_key",
+                "registered_key_count": 0,
+                "oidc_configuration_ok": true,
+                "oidc_errors": []
+              },
+              "audit": {
+                "ok": false,
+                "enabled": false,
+                "detail": "audit_disabled"
+              },
+              "confirmation_store": {
+                "ok": true,
+                "detail": "ok"
+              },
+              "shared_state_database": {
+                "ok": true,
+                "backend": "sqlite",
+                "detail": "local_mode"
+              },
+              "shadow_trial_store": {
+                "ok": true,
+                "detail": "not_required_in_advisory_mode"
+              },
+              "integration_gateway": {
+                "ok": true,
+                "enabled": false,
+                "registered_key_count": 0,
+                "detail": "disabled"
+              },
+              "async_schedule_queue": {
+                "ok": true,
+                "enabled": false,
+                "active_workers": 0,
+                "detail": "disabled"
+              },
+              "production_deployment": {
+                "ok": true,
+                "enforced": false,
+                "detail": "not_ready",
+                "blockers": [
+                  "runtime_mode"
+                ]
+              }
+            },
+            "warnings": [
+              "authentication_disabled_outside_controlled_mode",
+              "audit_disabled_outside_controlled_mode",
+              "production_deployment_not_ready"
+            ]
+          }
+        },
+        "production_readiness": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/production/readiness",
+          "read_only": true,
+          "http_status": 200,
+          "ok": true,
+          "latency_ms": 35.3,
+          "data": {
+            "ready_for_production": false,
+            "enforced": false,
+            "mode": "advisory",
+            "replica_count": 1,
+            "storage_model": "single_replica_file_and_sqlite",
+            "config_version": "2026.07+caf2c46b",
+            "checks": [
+              {
+                "name": "runtime_mode",
+                "ok": false,
+                "blocking": true,
+                "detail": "mode=advisory; production should use shadow before controlled"
+              },
+              {
+                "name": "single_replica_local_state",
+                "ok": true,
+                "blocking": true,
+                "detail": "replica_count=1; backend=sqlite; shared_database=local_sqlite_state; migration=not_applicable_to_local_state"
+              },
+              {
+                "name": "shared_database",
+                "ok": false,
+                "blocking": false,
+                "detail": "backend=sqlite; detail=local_sqlite_state"
+              },
+              {
+                "name": "database_migrations",
+                "ok": false,
+                "blocking": false,
+                "detail": "migrations_applied=False; detail=not_applicable_to_local_state"
+              },
+              {
+                "name": "async_schedule_queue",
+                "ok": true,
+                "blocking": false,
+                "detail": "enabled=False; detail=disabled"
+              },
+              {
+                "name": "async_schedule_shared_database",
+                "ok": true,
+                "blocking": false,
+                "detail": "enabled=False; backend=sqlite"
+              },
+              {
+                "name": "async_schedule_workers",
+                "ok": true,
+                "blocking": false,
+                "detail": "enabled=False; active_workers=0"
+              },
+              {
+                "name": "database_tls",
+                "ok": false,
+                "blocking": false,
+                "detail": "database_tls_verified=False; sslmode=not_set"
+              },
+              {
+                "name": "database_backup_and_pitr",
+                "ok": false,
+                "blocking": false,
+                "detail": "database_backup_mode=not_set"
+              },
+              {
+                "name": "durable_persistence",
+                "ok": false,
+                "blocking": false,
+                "detail": "persistence_class=ephemeral"
+              },
+              {
+                "name": "tls_termination",
+                "ok": false,
+                "blocking": false,
+                "detail": "TLS must terminate at the ingress or API gateway"
+              },
+              {
+                "name": "cors_restricted",
+                "ok": false,
+                "blocking": false,
+                "detail": "cors_origins=['*']"
+              },
+              {
+                "name": "authentication_enabled",
+                "ok": false,
+                "blocking": false,
+                "detail": "auth_mode=api_key; registered_key_count=0; oidc_configuration_ok=True"
+              },
+              {
+                "name": "api_key_strength",
+                "ok": false,
+                "blocking": false,
+                "detail": "all API keys must contain at least 32 UTF-8 bytes"
+              },
+              {
+                "name": "oidc_configuration",
+                "ok": true,
+                "blocking": false,
+                "detail": "auth_mode=api_key; errors=[]"
+              },
+              {
+                "name": "audit_enabled",
+                "ok": false,
+                "blocking": false,
+                "detail": "audit_enabled=False"
+              },
+              {
+                "name": "metrics_enabled",
+                "ok": false,
+                "blocking": false,
+                "detail": "metrics_enabled=False"
+              },
+              {
+                "name": "backup_enabled",
+                "ok": false,
+                "blocking": false,
+                "detail": "local_backup_enabled=False; database_backup_mode=not_set"
+              },
+              {
+                "name": "clock_synchronization_declared",
+                "ok": false,
+                "blocking": false,
+                "detail": "time_synced=False; signed integrations require synchronized clocks"
+              },
+              {
+                "name": "audit_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "absolute_persistent_path"
+              },
+              {
+                "name": "confirmation_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "absolute_persistent_path"
+              },
+              {
+                "name": "trial_database_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "absolute_persistent_path"
+              },
+              {
+                "name": "integration_database_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "not_configured"
+              },
+              {
+                "name": "schedule_queue_database_path",
+                "ok": true,
+                "blocking": false,
+                "detail": "not_configured"
+              }
+            ],
+            "blockers": [
+              "runtime_mode"
+            ],
+            "warnings": [
+              "shared_database",
+              "database_migrations",
+              "database_tls",
+              "database_backup_and_pitr",
+              "durable_persistence",
+              "tls_termination",
+              "cors_restricted",
+              "authentication_enabled",
+              "api_key_strength",
+              "audit_enabled",
+              "metrics_enabled",
+              "backup_enabled",
+              "clock_synchronization_declared"
+            ],
+            "ha_migration_required_for_replica_count_gt_1": true
+          }
+        },
+        "queue": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/schedule/queue/status",
+          "read_only": true,
+          "http_status": 503,
+          "ok": false,
+          "latency_ms": 40.55,
+          "data": {
+            "detail": "asynchronous_scheduling_disabled"
+          }
+        },
+        "agent_metrics": {
+          "source": "fault_injection",
+          "endpoint": "/api/v1/agent/metrics/tools",
+          "read_only": true,
+          "http_status": 503,
+          "ok": false,
+          "data": {
+            "detail": "synthetic_single_endpoint_unavailable"
+          }
+        },
+        "governance": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/governance/status",
+          "read_only": true,
+          "http_status": 200,
+          "ok": true,
+          "latency_ms": 21.11,
+          "data": {
+            "mode": "advisory",
+            "auth_enabled": false,
+            "auth_required": false,
+            "auth_mode": "api_key",
+            "audit_enabled": false,
+            "registered_key_count": 0,
+            "config_version": "2026.07+caf2c46b",
+            "execution_policy": "approval_record_only_no_external_dispatch",
+            "state_backend": "sqlite",
+            "shadow_trial_ledger": "sqlite_transactional_append_revision",
+            "integration": {
+              "enabled": false,
+              "registered_key_count": 0,
+              "allowed_target_count": 0,
+              "outbound_policy": "pull_only_reference_no_network_push_no_field_control"
+            },
+            "async_scheduling": {
+              "enabled": false
+            },
+            "production_readiness_enforced": false,
+            "supported_roles": [
+              "viewer",
+              "planner",
+              "approver",
+              "admin"
+            ]
+          }
+        }
+      }
+    },
+    "windos_unreachable_fault_injection": {
+      "system": "WINDOS",
+      "mode": "read_only_diagnosis",
+      "automatic_changes_permitted": false,
+      "evidence": {
+        "health": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/health",
+          "read_only": true,
+          "http_status": 502,
+          "ok": false,
+          "latency_ms": 3026.51,
+          "data": {
+            "text": ""
+          }
+        },
+        "ready": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/ready",
+          "read_only": true,
+          "http_status": 502,
+          "ok": false,
+          "latency_ms": 2710.67,
+          "data": {
+            "text": ""
+          }
+        },
+        "production_readiness": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/production/readiness",
+          "read_only": true,
+          "http_status": 502,
+          "ok": false,
+          "latency_ms": 3152.05,
+          "data": {
+            "text": ""
+          }
+        },
+        "queue": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/schedule/queue/status",
+          "read_only": true,
+          "http_status": 502,
+          "ok": false,
+          "latency_ms": 3861.82,
+          "data": {
+            "text": ""
+          }
+        },
+        "agent_metrics": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/agent/metrics/tools",
+          "read_only": true,
+          "http_status": 502,
+          "ok": false,
+          "latency_ms": 3417.57,
+          "data": {
+            "text": ""
+          }
+        },
+        "governance": {
+          "source": "windos_live_api",
+          "endpoint": "/api/v1/governance/status",
+          "read_only": true,
+          "http_status": 502,
+          "ok": false,
+          "latency_ms": 3211.0,
+          "data": {
+            "text": ""
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-07-15T11:57:44.512054+08:00",
+  "backend": "local",
+  "dataset": "E:\\Projects\\VSCodeProjects\\super_biz_agent\\super_biz_agent_py-release-2026-03-16\\evaluation\\datasets\\rag_queries.jsonl",
+  "dataset_size": 10,
+  "label_review": {
+    "pending": 10
+  },
+  "experiments": [
+    {
+      "chunk_size": 400,
+      "overlap": 50,
+      "top_k": 5,
+      "chunks": 78,
+      "metrics": {
+        "queries": 10,
+        "hit_at_5": 1.0,
+        "mrr_at_5": 0.9,
+        "average_retrieval_latency_ms": 1.843,
+        "p50_retrieval_latency_ms": 1.784,
+        "p95_retrieval_latency_ms": 2.269,
+        "failures": 0,
+        "error_attribution": {},
+        "category_hit_rate": {
+          "cpu": 1.0
+        }
+      }
+    }
+  ],
+  "best_experiment": {
+    "chunk_size": 400,
+    "overlap": 50,
+    "top_k": 5,
+    "chunks": 78,
+    "metrics": {
+      "queries": 10,
+      "hit_at_5": 1.0,
+      "mrr_at_5": 0.9,
+      "average_retrieval_latency_ms": 1.843,
+      "p50_retrieval_latency_ms": 1.784,
+      "p95_retrieval_latency_ms": 2.269,
+      "failures": 0,
+      "error_attribution": {},
+      "category_hit_rate": {
+        "cpu": 1.0
+      }
+    }
+  },
+  "errors": {
+    "chunk=400,overlap=50,k=5": []
+  }
+}

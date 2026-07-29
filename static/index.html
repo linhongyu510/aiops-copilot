@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1017">
+    <meta name="description" content="与 WINDOS 联动的证据驱动智能运维与 OnCall 诊断工作台">
+    <title>AIOps Copilot · WINDOS 可靠性控制面</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="/static/styles.css?v=4.0.0">
+    <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true"><span>AI</span></div>
+                <div>
+                    <div class="brand-title">AIOps Copilot</div>
+                    <div class="brand-subtitle">WINDOS RELIABILITY PLANE</div>
+                </div>
+            </div>
+
+            <div class="topbar-scope">
+                <span class="scope-dot"></span>
+                <div><strong>海上风电智能运维</strong><small>只读诊断 · 证据驱动</small></div>
+            </div>
+
+            <div class="topbar-spacer"></div>
+
+            <div class="topbar-actions">
+                <button class="auth-config-btn" id="authConfigBtn" type="button" title="配置当前标签页使用的 API Key">本机模式</button>
+                <button class="theme-toggle-btn" id="themeToggleBtn" type="button" title="切换深色 / 浅色主题" aria-label="切换主题">☾</button>
+                <span class="connection-chip" id="connectionChip"><i></i> 系统就绪</span>
+                <button class="ai-ops-top-btn" id="aiOpsSidebarBtn" type="button">
+                    <span class="pulse-line" aria-hidden="true"></span>
+                    <span>运行自动诊断</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="app-layout">
+            <aside class="sidebar" aria-label="对话导航">
+                <div class="sidebar-mobile-head">
+                    <strong>工作台导航</strong>
+                    <button class="mobile-close-btn" id="mobileCloseBtn" type="button" aria-label="关闭导航">×</button>
+                </div>
+
+                <div class="sidebar-content">
+                    <button class="new-chat-btn" id="newChatBtn" type="button">
+                        <span class="new-chat-plus" aria-hidden="true">＋</span>
+                        <span>新建诊断会话</span>
+                        <kbd>⌘ K</kbd>
+                    </button>
+
+                    <div class="sidebar-section-label">工作台</div>
+                    <button class="sidebar-workspace active" type="button">
+                        <span class="nav-glyph" aria-hidden="true">⌁</span>
+                        <span><strong>智能问答</strong><small>知识检索与诊断</small></span>
+                    </button>
+                    <button class="sidebar-workspace" type="button" data-prompt="请使用 windos_diagnose_overview 工具检查 WINDOS 当前运行状态，严格基于工具结果说明健康、生产就绪、队列和治理状态">
+                        <span class="nav-glyph" aria-hidden="true">W</span>
+                        <span><strong>WINDOS 体检</strong><small>只读可靠性快照</small></span>
+                    </button>
+
+                    <div class="chat-history-section">
+                        <div class="history-header"><span>最近会话</span><span class="history-count">LOCAL</span></div>
+                        <div class="chat-history-list" id="chatHistoryList"></div>
+                    </div>
+
+                    <div class="sidebar-footer">
+                        <div class="service-state">
+                            <span class="status-dot"></span>
+                            <div><strong>控制面在线</strong><small id="serviceDetail">正在检查依赖...</small></div>
+                        </div>
+                        <p>所有 WINDOS 工具默认只读；变更操作不在当前授权范围内。</p>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="workspace-header">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" title="打开导航" aria-label="打开导航">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div>
+                        <span class="workspace-eyebrow">ONCALL WORKSPACE</span>
+                        <strong>智能诊断中心</strong>
+                    </div>
+                    <div class="workspace-meta">Plan → Execute → Replan</div>
+                </div>
+
+                <section class="system-kpi-strip" aria-label="系统运行摘要">
+                    <article class="system-kpi-card tone-ok">
+                        <span>API 状态</span>
+                        <b id="apiStatusValue">检查中</b>
+                        <small>FastAPI control plane</small>
+                    </article>
+                    <article class="system-kpi-card tone-info">
+                        <span>向量检索</span>
+                        <b id="milvusStatusValue">检查中</b>
+                        <small>Milvus · BGE</small>
+                    </article>
+                    <article class="system-kpi-card tone-scheme">
+                        <span>工具成功率</span>
+                        <b id="toolSuccessValue">—</b>
+                        <small>process-local sample</small>
+                    </article>
+                    <article class="system-kpi-card tone-neutral">
+                        <span>累计调用</span>
+                        <b id="toolCallsValue">0</b>
+                        <small>MCP + local tools</small>
+                    </article>
+                    <article class="system-kpi-card tone-warning">
+                        <span>错误预算剩余</span>
+                        <b id="errorBudgetValue">—</b>
+                        <small>目标成功率 99%</small>
+                    </article>
+                    <article class="system-kpi-card tone-marine">
+                        <span>依赖隔离</span>
+                        <b id="guardStatusValue">未采样</b>
+                        <small>circuit · bulkhead</small>
+                    </article>
+                </section>
+
+                <div class="chat-container">
+                    <section class="welcome-greeting" id="welcomeGreeting">
+                        <div class="hero-grid">
+                            <div class="hero-copy">
+                                <div class="hero-badge"><span></span> EVIDENCE-FIRST INCIDENT RESPONSE</div>
+                                <h1>从告警到证据，<br><em>让诊断路径可复盘。</em></h1>
+                                <p>统一编排 WINDOS 健康与治理状态、内部 Runbook、日志、监控指标和只读数据库，输出事实、假设与建议边界。</p>
+                                <div class="hero-trust-row">
+                                    <span><i class="ok"></i> 只读工具链</span>
+                                    <span><i class="info"></i> 失败隔离</span>
+                                    <span><i class="scheme"></i> 请求追踪</span>
+                                </div>
+                            </div>
+                            <div class="hero-evidence-card">
+                                <div class="evidence-card-head"><span>诊断证据面</span><b>LIVE</b></div>
+                                <div class="evidence-flow">
+                                    <div><i></i><span>健康与就绪</span><strong>3 checks</strong></div>
+                                    <div><i></i><span>队列与 Worker</span><strong>read-only</strong></div>
+                                    <div><i></i><span>日志与指标</span><strong>MCP</strong></div>
+                                    <div><i></i><span>审计与治理</span><strong>traceable</strong></div>
+                                </div>
+                                <p>单项依赖异常会保留在证据快照中，不会覆盖其他成功结果。</p>
+                            </div>
+                        </div>
+
+                        <div class="section-heading">
+                            <div><span>快速开始</span><strong>选择一个常见诊断场景</strong></div>
+                            <small>点击后将直接发起诊断提问</small>
+                        </div>
+                        <div class="capability-grid">
+                            <button class="suggestion-card windos" data-prompt="请使用 windos_diagnose_overview 工具检查 WINDOS 当前运行状态，重点说明健康状态、生产就绪阻断项、排程队列和治理模式。严格基于工具结果，不执行任何变更。">
+                                <span class="card-code">W-01</span><strong>WINDOS 系统体检</strong><small>健康、队列、审计与生产闸门</small><i>→</i>
+                            </button>
+                            <button class="suggestion-card" data-prompt="请根据内部运维知识库，给出 CPU 使用率持续过高的排查步骤">
+                                <span class="card-code">CPU</span><strong>高 CPU 排查</strong><small>定位异常进程与资源瓶颈</small><i>→</i>
+                            </button>
+                            <button class="suggestion-card danger" data-prompt="请根据内部运维知识库，分析服务不可用的常见原因和止损方案">
+                                <span class="card-code">503</span><strong>服务不可用</strong><small>梳理依赖关系与快速止损</small><i>→</i>
+                            </button>
+                            <button class="suggestion-card warning" data-prompt="请根据内部运维知识库，说明磁盘使用率过高时如何安全处理">
+                                <span class="card-code">DSK</span><strong>磁盘空间告警</strong><small>分析增长来源与清理风险</small><i>→</i>
+                            </button>
+                        </div>
+                    </section>
+
+                    <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+
+                    <section class="operation-panel" id="operationPanel" aria-live="polite">
+                        <div class="operation-pulse"><span></span></div>
+                        <div class="operation-copy"><strong id="operationTitle">正在准备诊断</strong><small id="operationDetail">连接知识库与工具服务…</small></div>
+                        <time id="operationTimer">00:00</time>
+                        <button id="cancelButton" class="cancel-btn" type="button">取消</button>
+                    </section>
+
+                    <div class="chat-input-container">
+                        <div class="input-group-wrapper">
+                            <div class="upload-status" id="uploadStatus" hidden>
+                                <span class="upload-status-icon" aria-hidden="true">⇧</span>
+                                <span id="uploadStatusText">正在上传…</span>
+                            </div>
+                            <div class="input-wrapper">
+                                <label class="input-label" for="messageInput">描述故障或提出诊断问题</label>
+                                <input type="text" id="messageInput" placeholder="例如：检查 WINDOS 为什么服务可用但未达到生产就绪…" maxlength="2000" class="message-input" autocomplete="off">
+                                <div class="input-bottom-bar">
+                                    <div class="tools-btn-wrapper">
+                                        <button class="tools-btn" id="toolsBtn" title="更多选项" aria-label="更多选项">＋</button>
+                                        <div class="tools-menu" id="toolsMenu">
+                                            <button class="tools-menu-item" id="uploadFileItem" type="button">
+                                                <span class="upload-glyph" aria-hidden="true">⇧</span>
+                                                <span><strong>上传 Runbook</strong><small>支持 TXT / Markdown，最大 10 MB</small></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <span class="input-hint">Enter 发送 · Esc 取消任务</span>
+                                    <div class="right-actions">
+                                        <div class="mode-selector-wrapper">
+                                            <button class="mode-selector-btn" id="modeSelectorBtn" type="button">
+                                                <span class="mode-dot"></span><span id="currentModeText">快速</span><span class="dropdown-arrow">⌄</span>
+                                            </button>
+                                            <div class="mode-dropdown" id="modeDropdown">
+                                                <div class="dropdown-header">响应模式</div>
+                                                <button class="dropdown-item active" data-mode="quick" type="button"><span><strong>快速回答</strong><small>完整生成后一次返回</small></span><i></i></button>
+                                                <button class="dropdown-item" data-mode="stream" type="button"><span><strong>实时流式</strong><small>逐步展示生成过程</small></span><i></i></button>
+                                            </div>
+                                        </div>
+                                        <button class="send-btn-circle" id="sendButton" title="发送" aria-label="发送"><span>发送</span><i>→</i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="disclaimer">AI 输出仅用于辅助判断。执行任何变更前，请核对原始日志、指标、审批与操作边界。</p>
+                        </div>
+                        <input type="file" id="fileInput" accept=".txt,.md,.markdown" hidden>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="apiKeyModal" hidden role="dialog" aria-modal="true" aria-labelledby="apiKeyModalTitle">
+        <div class="modal-card">
+            <div class="modal-head">
+                <strong id="apiKeyModalTitle">配置 API Key</strong>
+                <button class="modal-close-btn" id="apiKeyCancel" type="button" aria-label="关闭">×</button>
+            </div>
+            <p class="modal-desc">API Key 仅保存在当前标签页的 sessionStorage 中；留空保存即恢复本机无鉴权模式。</p>
+            <div class="modal-current">当前状态：<b id="apiKeyMasked">未配置（本机模式）</b></div>
+            <label class="modal-label" for="apiKeyInput">新的 API Key</label>
+            <input type="password" id="apiKeyInput" class="modal-input" placeholder="粘贴 API Key，留空表示清除" autocomplete="off">
+            <div class="modal-actions">
+                <button class="modal-btn ghost" id="apiKeyClear" type="button">清除 Key</button>
+                <button class="modal-btn primary" id="apiKeySave" type="button">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js?v=4.0.0"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{
+  "generated_at": "2026-07-15T15:14:11.241976+08:00",
+  "base_url": "http://127.0.0.1:9900",
+  "unique_task_count": 1,
+  "runs": 1,
+  "task_count": 1,
+  "task_successes": 1,
+  "task_success_rate": 1.0,
+  "tool_calls": 2,
+  "tool_call_success_rate": 1.0,
+  "average_latency_ms": 78123.62,
+  "p50_latency_ms": 78123.62,
+  "p95_latency_ms": 78123.62,
+  "run_summaries": [
+    {
+      "run": 1,
+      "task_count": 1,
+      "task_successes": 1,
+      "task_success_rate": 1.0
+    }
+  ],
+  "results": [
+    {
+      "id": "agent-01-01",
+      "run": 1,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge",
+        "web_search"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 2,
+      "tool_successes": 2,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "负载"
+      ],
+      "latency_ms": 78123.62,
+      "answer_preview": "您好！根据您提供的信息（特别是 TaurusDB 集群中“存在一个与主节点不同可用区的同步节点”的提示），我理解您在使用华为云 TaurusDB 时遇到了高可用性配置问题。这确实是 TaurusDB 中常见的一个场景，我会结合华为云官方文档和实际经验，为您详细分析问题原因、影响和解决方案。以下内容均基于华为云 TaurusDB 产品规范（文档版本 2026-04-22）和实战经验，**确保可操作性强**。\n\n---\n\n### 🔍 问题原因分析\n在 TaurusDB 中，**同步节点（Sync Node）** 是集群中用于实现高可用和故障转移的关键组件。根据您描述的提示：\n> “你存在一个与主节"
+    }
+  ]
+}

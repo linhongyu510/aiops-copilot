@@ -1,0 +1,46 @@
+{
+  "pricing_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "pricing_basis": "cache-miss input and output USD per 1M tokens",
+  "rubric": "3 deterministic keyword-completeness cases; not a production accuracy claim",
+  "results": [
+    {
+      "route": "local",
+      "model": "qwen3:8b",
+      "requests": 3,
+      "successful_requests": 3,
+      "rubric_accuracy": 0.3333,
+      "average_latency_ms": 40639.48,
+      "p95_latency_ms": 64619.31,
+      "input_tokens": 104,
+      "output_tokens": 576,
+      "estimated_cost_usd": 0.0,
+      "error": null
+    },
+    {
+      "route": "flash",
+      "model": "deepseek-v4-flash",
+      "requests": 3,
+      "successful_requests": 3,
+      "rubric_accuracy": 1.0,
+      "average_latency_ms": 1676.6,
+      "p95_latency_ms": 1875.97,
+      "input_tokens": 79,
+      "output_tokens": 236,
+      "estimated_cost_usd": 7.714e-05,
+      "error": null
+    },
+    {
+      "route": "pro",
+      "model": "deepseek-v4-pro",
+      "requests": 3,
+      "successful_requests": 3,
+      "rubric_accuracy": 0.0,
+      "average_latency_ms": 3960.34,
+      "p95_latency_ms": 4542.77,
+      "input_tokens": 79,
+      "output_tokens": 600,
+      "estimated_cost_usd": 0.00055636,
+      "error": null
+    }
+  ]
+}

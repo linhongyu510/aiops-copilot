@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-07-15T15:34:16.998592+08:00",
+  "base_url": "http://127.0.0.1:9900",
+  "unique_task_count": 1,
+  "runs": 1,
+  "task_count": 1,
+  "task_successes": 1,
+  "task_success_rate": 1.0,
+  "tool_calls": 1,
+  "tool_call_success_rate": 1.0,
+  "average_latency_ms": 25872.63,
+  "p50_latency_ms": 25872.63,
+  "p95_latency_ms": 25872.63,
+  "run_summaries": [
+    {
+      "run": 1,
+      "task_count": 1,
+      "task_successes": 1,
+      "task_success_rate": 1.0
+    }
+  ],
+  "results": [
+    {
+      "id": "agent-01-01",
+      "run": 1,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 25872.63,
+      "answer_preview": "根据知识库中的排查步骤，**第一步应查询系统日志**，使用 `query_logs` 工具，参数如下：  \n- **地域**: `ap-guangzhou`  \n- **日志主题**: `system-metrics`  \n- **时间范围**: 最近30分钟  \n- **查询条件**: `cpu_usage > 80 AND service_name:order-service`  \n\n**目的**: 快速定位CPU飙高的进程和潜在异常，如死循环、流量突增或定时任务问题。"
+    }
+  ]
+}

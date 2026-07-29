@@ -1,0 +1,15 @@
+{
+  "tests": {
+    "total": 122,
+    "passed": 122,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "coverage_percent": 72.16,
+  "tools": {
+    "mcp": 17,
+    "local": 2,
+    "total": 19
+  }
+}

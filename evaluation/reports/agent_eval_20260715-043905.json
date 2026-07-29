@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-07-15T04:39:05.485043+08:00",
+  "base_url": "http://127.0.0.1:9900",
+  "task_count": 1,
+  "task_successes": 0,
+  "task_success_rate": 0.0,
+  "tool_calls": 0,
+  "tool_call_success_rate": 0.0,
+  "average_latency_ms": 524.97,
+  "p50_latency_ms": 524.97,
+  "p95_latency_ms": 524.97,
+  "results": [
+    {
+      "id": "agent-01-01",
+      "category": "cpu",
+      "success": false,
+      "response_ok": false,
+      "tool_selection_ok": false,
+      "called_tools": [],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 0,
+      "tool_successes": 0,
+      "keyword_coverage": 0.0,
+      "matched_keywords": [],
+      "latency_ms": 524.97,
+      "answer_preview": ""
+    }
+  ]
+}

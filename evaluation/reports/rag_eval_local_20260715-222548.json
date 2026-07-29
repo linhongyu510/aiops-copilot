@@ -1,0 +1,6700 @@
+{
+  "generated_at": "2026-07-15T22:25:48.693214+08:00",
+  "backend": "local",
+  "dataset": "D:\\Projects\\VSCodeProjects\\AIOps Copilot\\evaluation\\datasets\\rag_queries.jsonl",
+  "dataset_size": 120,
+  "dataset_split": "dev",
+  "label_review": {
+    "pending": 120
+  },
+  "experiments": [
+    {
+      "chunk_size": 400,
+      "overlap": 50,
+      "top_k": 1,
+      "chunks": 78,
+      "metrics": {
+        "queries": 120,
+        "hit_at_1": 0.575,
+        "mrr_at_1": 0.575,
+        "average_retrieval_latency_ms": 2.771,
+        "p50_retrieval_latency_ms": 2.639,
+        "p95_retrieval_latency_ms": 3.415,
+        "failures": 51,
+        "error_attribution": {
+          "ranking_error": 50,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.5417,
+          "cpu": 0.4583,
+          "disk": 0.7083,
+          "latency": 0.6667,
+          "memory": 0.5
+        }
+      }
+    },
+    {
+      "chunk_size": 400,
+      "overlap": 50,
+      "top_k": 3,
+      "chunks": 78,
+      "metrics": {
+        "queries": 120,
+        "hit_at_3": 0.8667,
+        "mrr_at_3": 0.7083,
+        "average_retrieval_latency_ms": 3.012,
+        "p50_retrieval_latency_ms": 3.154,
+        "p95_retrieval_latency_ms": 3.541,
+        "failures": 16,
+        "error_attribution": {
+          "ranking_error": 15,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.9583,
+          "cpu": 0.7917,
+          "disk": 0.875,
+          "latency": 0.9167,
+          "memory": 0.7917
+        }
+      }
+    },
+    {
+      "chunk_size": 400,
+      "overlap": 50,
+      "top_k": 5,
+      "chunks": 78,
+      "metrics": {
+        "queries": 120,
+        "hit_at_5": 0.95,
+        "mrr_at_5": 0.7279,
+        "average_retrieval_latency_ms": 3.247,
+        "p50_retrieval_latency_ms": 3.326,
+        "p95_retrieval_latency_ms": 3.846,
+        "failures": 6,
+        "error_attribution": {
+          "ranking_error": 5,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.9583,
+          "cpu": 0.9583,
+          "disk": 0.9167,
+          "latency": 1.0,
+          "memory": 0.9167
+        }
+      }
+    },
+    {
+      "chunk_size": 400,
+      "overlap": 100,
+      "top_k": 1,
+      "chunks": 82,
+      "metrics": {
+        "queries": 120,
+        "hit_at_1": 0.575,
+        "mrr_at_1": 0.575,
+        "average_retrieval_latency_ms": 3.15,
+        "p50_retrieval_latency_ms": 3.231,
+        "p95_retrieval_latency_ms": 3.641,
+        "failures": 51,
+        "error_attribution": {
+          "ranking_error": 48,
+          "semantic_miss": 3
+        },
+        "category_hit_rate": {
+          "availability": 0.5417,
+          "cpu": 0.4583,
+          "disk": 0.7083,
+          "latency": 0.6667,
+          "memory": 0.5
+        }
+      }
+    },
+    {
+      "chunk_size": 400,
+      "overlap": 100,
+      "top_k": 3,
+      "chunks": 82,
+      "metrics": {
+        "queries": 120,
+        "hit_at_3": 0.8583,
+        "mrr_at_3": 0.7014,
+        "average_retrieval_latency_ms": 2.723,
+        "p50_retrieval_latency_ms": 2.712,
+        "p95_retrieval_latency_ms": 3.652,
+        "failures": 17,
+        "error_attribution": {
+          "ranking_error": 14,
+          "semantic_miss": 3
+        },
+        "category_hit_rate": {
+          "availability": 0.9167,
+          "cpu": 0.8333,
+          "disk": 0.8333,
+          "latency": 0.9167,
+          "memory": 0.7917
+        }
+      }
+    },
+    {
+      "chunk_size": 400,
+      "overlap": 100,
+      "top_k": 5,
+      "chunks": 82,
+      "metrics": {
+        "queries": 120,
+        "hit_at_5": 0.9417,
+        "mrr_at_5": 0.7214,
+        "average_retrieval_latency_ms": 2.711,
+        "p50_retrieval_latency_ms": 2.655,
+        "p95_retrieval_latency_ms": 3.462,
+        "failures": 7,
+        "error_attribution": {
+          "ranking_error": 4,
+          "semantic_miss": 3
+        },
+        "category_hit_rate": {
+          "availability": 0.9583,
+          "cpu": 0.9583,
+          "disk": 0.9167,
+          "latency": 0.9583,
+          "memory": 0.9167
+        }
+      }
+    },
+    {
+      "chunk_size": 800,
+      "overlap": 50,
+      "top_k": 1,
+      "chunks": 59,
+      "metrics": {
+        "queries": 120,
+        "hit_at_1": 0.575,
+        "mrr_at_1": 0.575,
+        "average_retrieval_latency_ms": 2.074,
+        "p50_retrieval_latency_ms": 1.971,
+        "p95_retrieval_latency_ms": 2.469,
+        "failures": 51,
+        "error_attribution": {
+          "ranking_error": 50,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.5,
+          "cpu": 0.4583,
+          "disk": 0.7083,
+          "latency": 0.7083,
+          "memory": 0.5
+        }
+      }
+    },
+    {
+      "chunk_size": 800,
+      "overlap": 50,
+      "top_k": 3,
+      "chunks": 59,
+      "metrics": {
+        "queries": 120,
+        "hit_at_3": 0.8583,
+        "mrr_at_3": 0.7028,
+        "average_retrieval_latency_ms": 2.225,
+        "p50_retrieval_latency_ms": 2.327,
+        "p95_retrieval_latency_ms": 3.154,
+        "failures": 17,
+        "error_attribution": {
+          "ranking_error": 16,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.875,
+          "cpu": 0.8333,
+          "disk": 0.875,
+          "latency": 0.9167,
+          "memory": 0.7917
+        }
+      }
+    },
+    {
+      "chunk_size": 800,
+      "overlap": 50,
+      "top_k": 5,
+      "chunks": 59,
+      "metrics": {
+        "queries": 120,
+        "hit_at_5": 0.95,
+        "mrr_at_5": 0.7244,
+        "average_retrieval_latency_ms": 1.86,
+        "p50_retrieval_latency_ms": 1.814,
+        "p95_retrieval_latency_ms": 3.076,
+        "failures": 6,
+        "error_attribution": {
+          "ranking_error": 5,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 1.0,
+          "cpu": 0.9583,
+          "disk": 0.9167,
+          "latency": 0.9583,
+          "memory": 0.9167
+        }
+      }
+    },
+    {
+      "chunk_size": 800,
+      "overlap": 100,
+      "top_k": 1,
+      "chunks": 59,
+      "metrics": {
+        "queries": 120,
+        "hit_at_1": 0.575,
+        "mrr_at_1": 0.575,
+        "average_retrieval_latency_ms": 2.235,
+        "p50_retrieval_latency_ms": 2.258,
+        "p95_retrieval_latency_ms": 2.588,
+        "failures": 51,
+        "error_attribution": {
+          "ranking_error": 50,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.5,
+          "cpu": 0.4583,
+          "disk": 0.7083,
+          "latency": 0.7083,
+          "memory": 0.5
+        }
+      }
+    },
+    {
+      "chunk_size": 800,
+      "overlap": 100,
+      "top_k": 3,
+      "chunks": 59,
+      "metrics": {
+        "queries": 120,
+        "hit_at_3": 0.8583,
+        "mrr_at_3": 0.7028,
+        "average_retrieval_latency_ms": 2.318,
+        "p50_retrieval_latency_ms": 2.391,
+        "p95_retrieval_latency_ms": 2.822,
+        "failures": 17,
+        "error_attribution": {
+          "ranking_error": 16,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.875,
+          "cpu": 0.8333,
+          "disk": 0.875,
+          "latency": 0.9167,
+          "memory": 0.7917
+        }
+      }
+    },
+    {
+      "chunk_size": 800,
+      "overlap": 100,
+      "top_k": 5,
+      "chunks": 59,
+      "metrics": {
+        "queries": 120,
+        "hit_at_5": 0.9417,
+        "mrr_at_5": 0.7228,
+        "average_retrieval_latency_ms": 2.202,
+        "p50_retrieval_latency_ms": 2.319,
+        "p95_retrieval_latency_ms": 2.538,
+        "failures": 7,
+        "error_attribution": {
+          "ranking_error": 6,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.9583,
+          "cpu": 0.9583,
+          "disk": 0.9167,
+          "latency": 0.9583,
+          "memory": 0.9167
+        }
+      }
+    },
+    {
+      "chunk_size": 1200,
+      "overlap": 50,
+      "top_k": 1,
+      "chunks": 56,
+      "metrics": {
+        "queries": 120,
+        "hit_at_1": 0.575,
+        "mrr_at_1": 0.575,
+        "average_retrieval_latency_ms": 2.04,
+        "p50_retrieval_latency_ms": 1.91,
+        "p95_retrieval_latency_ms": 2.372,
+        "failures": 51,
+        "error_attribution": {
+          "ranking_error": 50,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.5,
+          "cpu": 0.4583,
+          "disk": 0.7083,
+          "latency": 0.7083,
+          "memory": 0.5
+        }
+      }
+    },
+    {
+      "chunk_size": 1200,
+      "overlap": 50,
+      "top_k": 3,
+      "chunks": 56,
+      "metrics": {
+        "queries": 120,
+        "hit_at_3": 0.8583,
+        "mrr_at_3": 0.7028,
+        "average_retrieval_latency_ms": 2.108,
+        "p50_retrieval_latency_ms": 2.254,
+        "p95_retrieval_latency_ms": 2.493,
+        "failures": 17,
+        "error_attribution": {
+          "ranking_error": 16,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.875,
+          "cpu": 0.8333,
+          "disk": 0.875,
+          "latency": 0.9167,
+          "memory": 0.7917
+        }
+      }
+    },
+    {
+      "chunk_size": 1200,
+      "overlap": 50,
+      "top_k": 5,
+      "chunks": 56,
+      "metrics": {
+        "queries": 120,
+        "hit_at_5": 0.95,
+        "mrr_at_5": 0.7244,
+        "average_retrieval_latency_ms": 2.175,
+        "p50_retrieval_latency_ms": 2.272,
+        "p95_retrieval_latency_ms": 3.108,
+        "failures": 6,
+        "error_attribution": {
+          "ranking_error": 5,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 1.0,
+          "cpu": 0.9583,
+          "disk": 0.9167,
+          "latency": 0.9583,
+          "memory": 0.9167
+        }
+      }
+    },
+    {
+      "chunk_size": 1200,
+      "overlap": 100,
+      "top_k": 1,
+      "chunks": 56,
+      "metrics": {
+        "queries": 120,
+        "hit_at_1": 0.575,
+        "mrr_at_1": 0.575,
+        "average_retrieval_latency_ms": 2.242,
+        "p50_retrieval_latency_ms": 2.245,
+        "p95_retrieval_latency_ms": 2.414,
+        "failures": 51,
+        "error_attribution": {
+          "ranking_error": 50,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.5,
+          "cpu": 0.4583,
+          "disk": 0.7083,
+          "latency": 0.7083,
+          "memory": 0.5
+        }
+      }
+    },
+    {
+      "chunk_size": 1200,
+      "overlap": 100,
+      "top_k": 3,
+      "chunks": 56,
+      "metrics": {
+        "queries": 120,
+        "hit_at_3": 0.8583,
+        "mrr_at_3": 0.7028,
+        "average_retrieval_latency_ms": 2.177,
+        "p50_retrieval_latency_ms": 2.248,
+        "p95_retrieval_latency_ms": 2.471,
+        "failures": 17,
+        "error_attribution": {
+          "ranking_error": 16,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.875,
+          "cpu": 0.8333,
+          "disk": 0.875,
+          "latency": 0.9167,
+          "memory": 0.7917
+        }
+      }
+    },
+    {
+      "chunk_size": 1200,
+      "overlap": 100,
+      "top_k": 5,
+      "chunks": 56,
+      "metrics": {
+        "queries": 120,
+        "hit_at_5": 0.9417,
+        "mrr_at_5": 0.7228,
+        "average_retrieval_latency_ms": 2.208,
+        "p50_retrieval_latency_ms": 2.286,
+        "p95_retrieval_latency_ms": 2.704,
+        "failures": 7,
+        "error_attribution": {
+          "ranking_error": 6,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.9583,
+          "cpu": 0.9583,
+          "disk": 0.9167,
+          "latency": 0.9583,
+          "memory": 0.9167
+        }
+      }
+    }
+  ],
+  "best_experiment": {
+    "chunk_size": 400,
+    "overlap": 50,
+    "top_k": 5,
+    "chunks": 78,
+    "metrics": {
+      "queries": 120,
+      "hit_at_5": 0.95,
+      "mrr_at_5": 0.7279,
+      "average_retrieval_latency_ms": 3.247,
+      "p50_retrieval_latency_ms": 3.326,
+      "p95_retrieval_latency_ms": 3.846,
+      "failures": 6,
+      "error_attribution": {
+        "ranking_error": 5,
+        "semantic_miss": 1
+      },
+      "category_hit_rate": {
+        "availability": 0.9583,
+        "cpu": 0.9583,
+        "disk": 0.9167,
+        "latency": 1.0,
+        "memory": 0.9167
+      }
+    }
+  },
+  "errors": {
+    "chunk=400,overlap=50,k=1": [
+      {
+        "id": "rag-01-13-03",
+        "query": "简要回答：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-03",
+        "query": "简要回答：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-05",
+        "query": "当前是业务高峰期，HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-06",
+        "query": "从事后复盘角度说明：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-02",
+        "query": "线上突然如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-04",
+        "query": "只基于内部知识库回答：如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-05",
+        "query": "当前是业务高峰期，如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-06",
+        "query": "从事后复盘角度说明：如何为处理器负载过高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-06",
+        "query": "从事后复盘角度说明：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-02",
+        "query": "线上突然遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-03",
+        "query": "简要回答：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-05",
+        "query": "当前是业务高峰期，遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-02",
+        "query": "线上突然HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-05",
+        "query": "当前是业务高峰期，HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-03",
+        "query": "简要回答：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-06",
+        "query": "从事后复盘角度说明：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-06",
+        "query": "从事后复盘角度说明：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-15-04",
+        "query": "只基于内部知识库回答：如何为HighDiskUsage确定影响范围和优先级？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-03",
+        "query": "简要回答：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-06",
+        "query": "从事后复盘角度说明：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-01",
+        "query": "遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-02",
+        "query": "线上突然遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-05",
+        "query": "当前是业务高峰期，遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-01",
+        "query": "服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-02",
+        "query": "线上突然ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-04",
+        "query": "只基于内部知识库回答：服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-05",
+        "query": "当前是业务高峰期，ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-03",
+        "query": "简要回答：如何为服务宕机确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-05-13-06",
+        "query": "从事后复盘角度说明：遇到SlowResponse，有哪些操作不能直接在生产环境执行？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-14-04",
+        "query": "只基于内部知识库回答：接口延迟升高与最近发布可能有什么关系？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-15-06",
+        "query": "从事后复盘角度说明：如何为接口延迟升高确定影响范围和优先级？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-01",
+        "query": "请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-04",
+        "query": "只基于内部知识库回答：请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-05",
+        "query": "当前是业务高峰期，请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=400,overlap=50,k=3": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "slow_response.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-06",
+        "query": "从事后复盘角度说明：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "slow_response.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "slow_response.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md",
+          "memory_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-04",
+        "query": "只基于内部知识库回答：请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "disk_high_usage.md",
+          "memory_high_usage.md"
+        ]
+      }
+    ],
+    "chunk=400,overlap=50,k=5": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "disk_high_usage.md",
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "slow_response.md",
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      }
+    ],
+    "chunk=400,overlap=100,k=1": [
+      {
+        "id": "rag-01-13-03",
+        "query": "简要回答：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-03",
+        "query": "简要回答：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-05",
+        "query": "当前是业务高峰期，HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-06",
+        "query": "从事后复盘角度说明：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-02",
+        "query": "线上突然如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-04",
+        "query": "只基于内部知识库回答：如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-05",
+        "query": "当前是业务高峰期，如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-06",
+        "query": "从事后复盘角度说明：如何为处理器负载过高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-06",
+        "query": "从事后复盘角度说明：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-02",
+        "query": "线上突然遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-03",
+        "query": "简要回答：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-05",
+        "query": "当前是业务高峰期，遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-02",
+        "query": "线上突然HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-05",
+        "query": "当前是业务高峰期，HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-03",
+        "query": "简要回答：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-06",
+        "query": "从事后复盘角度说明：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-06",
+        "query": "从事后复盘角度说明：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-15-04",
+        "query": "只基于内部知识库回答：如何为HighDiskUsage确定影响范围和优先级？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-03",
+        "query": "简要回答：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-06",
+        "query": "从事后复盘角度说明：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-01",
+        "query": "遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-02",
+        "query": "线上突然遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-05",
+        "query": "当前是业务高峰期，遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-01",
+        "query": "服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-02",
+        "query": "线上突然ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-04",
+        "query": "只基于内部知识库回答：服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-05",
+        "query": "当前是业务高峰期，ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-03",
+        "query": "简要回答：如何为服务宕机确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-05-13-06",
+        "query": "从事后复盘角度说明：遇到SlowResponse，有哪些操作不能直接在生产环境执行？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-14-04",
+        "query": "只基于内部知识库回答：接口延迟升高与最近发布可能有什么关系？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-15-06",
+        "query": "从事后复盘角度说明：如何为接口延迟升高确定影响范围和优先级？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-01",
+        "query": "请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-04",
+        "query": "只基于内部知识库回答：请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-05",
+        "query": "当前是业务高峰期，请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=400,overlap=100,k=3": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "slow_response.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-15-04",
+        "query": "只基于内部知识库回答：如何为HighDiskUsage确定影响范围和优先级？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "memory_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "disk_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-04",
+        "query": "只基于内部知识库回答：请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "disk_high_usage.md",
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      }
+    ],
+    "chunk=400,overlap=100,k=5": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "disk_high_usage.md",
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "disk_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md",
+          "disk_high_usage.md",
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=800,overlap=50,k=1": [
+      {
+        "id": "rag-01-13-03",
+        "query": "简要回答：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-03",
+        "query": "简要回答：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-05",
+        "query": "当前是业务高峰期，HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-06",
+        "query": "从事后复盘角度说明：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-02",
+        "query": "线上突然如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-04",
+        "query": "只基于内部知识库回答：如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-05",
+        "query": "当前是业务高峰期，如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-06",
+        "query": "从事后复盘角度说明：如何为处理器负载过高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-06",
+        "query": "从事后复盘角度说明：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-02",
+        "query": "线上突然遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-03",
+        "query": "简要回答：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-05",
+        "query": "当前是业务高峰期，遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-02",
+        "query": "线上突然HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-05",
+        "query": "当前是业务高峰期，HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-03",
+        "query": "简要回答：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-06",
+        "query": "从事后复盘角度说明：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-06",
+        "query": "从事后复盘角度说明：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-15-04",
+        "query": "只基于内部知识库回答：如何为HighDiskUsage确定影响范围和优先级？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-03",
+        "query": "简要回答：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-06",
+        "query": "从事后复盘角度说明：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-01",
+        "query": "遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-02",
+        "query": "线上突然遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-05",
+        "query": "当前是业务高峰期，遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-01",
+        "query": "服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-02",
+        "query": "线上突然ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-04",
+        "query": "只基于内部知识库回答：服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-05",
+        "query": "当前是业务高峰期，ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-03",
+        "query": "简要回答：如何为服务宕机确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-16-05",
+        "query": "当前是业务高峰期，请生成服务宕机的 OnCall 检查清单。",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-05-13-06",
+        "query": "从事后复盘角度说明：遇到SlowResponse，有哪些操作不能直接在生产环境执行？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-14-04",
+        "query": "只基于内部知识库回答：接口延迟升高与最近发布可能有什么关系？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-15-06",
+        "query": "从事后复盘角度说明：如何为接口延迟升高确定影响范围和优先级？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-01",
+        "query": "请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-05",
+        "query": "当前是业务高峰期，请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=800,overlap=50,k=3": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "slow_response.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md",
+          "memory_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      }
+    ],
+    "chunk=800,overlap=50,k=5": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "disk_high_usage.md",
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md",
+          "disk_high_usage.md",
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=800,overlap=100,k=1": [
+      {
+        "id": "rag-01-13-03",
+        "query": "简要回答：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-03",
+        "query": "简要回答：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-05",
+        "query": "当前是业务高峰期，HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-06",
+        "query": "从事后复盘角度说明：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-02",
+        "query": "线上突然如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-04",
+        "query": "只基于内部知识库回答：如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-05",
+        "query": "当前是业务高峰期，如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-06",
+        "query": "从事后复盘角度说明：如何为处理器负载过高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-06",
+        "query": "从事后复盘角度说明：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-02",
+        "query": "线上突然遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-03",
+        "query": "简要回答：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-05",
+        "query": "当前是业务高峰期，遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-02",
+        "query": "线上突然HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-05",
+        "query": "当前是业务高峰期，HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-03",
+        "query": "简要回答：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-06",
+        "query": "从事后复盘角度说明：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-06",
+        "query": "从事后复盘角度说明：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-15-04",
+        "query": "只基于内部知识库回答：如何为HighDiskUsage确定影响范围和优先级？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-03",
+        "query": "简要回答：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-06",
+        "query": "从事后复盘角度说明：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-01",
+        "query": "遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-02",
+        "query": "线上突然遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-05",
+        "query": "当前是业务高峰期，遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-01",
+        "query": "服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-02",
+        "query": "线上突然ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-04",
+        "query": "只基于内部知识库回答：服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-05",
+        "query": "当前是业务高峰期，ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-03",
+        "query": "简要回答：如何为服务宕机确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-16-05",
+        "query": "当前是业务高峰期，请生成服务宕机的 OnCall 检查清单。",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-05-13-06",
+        "query": "从事后复盘角度说明：遇到SlowResponse，有哪些操作不能直接在生产环境执行？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-14-04",
+        "query": "只基于内部知识库回答：接口延迟升高与最近发布可能有什么关系？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-15-06",
+        "query": "从事后复盘角度说明：如何为接口延迟升高确定影响范围和优先级？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-01",
+        "query": "请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-05",
+        "query": "当前是业务高峰期，请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=800,overlap=100,k=3": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "slow_response.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md",
+          "memory_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      }
+    ],
+    "chunk=800,overlap=100,k=5": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "disk_high_usage.md",
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md",
+          "disk_high_usage.md",
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=1200,overlap=50,k=1": [
+      {
+        "id": "rag-01-13-03",
+        "query": "简要回答：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-03",
+        "query": "简要回答：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-05",
+        "query": "当前是业务高峰期，HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-06",
+        "query": "从事后复盘角度说明：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-02",
+        "query": "线上突然如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-04",
+        "query": "只基于内部知识库回答：如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-05",
+        "query": "当前是业务高峰期，如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-06",
+        "query": "从事后复盘角度说明：如何为处理器负载过高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-06",
+        "query": "从事后复盘角度说明：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-02",
+        "query": "线上突然遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-03",
+        "query": "简要回答：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-05",
+        "query": "当前是业务高峰期，遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-02",
+        "query": "线上突然HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-05",
+        "query": "当前是业务高峰期，HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-03",
+        "query": "简要回答：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-06",
+        "query": "从事后复盘角度说明：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-06",
+        "query": "从事后复盘角度说明：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-15-04",
+        "query": "只基于内部知识库回答：如何为HighDiskUsage确定影响范围和优先级？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-03",
+        "query": "简要回答：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-06",
+        "query": "从事后复盘角度说明：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-01",
+        "query": "遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-02",
+        "query": "线上突然遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-05",
+        "query": "当前是业务高峰期，遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-01",
+        "query": "服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-02",
+        "query": "线上突然ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-04",
+        "query": "只基于内部知识库回答：服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-05",
+        "query": "当前是业务高峰期，ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-03",
+        "query": "简要回答：如何为服务宕机确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-16-05",
+        "query": "当前是业务高峰期，请生成服务宕机的 OnCall 检查清单。",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-05-13-06",
+        "query": "从事后复盘角度说明：遇到SlowResponse，有哪些操作不能直接在生产环境执行？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-14-04",
+        "query": "只基于内部知识库回答：接口延迟升高与最近发布可能有什么关系？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-15-06",
+        "query": "从事后复盘角度说明：如何为接口延迟升高确定影响范围和优先级？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-01",
+        "query": "请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-05",
+        "query": "当前是业务高峰期，请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=1200,overlap=50,k=3": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "slow_response.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md",
+          "memory_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      }
+    ],
+    "chunk=1200,overlap=50,k=5": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "disk_high_usage.md",
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md",
+          "disk_high_usage.md",
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=1200,overlap=100,k=1": [
+      {
+        "id": "rag-01-13-03",
+        "query": "简要回答：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-03",
+        "query": "简要回答：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-05",
+        "query": "当前是业务高峰期，HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-06",
+        "query": "从事后复盘角度说明：CPU 飙高与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-02",
+        "query": "线上突然如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-04",
+        "query": "只基于内部知识库回答：如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-05",
+        "query": "当前是业务高峰期，如何为CPU 飙高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-06",
+        "query": "从事后复盘角度说明：如何为处理器负载过高确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-06",
+        "query": "从事后复盘角度说明：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-02",
+        "query": "线上突然遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-03",
+        "query": "简要回答：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-05",
+        "query": "当前是业务高峰期，遇到内存泄漏，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-02",
+        "query": "线上突然HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-14-05",
+        "query": "当前是业务高峰期，HighMemoryUsage与最近发布可能有什么关系？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-03",
+        "query": "简要回答：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-06",
+        "query": "从事后复盘角度说明：如何为内存泄漏确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-06",
+        "query": "从事后复盘角度说明：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-15-04",
+        "query": "只基于内部知识库回答：如何为HighDiskUsage确定影响范围和优先级？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-03",
+        "query": "简要回答：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-03-16-06",
+        "query": "从事后复盘角度说明：请生成HighDiskUsage的 OnCall 检查清单。",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-01",
+        "query": "遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-02",
+        "query": "线上突然遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-05",
+        "query": "当前是业务高峰期，遇到服务宕机，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-01",
+        "query": "服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-02",
+        "query": "线上突然ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-04",
+        "query": "只基于内部知识库回答：服务宕机与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-14-05",
+        "query": "当前是业务高峰期，ServiceUnavailable与最近发布可能有什么关系？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-03",
+        "query": "简要回答：如何为服务宕机确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-16-05",
+        "query": "当前是业务高峰期，请生成服务宕机的 OnCall 检查清单。",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 3,
+        "retrieved_sources": [
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-05-13-06",
+        "query": "从事后复盘角度说明：遇到SlowResponse，有哪些操作不能直接在生产环境执行？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-14-04",
+        "query": "只基于内部知识库回答：接口延迟升高与最近发布可能有什么关系？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-15-06",
+        "query": "从事后复盘角度说明：如何为接口延迟升高确定影响范围和优先级？",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-01",
+        "query": "请生成请求超时的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-05",
+        "query": "当前是业务高峰期，请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 2,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md"
+        ]
+      }
+    ],
+    "chunk=1200,overlap=100,k=3": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-14-02",
+        "query": "线上突然HighCPUUsage与最近发布可能有什么关系？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-15-01",
+        "query": "如何为HighCPUUsage确定影响范围和优先级？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-01-16-03",
+        "query": "简要回答：请生成HighCPUUsage的 OnCall 检查清单。",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "slow_response.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-13-06",
+        "query": "从事后复盘角度说明：遇到HighMemoryUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-01",
+        "query": "如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-15-04",
+        "query": "只基于内部知识库回答：如何为HighMemoryUsage确定影响范围和优先级？",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-13-03",
+        "query": "简要回答：遇到HighDiskUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 5,
+        "retrieved_sources": [
+          "slow_response.md",
+          "memory_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-04-13-04",
+        "query": "只基于内部知识库回答：遇到接口 503，有哪些操作不能直接在生产环境执行？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-02",
+        "query": "线上突然如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-02",
+        "query": "线上突然请生成接口延迟升高的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 4,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      }
+    ],
+    "chunk=1200,overlap=100,k=5": [
+      {
+        "id": "rag-01-13-06",
+        "query": "从事后复盘角度说明：遇到HighCPUUsage，有哪些操作不能直接在生产环境执行？",
+        "category": "cpu",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "cpu_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "disk_high_usage.md",
+          "memory_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-03",
+        "query": "简要回答：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": 10,
+        "retrieved_sources": [
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "slow_response.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-02-16-06",
+        "query": "从事后复盘角度说明：请生成HighMemoryUsage的 OnCall 检查清单。",
+        "category": "memory",
+        "error_type": "semantic_miss",
+        "expected_sources": [
+          "memory_high_usage.md"
+        ],
+        "best_relevant_rank": null,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-02",
+        "query": "线上突然HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 7,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "service_unavailable.md",
+          "slow_response.md"
+        ]
+      },
+      {
+        "id": "rag-03-14-05",
+        "query": "当前是业务高峰期，HighDiskUsage与最近发布可能有什么关系？",
+        "category": "disk",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "disk_high_usage.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "memory_high_usage.md",
+          "cpu_high_usage.md",
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-04-15-05",
+        "query": "当前是业务高峰期，如何为接口 503确定影响范围和优先级？",
+        "category": "availability",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "service_unavailable.md"
+        ],
+        "best_relevant_rank": 6,
+        "retrieved_sources": [
+          "slow_response.md",
+          "slow_response.md",
+          "slow_response.md",
+          "cpu_high_usage.md",
+          "cpu_high_usage.md"
+        ]
+      },
+      {
+        "id": "rag-05-16-06",
+        "query": "从事后复盘角度说明：请生成SlowResponse的 OnCall 检查清单。",
+        "category": "latency",
+        "error_type": "ranking_error",
+        "expected_sources": [
+          "slow_response.md"
+        ],
+        "best_relevant_rank": 9,
+        "retrieved_sources": [
+          "service_unavailable.md",
+          "disk_high_usage.md",
+          "cpu_high_usage.md",
+          "disk_high_usage.md",
+          "service_unavailable.md"
+        ]
+      }
+    ]
+  }
+}

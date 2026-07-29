@@ -1,0 +1,757 @@
+{
+  "generated_at": "2026-07-15T13:34:05.198753+08:00",
+  "dataset_size": 600,
+  "label_review": {
+    "pending": 600
+  },
+  "experiments": [
+    {
+      "name": "BM25 baseline",
+      "splitter": "plain",
+      "chunk_size": 1200,
+      "overlap": 0,
+      "chunks": 17,
+      "metrics": {
+        "queries": 600,
+        "hit_at_5": 0.905,
+        "mrr_at_5": 0.5836,
+        "p50_retrieval_latency_ms": 0.24,
+        "p95_retrieval_latency_ms": 0.365,
+        "failures": 57,
+        "error_attribution": {
+          "ranking_error": 56,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 0.9417,
+          "cpu": 0.9417,
+          "disk": 0.8583,
+          "latency": 0.875,
+          "memory": 0.9083
+        },
+        "errors": [
+          {
+            "id": "rag-01-06-01",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-01-06-02",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-01-06-04",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-01-07-01",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-01-07-04",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-01-18-01",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-01-18-04",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-02-01-03",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-02-01-04",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-02-01-06",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-02-06-04",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-02-07-03",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-02-07-06",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-02-11-05",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-02-13-03",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-02-13-04",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-02-13-06",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-02-18-04",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-03-01-03",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-01-06",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-02-02",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-03-07-03",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-03-09-04",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-03-10-03",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-03-10-06",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-03-11-02",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-03-14-02",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-03-15-04",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-03-17-01",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-17-02",
+            "category": "disk",
+            "error_type": "semantic_miss",
+            "best_relevant_rank": null
+          },
+          {
+            "id": "rag-03-17-04",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-03-17-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-03-17-06",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-19-03",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-20-02",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-04-08-03",
+            "category": "availability",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-04-09-01",
+            "category": "availability",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-04-09-02",
+            "category": "availability",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-04-09-03",
+            "category": "availability",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-04-09-05",
+            "category": "availability",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-04-13-05",
+            "category": "availability",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-04-16-02",
+            "category": "availability",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-01-03",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-03-04",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-05-05-02",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-05-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-06-01",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-05-07-01",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-07-03",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-07-04",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-10-03",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-05-10-04",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-05-10-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-12-04",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-17-02",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-05-17-03",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-17-05",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          }
+        ]
+      }
+    },
+    {
+      "name": "Initial BGE",
+      "splitter": "markdown-header",
+      "chunk_size": 800,
+      "overlap": 100,
+      "chunks": 59,
+      "metrics": {
+        "queries": 600,
+        "hit_at_5": 0.9333,
+        "mrr_at_5": 0.6882,
+        "p50_retrieval_latency_ms": 1.199,
+        "p95_retrieval_latency_ms": 1.817,
+        "failures": 40,
+        "error_attribution": {
+          "ranking_error": 35,
+          "semantic_miss": 5
+        },
+        "category_hit_rate": {
+          "availability": 0.9833,
+          "cpu": 0.9583,
+          "disk": 0.9167,
+          "latency": 0.8833,
+          "memory": 0.925
+        },
+        "errors": [
+          {
+            "id": "rag-01-07-02",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-01-07-03",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-01-07-05",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-01-07-06",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-01-13-06",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-02-01-03",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-02-01-06",
+            "category": "memory",
+            "error_type": "semantic_miss",
+            "best_relevant_rank": null
+          },
+          {
+            "id": "rag-02-02-02",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-02-06-01",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-02-06-04",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-02-10-06",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 10
+          },
+          {
+            "id": "rag-02-16-03",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 10
+          },
+          {
+            "id": "rag-02-16-06",
+            "category": "memory",
+            "error_type": "semantic_miss",
+            "best_relevant_rank": null
+          },
+          {
+            "id": "rag-02-17-02",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-03-01-03",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-02-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-03-04-03",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-05-05",
+            "category": "disk",
+            "error_type": "semantic_miss",
+            "best_relevant_rank": null
+          },
+          {
+            "id": "rag-03-11-02",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 10
+          },
+          {
+            "id": "rag-03-11-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-03-14-02",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-14-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-03-17-05",
+            "category": "disk",
+            "error_type": "semantic_miss",
+            "best_relevant_rank": null
+          },
+          {
+            "id": "rag-03-20-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-04-09-02",
+            "category": "availability",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-04-15-05",
+            "category": "availability",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-01-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-05-02-01",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-03-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 10
+          },
+          {
+            "id": "rag-05-06-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-07-01",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-07-03",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-07-04",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-07-06",
+            "category": "latency",
+            "error_type": "semantic_miss",
+            "best_relevant_rank": null
+          },
+          {
+            "id": "rag-05-09-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-05-10-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-12-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-16-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-05-18-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-19-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 10
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tuned BGE",
+      "splitter": "plain",
+      "chunk_size": 1200,
+      "overlap": 0,
+      "chunks": 17,
+      "metrics": {
+        "queries": 600,
+        "hit_at_5": 0.9783,
+        "mrr_at_5": 0.7992,
+        "p50_retrieval_latency_ms": 0.353,
+        "p95_retrieval_latency_ms": 0.465,
+        "failures": 13,
+        "error_attribution": {
+          "ranking_error": 13
+        },
+        "category_hit_rate": {
+          "availability": 1.0,
+          "cpu": 1.0,
+          "disk": 0.9333,
+          "latency": 0.9583,
+          "memory": 1.0
+        },
+        "errors": [
+          {
+            "id": "rag-03-05-02",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-03-05-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-03-11-02",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-11-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-13-03",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-03-14-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-17-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-20-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-06-05",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-07-01",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-07-04",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-07-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-09-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          }
+        ]
+      }
+    }
+  ],
+  "improvement": {
+    "initial_hit_at_5": 0.9333,
+    "optimized_hit_at_5": 0.9783,
+    "absolute_percentage_points": 4.5
+  }
+}

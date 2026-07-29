@@ -1,0 +1,2118 @@
+{
+  "generated_at": "2026-07-15T15:59:44.526241+08:00",
+  "base_url": "http://127.0.0.1:9900",
+  "unique_task_count": 30,
+  "runs": 3,
+  "task_count": 90,
+  "task_successes": 72,
+  "task_success_rate": 0.8,
+  "tool_calls": 90,
+  "tool_call_success_rate": 1.0,
+  "average_latency_ms": 10166.78,
+  "p50_latency_ms": 9362.41,
+  "p95_latency_ms": 17364.78,
+  "run_summaries": [
+    {
+      "run": 1,
+      "task_count": 30,
+      "task_successes": 22,
+      "task_success_rate": 0.7333
+    },
+    {
+      "run": 2,
+      "task_count": 30,
+      "task_successes": 25,
+      "task_success_rate": 0.8333
+    },
+    {
+      "run": 3,
+      "task_count": 30,
+      "task_successes": 25,
+      "task_success_rate": 0.8333
+    }
+  ],
+  "results": [
+    {
+      "id": "agent-01-01",
+      "run": 1,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 30151.37,
+      "answer_preview": "第一步检查系统日志，查询CPU使用率异常时间段的进程信息。使用`query_logs`工具，地域设为`ap-guangzhou`，日志主题为`system-metrics`，时间范围为告警前30分钟，筛选`cpu_usage>80`且服务名称包含`order-service`的记录，定位高CPU进程及PID。"
+    },
+    {
+      "id": "agent-01-02",
+      "run": 1,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 11573.1,
+      "answer_preview": "排查顺序：  \n1. **获取告警时间**，定位日志范围；  \n2. **查询系统日志**，筛选CPU>80%记录；  \n3. **分析高CPU进程**，提取进程名、PID、启动时间；  \n4. **核查应用日志**，确认错误/警告信息。  \n\n**证据**：日志中的错误堆栈、进程信息、慢查询记录。  \n**止损动作**：重启异常进程/服务；扩容实例；优化SQL/代码逻辑；启用限流。"
+    },
+    {
+      "id": "agent-01-03",
+      "run": 1,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 8884.11,
+      "answer_preview": "根据内部知识库，当前仅提供内存告警处理方案。若需CPU告警证据收集，请补充具体告警类型或参考以下通用步骤：  \n1. **查询系统监控日志**：检查CPU使用率是否持续高于阈值（如90%）。  \n2. **分析进程状态**：定位占用CPU的进程ID，检查是否有异常线程或死循环。  \n3. **查看应用日志**：确认是否存在性能瓶颈、SQL慢查询或代码逻辑问题。  \n4. **检查资源争用**：排查锁竞争、连接池耗尽等导致CPU空转的原因。  \n5. **获取线程快照**：分析线程状态，识别阻塞或忙等待的线程。"
+    },
+    {
+      "id": "agent-01-04",
+      "run": 1,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "CPU",
+        "进程",
+        "负载"
+      ],
+      "latency_ms": 10105.68,
+      "answer_preview": "排查顺序：  \n1. **查系统日志**（`query_logs`）定位高CPU进程，看是否为特定应用进程或系统进程。  \n2. **分析进程属性**：单进程高CPU（如死循环）→应用问题；多进程均匀升高（如流量突增）→可能为基础设施资源不足或应用负载。  \n3. **查应用日志**：是否有错误/警告，如死循环、慢查询等应用层异常。  \n4. **验证资源监控**：若系统进程（如kswapd、kthreadd）高CPU，可能是硬件资源不足或内核问题。  \n\n**止损动作**：优先重启异常服务实例；若资源不足，立即扩容。"
+    },
+    {
+      "id": "agent-01-05",
+      "run": 1,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 9289.06,
+      "answer_preview": "排查顺序及根因：  \n1. **死循环或无限递归**（单进程CPU接近100%，日志有重复错误堆栈）；  \n2. **流量突增**（多进程CPU升高，请求量激增）；  \n3. **定时任务重叠**（周期性CPU高峰，日志含任务记录）；  \n4. **数据库慢查询**（应用CPU高但业务简单，日志有慢SQL）。  \n**止损动作**：立即扩容/限流/重启实例，分析日志定位根因。"
+    },
+    {
+      "id": "agent-01-06",
+      "run": 1,
+      "category": "cpu",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "CPU"
+      ],
+      "latency_ms": 9821.86,
+      "answer_preview": "**HighCPUUsage临时止损措施**  \n1. **摘除故障实例**（第一时间）：确认高CPU实例并隔离，避免影响其他节点。  \n2. **启用降级/熔断**（5分钟内）：触发熔断机制，限制非核心功能调用，保障核心服务。  \n3. **切换备用服务**（15分钟内）：若无法快速修复，切换至备用服务或维护页面。  \n4. **重启服务**（30分钟内）：若问题持续，重启高CPU服务实例，同步检查依赖组件。  \n**证据**：监控告警HighCPUUsage、健康检查失败、实例状态异常。  \n**止损动作**：优先隔离故障实例，快速切换降级方案，避免全链路阻塞。"
+    },
+    {
+      "id": "agent-02-01",
+      "run": 1,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "内存",
+        "OOM"
+      ],
+      "latency_ms": 10487.13,
+      "answer_preview": "**第一步检查系统监控日志**，使用`query_logs`工具，参数为：地域`ap-guangzhou`，日志主题`system-metrics`，时间范围最近30分钟，查询语句`memory_usage > 85 OR oom_kill:true`。确认内存是否持续超阈值或触发OOM事件。"
+    },
+    {
+      "id": "agent-02-02",
+      "run": 1,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 17364.78,
+      "answer_preview": "排查顺序：  \n1. **查系统日志**：查询内存使用>85%或OOM事件（工具：query_logs，参数：时间范围30分钟）。  \n2. **查应用日志**：定位OOM错误或GC过载记录（工具：query_logs，参数：应用日志主题）。  \n3. **分析内存数据**：检查堆内存、GC频率、大对象分配及Full GC后内存是否释放。  \n4. **获取堆转储**：重启前dump内存快照，使用MAT分析泄漏对象引用。  \n5. **止损动作**：紧急重启应用，临时调整JVM参数或扩容。  \n\n证据：日志中的OOM记录、GC频率异常、堆转储中长存对象。"
+    },
+    {
+      "id": "agent-02-03",
+      "run": 1,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 9755.86,
+      "answer_preview": "**排查顺序与证据收集：**  \n1. **系统监控日志**：查询最近30分钟内存使用率>85%或OOM事件，定位时间范围。  \n2. **应用日志**：搜索`OutOfMemoryError`或`GC overhead`，确认应用层面异常。  \n3. **内存指标分析**：提取JVM堆内存使用、GC频率/耗时、大对象分配记录。  \n4. **缓存与流量关联**：检查缓存命中率、数据过期策略及流量突增时段。  \n5. **JVM配置核查**：确认堆内存参数（-Xmx/-Xms）、GC算法及元空间设置。  \n\n**止损动作**：立即重启高内存实例，扩容或限流防止进一步恶化。"
+    },
+    {
+      "id": "agent-02-04",
+      "run": 1,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 12048.11,
+      "answer_preview": "**排查顺序**：  \n1. **系统监控日志**：检查 `memory_usage >85` 或 `swap频繁`，判断是否基础设施资源不足。  \n2. **应用日志**：查找 `OutOfMemoryError` 或 `GC overhead`，确认应用层面问题。  \n3. **JVM参数**：分析堆内存配置是否合理，是否因参数错误导致内存溢出。  \n\n**证据**：  \n- 系统日志显示内存持续升高且无应用错误 → 基础设施问题（如物理内存不足）。  \n- 应用日志有OOM或GC异常 → 应用问题（如内存泄漏、缓存配置不当）。  \n\n**止损动作**：  \n- 立即重启高内存实例（基础设"
+    },
+    {
+      "id": "agent-02-05",
+      "run": 1,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 21485.82,
+      "answer_preview": "内存泄漏常见根因包括：  \n1. **缓存未释放**：未及时清理或销毁缓存对象，导致内存占用持续增长。  \n2. **静态集合类无限增长**：如静态Map/List未控制容量，持续添加元素而未移除。  \n3. **监听器/回调未注销**：如事件监听器未移除，导致对象无法被回收。  \n4. **对象引用未置空**：局部变量或容器中引用未显式置空，导致GC无法回收。  \n\n**排查顺序**：  \n- 使用 `jstat -gc` 监控GC频率及内存分配情况，确认是否频繁GC（FrequentGC告警）。  \n- 通过 `jmap -heap` 和堆转储分析对象存活状态，定位大对象或泄漏路径。  \n"
+    },
+    {
+      "id": "agent-02-06",
+      "run": 1,
+      "category": "memory",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "内存"
+      ],
+      "latency_ms": 7664.59,
+      "answer_preview": "**HighMemoryUsage临时止损措施**  \n1. **摘除故障实例**：确认高内存服务实例故障，立即隔离并重启。  \n2. **启用备用服务**：切换至备用实例或维护页面，保障基础可用性。  \n3. **调整资源分配**：临时扩容内存资源，避免服务崩溃。  \n4. **触发熔断降级**：若依赖服务异常，启用降级策略，减轻内存压力。  \n**优先级**：先隔离故障，再调整资源，最后触发降级。"
+    },
+    {
+      "id": "agent-03-01",
+      "run": 1,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "磁盘",
+        "文件"
+      ],
+      "latency_ms": 9741.56,
+      "answer_preview": "**第一步检查系统磁盘使用情况**：  \n使用 `query_logs` 工具，参数为地域 `ap-guangzhou`、日志主题 `system-metrics`，时间范围最近30分钟，查询语句 `disk_usage > 80 OR filesystem:full`，确认磁盘使用率是否超限及具体分区。  \n**证据**：日志中若显示 `disk_full:true` 或 `disk_usage > 90`，则需立即止损，清理临时文件或扩容。  \n**止损动作**：若确认磁盘满，优先清理 `/tmp`、日志文件，或临时扩容。"
+    },
+    {
+      "id": "agent-03-02",
+      "run": 1,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "磁盘",
+        "文件"
+      ],
+      "latency_ms": 10899.07,
+      "answer_preview": "**磁盘告警排查顺序**  \n1. **获取当前时间**（记录告警时间）  \n2. **查询系统日志**（确认磁盘使用率>80%或满）  \n3. **查询应用日志**（检查“No space left”或磁盘满错误）  \n4. **分析磁盘占用**（定位大文件/目录，如日志、临时文件、数据文件等）  \n\n**止损动作**  \n- 立即清理日志（如清空/压缩/删除旧日志）  \n- 删除临时文件及缓存  \n- 清理备份文件，保留最近N天  \n- 数据归档或扩容磁盘（若业务增长）  \n- 优化日志轮转及缓存策略"
+    },
+    {
+      "id": "agent-03-03",
+      "run": 1,
+      "category": "disk",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "磁盘"
+      ],
+      "latency_ms": 5787.49,
+      "answer_preview": "当前知识库仅包含内存使用率告警（HighMemoryUsage）的处理方案，未提供HighDiskUsage（磁盘使用率过高）告警的证据收集指引。建议核查是否有其他相关文档，或联系运维团队确认告警类型后提供对应方案。"
+    },
+    {
+      "id": "agent-03-04",
+      "run": 1,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "磁盘",
+        "文件"
+      ],
+      "latency_ms": 8713.68,
+      "answer_preview": "排查顺序：  \n1. **查应用日志**：搜索“No space left on device”或“disk full”错误，确认是否由应用生成文件导致（如日志/缓存）。  \n2. **分析磁盘占用**：定位占用最大的目录（如/var/log、/tmp），判断是否为应用生成文件或系统服务临时文件。  \n3. **检查系统磁盘**：通过`df -h`确认磁盘容量是否不足，是否因基础设施配额或存储满导致。  \n\n**证据**：应用日志中的错误提示指向应用问题；系统磁盘满或目录占用异常指向基础设施问题。  \n**止损动作**：清理日志/临时文件，调整日志轮转；扩容磁盘或迁移数据。"
+    },
+    {
+      "id": "agent-03-05",
+      "run": 1,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "磁盘",
+        "空间",
+        "文件"
+      ],
+      "latency_ms": 11593.82,
+      "answer_preview": "磁盘告警常见根因及排查顺序：  \n1. **日志文件过大**（证据：/var/log目录占用>80%，日志持续增长，未轮转）→ 清理日志/配置轮转。  \n2. **临时文件堆积**（证据：/tmp目录占用>80%，大量未清理临时文件）→ 清理临时文件并设置定期清理。  \n3. **数据文件增长过快**（证据：数据库/业务数据激增，无归档策略）→ 清理过期数据或扩容磁盘。  \n4. **备份文件占用空间**（证据：备份目录占用>80%，历史备份未压缩/转移）→ 删除旧备份并优化策略。  \n5. **应用缓存文件过多**（证据：缓存目录占用>80%，缓存未过期清理）→ 清理缓存并调整策略。  \n*"
+    },
+    {
+      "id": "agent-03-06",
+      "run": 1,
+      "category": "disk",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "磁盘"
+      ],
+      "latency_ms": 11790.24,
+      "answer_preview": "**HighDiskUsage 临时止损措施**  \n1. **摘除高负载实例**：确认磁盘使用率超阈值的实例，摘除并切换至备用实例（证据：监控告警 `HighDiskUsage`）。  \n2. **流量切换**：启用备用域名或CDN分流流量，减轻主实例压力。  \n3. **降级处理**：触发熔断机制，关闭非核心功能，保留基础服务运行。  \n4. **临时扩容**：若为存储瓶颈，快速增加临时存储资源并迁移数据。  \n5. **监控验证**：确认磁盘使用率下降至安全范围（<80%），并持续观察30分钟。  \n\n**排查顺序**：先确认实例状态，再切换流量，最后执行降级或扩容。"
+    },
+    {
+      "id": "agent-04-01",
+      "run": 1,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 5798.28,
+      "answer_preview": "**第一步检查：确认故障**  \n通过监控和日志快速验证服务是否真实不可用，确保告警准确性。若确认故障，立即启动应急响应：  \n1. **通知相关人员**，触发应急预案；  \n2. **执行止损措施**：  \n   - 若部分实例故障，摘除故障实例；  \n   - 若全部故障，切换备用服务或维护页面。  \n同步检查健康检查状态及依赖服务（如数据库）是否异常，优先定位实例级问题。"
+    },
+    {
+      "id": "agent-04-02",
+      "run": 1,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 16259.3,
+      "answer_preview": "**服务宕机排查顺序**  \n1. **确认服务状态**：检查进程是否运行，端口是否监听（工具：`check_process`）。  \n2. **系统资源检查**：查询CPU、内存、磁盘IO使用率（工具：`query_logs`，主题`system-metrics`）。  \n3. **应用日志分析**：定位错误/异常日志（工具：`query_logs`，主题`application-logs`，条件`level:ERROR`）。  \n4. **依赖服务排查**：验证数据库、API等依赖服务可用性（工具：`query_logs`，主题`database-slow-query`或`external"
+    },
+    {
+      "id": "agent-04-03",
+      "run": 1,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 9231.96,
+      "answer_preview": "**证据收集顺序及内容**：  \n1. **服务状态日志**：查询`ap-guangzhou`地域`application-logs`，时间范围最近15分钟，过滤`ERROR/FATAL`或`status:500`。  \n2. **系统事件日志**：检查`system-events`中`restart`/`crash`/`oom_kill`相关记录。  \n3. **依赖服务状态**：查看`application-logs`中涉及`database`/`redis`/`mq`等依赖服务的错误。  \n4. **网络及配置**：确认配置变更记录，检查DNS、防火墙、安全组等网络配置。  \n**止损动"
+    },
+    {
+      "id": "agent-04-04",
+      "run": 1,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "服务",
+        "日志"
+      ],
+      "latency_ms": 13133.31,
+      "answer_preview": "**排查顺序：**  \n1. **基础设施检查**：查看网络服务状态、路由配置、负载均衡器配置，尝试重启网络服务或切换备用网络（参考修复网络步骤）。  \n2. **应用健康检查**：确认所有实例健康检查通过，检查应用日志及数据库连接状态（如`DatabaseConnectionFailed`告警）。  \n3. **流量切换验证**：切换备用域名或地域，观察是否恢复（参考流量切换步骤）。  \n4. **监控与日志分析**：通过`HealthCheckFailed`或`AllInstancesDown`告警定位根因，结合日志确认是应用层错误还是基础设施异常。  \n\n**证据/止损动作**：  \n-"
+    },
+    {
+      "id": "agent-04-05",
+      "run": 1,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "服务",
+        "日志"
+      ],
+      "latency_ms": 9536.8,
+      "answer_preview": "服务宕机常见根因及排查顺序：  \n1. **内存溢出（OOMError）**：优先检查JVM内存使用，通过`jmap -heap`确认堆内存是否耗尽。  \n2. **频繁GC（FrequentGC）**：使用`jstat -gc`监控GC频率，高GC频率可能导致CPU飙升（HighCPUUsage）。  \n3. **内存泄漏**：分析堆转储文件（`jmap -dump`）定位泄漏对象。  \n4. **响应延迟（SlowResponse）**：结合GC日志与内存使用，确认是否因内存不足导致频繁Full GC。  \n\n**止损动作**：立即重启服务，临时扩容资源，并调整JVM参数（如-Xmx、-X"
+    },
+    {
+      "id": "agent-04-06",
+      "run": 1,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 8195.35,
+      "answer_preview": "**ServiceUnavailable 临时止损措施**  \n1. **优先排查日志**：查询应用日志（步骤2），定位错误类型（如500错误、OOM）。  \n2. **检查依赖服务**：确认数据库、Redis、MQ等是否可用（步骤4）。  \n3. **紧急回滚**：若为新版本故障，立即回滚至稳定版本；若配置错误，恢复上一版本配置。  \n4. **熔断降级**：启用熔断机制，跳过非关键依赖，返回降级响应。  \n5. **资源清理**：释放磁盘/内存，重启故障进程，调整连接池参数。  \n6. **网络验证**：检查防火墙、DNS及负载均衡器状态，确保网络连通。  \n**证据**：日志错误类型、依"
+    },
+    {
+      "id": "agent-05-01",
+      "run": 1,
+      "category": "latency",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "日志"
+      ],
+      "latency_ms": 12367.32,
+      "answer_preview": "**排查顺序**：  \n1. **检查服务状态日志**（步骤2），查询最近15分钟内 `order-service` 的错误/致命日志，确认是否存在应用崩溃、依赖故障或资源耗尽等直接原因。  \n2. **验证依赖服务状态**（步骤4），排查数据库、Redis、MQ等关键依赖是否异常。  \n3. **检查网络连通性**，确认服务间通信是否受阻。  \n\n**证据**：日志中是否存在 `ERROR/FATAL`、`downstream_service`、`database` 等关键词。  \n**止损动作**：若发现应用崩溃，立即回滚版本；若依赖服务故障，优先恢复其可用性。"
+    },
+    {
+      "id": "agent-05-02",
+      "run": 1,
+      "category": "latency",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "响应",
+        "日志"
+      ],
+      "latency_ms": 7462.76,
+      "answer_preview": "**排查顺序：**  \n1. **紧急处理**：扩容/限流/降级/重启（资源不足/内存泄漏）。  \n2. **资源监控**：检查CPU、内存、网络、磁盘IO是否过载。  \n3. **数据库排查**：慢查询数量、索引缺失、N+1查询、连接池使用率。  \n4. **缓存检查**：命中率、是否合理使用缓存策略。  \n5. **网络与传输**：外部API超时、数据压缩（GZIP）、传输数据量。  \n6. **代码优化**：同步等待、大对象序列化、日志级别。  \n7. **验证**：确认P99响应时间<1s，错误率下降，用户投诉减少。  \n\n**证据/止损**：优先检查资源告警、慢查询、缓存命中率，快速"
+    },
+    {
+      "id": "agent-05-03",
+      "run": 1,
+      "category": "latency",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "日志"
+      ],
+      "latency_ms": 8969.58,
+      "answer_preview": "**排查顺序及证据收集**：  \n1. **应用性能日志**：查询`application-logs`中`response_time>3000`或`slow_query:true`的记录（时间范围最近30分钟）。  \n2. **数据库慢查询日志**：检查`database-slow-query`中`query_time>1000`的记录（时间与告警一致）。  \n3. **系统资源指标**：分析`system-metrics`中的`cpu_usage`、`memory_usage`、`disk_io`异常。  \n\n**止损动作**：  \n- 优化慢SQL，增加索引或调整连接池。  \n- 检查外部"
+    },
+    {
+      "id": "agent-05-04",
+      "run": 1,
+      "category": "latency",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "延迟",
+        "日志"
+      ],
+      "latency_ms": 10334.71,
+      "answer_preview": "**排查顺序与区分方法**：  \n1. **应用日志分析**：查询应用性能日志（`response_time>3000`）及慢查询日志，确认是否因SQL执行慢或代码逻辑问题导致。  \n2. **系统资源检查**：查看CPU、内存、磁盘IO使用率，判断是否因资源不足引发。  \n3. **网络与外部依赖**：排查跨地域调用延迟或第三方API超时，确认网络或外部服务问题。  \n**证据与止损**：  \n- 应用层：慢查询日志、代码性能警告。  \n- 基础设施层：高CPU/内存使用、网络丢包。  \n- 紧急措施：优化SQL/代码、扩容资源、启用熔断机制。"
+    },
+    {
+      "id": "agent-05-05",
+      "run": 1,
+      "category": "latency",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "响应"
+      ],
+      "latency_ms": 12487.58,
+      "answer_preview": "**排查顺序与根因**  \n1. **网络问题**：检查路由配置、负载均衡器状态（参考修复网络步骤）。  \n2. **资源瓶颈**：确认CPU/内存/磁盘IO是否过载。  \n3. **数据库性能**：排查数据库连接池、查询效率及锁竞争。  \n4. **配置异常**：检查超时参数、限流规则及熔断阈值。  \n5. **依赖服务**：验证第三方服务响应时间及可用性。  \n\n**止损动作**：  \n- 立即切换备用网络或启用CDN（参考流量切换）。  \n- 摘除异常实例，启动降级策略（如熔断、限流）。  \n- 临时扩容资源或切换至备用地域。"
+    },
+    {
+      "id": "agent-05-06",
+      "run": 1,
+      "category": "latency",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "响应"
+      ],
+      "latency_ms": 8791.7,
+      "answer_preview": "**排查顺序与止损措施**  \n1. **网络修复**：重启网络服务/修正路由/更新负载均衡配置/切换备用网络（证据：网络服务异常导致响应变慢）。  \n2. **流量切换**：切换备用地域/启用备用域名/CDN（证据：流量集中或网络瓶颈）。  \n3. **启用备用服务**：摘除故障实例/启动维护页面（证据：服务不可用或全部故障）。  \n**止损动作**：优先执行网络修复，若无效则切换流量至备用路径，最后启用备用服务保障可用性。"
+    },
+    {
+      "id": "agent-01-01",
+      "run": 2,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 12497.5,
+      "answer_preview": "**第一步**：查询系统日志（`query_logs`），参数包括地域`ap-guangzhou`、日志主题`system-metrics`、时间范围与告警时间一致，查询条件`cpu_usage>80 AND service_name:order-service`。  \n**证据**：日志中高CPU进程的PID、启动时间及关联错误堆栈，定位是否死循环、资源泄漏或异常流量。  \n**止损动作**：若发现死循环，立即重启服务并回滚版本；若流量突增，启动扩容或限流。"
+    },
+    {
+      "id": "agent-01-02",
+      "run": 2,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 11751.52,
+      "answer_preview": "排查顺序：  \n1. **获取当前时间**，确定告警时间范围。  \n2. **查询系统日志**（地域：ap-guangzhou，主题：system-metrics，时间范围：最近30分钟，条件：cpu_usage>80）。  \n3. **分析CPU消耗进程**，查看进程名、PID、CPU占比、启动时间及所属服务。  \n4. **查询应用日志**（主题：application-logs，时间范围同步，条件：ERROR/WARN）。  \n**证据**：日志中的高CPU进程、错误堆栈、慢查询记录。  \n**止损动作**：立即扩容/限流/重启实例；若单实例问题，重启该实例；若代码异常，回滚版本。"
+    },
+    {
+      "id": "agent-01-03",
+      "run": 2,
+      "category": "cpu",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.0,
+      "matched_keywords": [],
+      "latency_ms": 10734.48,
+      "answer_preview": "排查顺序：1. 查询系统监控日志（memory_usage>85或OOM事件）；2. 查询应用日志（OutOfMemoryError或GC overhead）；3. 分析JVM堆内存、GC频率、大对象分配记录。证据包括：高内存使用时段日志、OOM事件记录、GC日志、堆内存增长趋势。止损动作：立即重启实例，扩容资源，临时调整JVM参数。"
+    },
+    {
+      "id": "agent-01-04",
+      "run": 2,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 8089.23,
+      "answer_preview": "**排查顺序**：  \n1. **系统日志**（步骤2）：定位高CPU进程及PID，确认是否为应用进程或系统进程。  \n2. **应用日志**（步骤4）：检查是否有错误/警告，如死循环、慢查询等应用异常。  \n3. **资源监控**：确认CPU核心数、调度是否正常，是否存在资源争用。  \n\n**证据**：  \n- 应用进程（如服务名）高CPU → **应用问题**；  \n- 系统进程（如kthreadd）或资源不足 → **基础设施问题**。  \n\n**止损动作**：  \n- 应用问题：重启服务、回滚版本；  \n- 基础设施问题：扩容实例、调整资源配额。"
+    },
+    {
+      "id": "agent-01-05",
+      "run": 2,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 12186.92,
+      "answer_preview": "常见根因及排查顺序：  \n1. **死循环/无限递归**（单进程CPU接近100%，日志含重复错误堆栈）→ 立即重启服务并回滚版本。  \n2. **流量突增**（多进程CPU均匀升高，请求量激增）→ 启动扩容或限流。  \n3. **定时任务重叠**（周期性CPU峰值，日志含任务执行记录）→ 调整任务时间或加互斥锁。  \n4. **数据库慢查询**（应用CPU高但逻辑简单，日志含慢SQL）→ 优化SQL或增缓存。  \n证据：检查进程CPU占用、应用日志、流量监控及慢查询日志。"
+    },
+    {
+      "id": "agent-01-06",
+      "run": 2,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "负载"
+      ],
+      "latency_ms": 8835.41,
+      "answer_preview": "**HighCPUUsage临时止损措施排查顺序：**  \n1. **摘除故障实例**：隔离高CPU节点，避免影响整体服务。  \n2. **启用备用服务**：切换至备用实例或维护页面，保障基础可用性。  \n3. **熔断降级**：触发熔断机制，关闭非核心功能，减轻CPU压力。  \n4. **限流保护**：限制请求流量，防止资源耗尽。  \n5. **检查依赖服务**：确认数据库、中间件等依赖是否异常，执行回滚或切换备用链路。  \n\n**证据/动作：**  \n- 监控确认CPU峰值及受影响实例  \n- 快速执行摘除/熔断操作并验证服务可用性  \n- 若持续高负载，启动备用链路并通知研发介入。"
+    },
+    {
+      "id": "agent-02-01",
+      "run": 2,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 7344.21,
+      "answer_preview": "**第一步检查系统监控日志**，确认内存使用率是否持续超过85%或出现OOM事件。  \n**工具**: `query_logs`，参数包括地域`ap-guangzhou`、日志主题`system-metrics`、时间范围最近30分钟，查询语句`memory_usage > 85 OR oom_kill:true`。  \n**证据**: 若日志显示内存持续高或OOM，优先排查内存泄漏或突发流量；若无，则检查应用日志中的GC频率及大对象分配记录。"
+    },
+    {
+      "id": "agent-02-02",
+      "run": 2,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 11202.36,
+      "answer_preview": "排查顺序：  \n1. **获取告警时间范围**（步骤1）  \n2. **查询系统监控日志**（步骤2），定位内存超阈值或OOM事件  \n3. **分析应用日志**（步骤3），确认OOM错误或GC过载  \n4. **检查内存指标**（步骤4），观察堆内存、GC频率及大对象分配  \n5. **紧急止损**：重启应用释放内存，同步获取堆转储（dump.hprof）  \n6. **工具分析**：使用MAT分析堆转储，定位对象引用链及泄漏代码  \n\n（依据内部知识库中的排查步骤与内存泄漏处理方案）"
+    },
+    {
+      "id": "agent-02-03",
+      "run": 2,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 9863.2,
+      "answer_preview": "排查顺序及证据收集：  \n1. **获取告警时间范围**（步骤1）：确认告警发生时段。  \n2. **查询系统监控日志**（步骤2）：收集`memory_usage>85%`或`OOM`事件记录，定位内存突增时间点。  \n3. **查询应用日志**（步骤3）：提取`OutOfMemoryError`或`GC overhead`日志，分析应用层面异常。  \n4. **分析内存使用数据**：提取JVM堆内存、GC频率、大对象分配及内存泄漏迹象（如Full GC后内存未释放）。  \n**止损动作**：立即重启高内存实例或扩容，防止OOM。"
+    },
+    {
+      "id": "agent-02-04",
+      "run": 2,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 11234.93,
+      "answer_preview": "**排查顺序**  \n1. **查系统日志**：确认内存使用率是否持续超标（如swap频繁、内核OOM killer触发）。  \n2. **查应用日志**：搜索`OutOfMemoryError`或`GC overhead`，判断是否应用自身内存泄漏或GC异常。  \n3. **分析内存使用**：结合JVM堆内存、GC频率及大对象分配记录，定位应用层问题；若系统层面无异常，则为基础设施资源不足。  \n\n**证据/止损动作**  \n- **应用问题**：应用日志含OOM/GC异常，需调整JVM参数、优化代码或扩容。  \n- **基础设施问题**：系统日志显示swap过高或内核OOM，需扩容实例或优"
+    },
+    {
+      "id": "agent-02-05",
+      "run": 2,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 8825.83,
+      "answer_preview": "内存泄漏常见根因包括：1. **对象未被回收**（如静态集合未清理）；2. **缓存未释放**（如线程局部变量未清除）；3. **监听器/回调未解绑**；4. **GC策略配置不当**（如老年代空间不足）。  \n**排查顺序**：先检查告警 `FrequentGC` 和 `OOMError`，执行 `jstat -gc` 分析GC频率，使用 `jmap -dump` 生成堆转储，通过工具定位长生存对象。**止损动作**：立即重启服务，临时扩容JVM堆内存，并联系开发团队修复代码逻辑。"
+    },
+    {
+      "id": "agent-02-06",
+      "run": 2,
+      "category": "memory",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "内存"
+      ],
+      "latency_ms": 7905.44,
+      "answer_preview": "**HighMemoryUsage临时止损措施**  \n1. **摘除故障实例**：隔离高内存使用服务实例，防止影响整体稳定性。  \n2. **启用备用服务**：切换至备用服务或维护页面，保障基础可用性。  \n3. **重启服务进程**：针对局部内存泄漏问题，重启相关服务或组件。  \n4. **临时限流降级**：通过熔断机制限制流量，降低内存压力。  \n\n**排查顺序**：确认故障→摘除实例→重启服务→启用备用→验证功能。  \n**止损动作**：优先隔离故障点，快速切换备用服务，避免全链路崩溃。"
+    },
+    {
+      "id": "agent-03-01",
+      "run": 2,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "磁盘",
+        "文件"
+      ],
+      "latency_ms": 9806.4,
+      "answer_preview": "**第一步**：检查系统磁盘使用情况，使用`query_logs`工具查询最近30分钟内`disk_usage > 80%`或`filesystem:full`的告警日志，定位具体磁盘分区及使用率。  \n**证据**：通过日志确认磁盘分区及使用率，判断是否已触发阈值。  \n**止损动作**：若确认磁盘满，立即清理临时文件或日志，避免应用崩溃。"
+    },
+    {
+      "id": "agent-03-02",
+      "run": 2,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "磁盘",
+        "文件"
+      ],
+      "latency_ms": 10871.86,
+      "answer_preview": "**磁盘告警排查顺序**  \n1. **获取告警时间**：记录告警发生时间，用于日志查询。  \n2. **查询系统磁盘使用**：通过`query_logs`分析磁盘使用率是否超阈值（>80%），定位满盘目录。  \n3. **检查应用日志**：搜索`No space left on device`或磁盘满的错误记录。  \n4. **分析占用来源**：结合日志定位大文件/目录，检查日志、临时文件、数据文件、备份等占用。  \n\n**止损动作**：  \n- 立即清理日志（如清空/压缩）、删除旧临时文件、清理备份、删除过期数据。  \n- 配置日志轮转、定期清理任务，避免重复占用。"
+    },
+    {
+      "id": "agent-03-03",
+      "run": 2,
+      "category": "disk",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "磁盘"
+      ],
+      "latency_ms": 7786.8,
+      "answer_preview": "当前知识库中未收录HighDiskUsage告警相关处理方案，无法提供证据收集指引。建议核查告警类型是否为HighMemoryUsage，并参考内存告警处理流程。若确为磁盘告警，需补充对应知识库文档后方可继续。"
+    },
+    {
+      "id": "agent-03-04",
+      "run": 2,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "磁盘",
+        "空间",
+        "文件"
+      ],
+      "latency_ms": 11712.21,
+      "answer_preview": "排查顺序：  \n1. **查系统日志**（步骤2）：确认磁盘使用率是否持续超阈值，定位是否为基础设施容量不足。  \n2. **查应用日志**（步骤3）：搜索“No space left on device”或“disk full”错误，判断应用是否因写入失败触发告警。  \n3. **分析占用目录**（步骤4）：通过日志定位占用空间的目录（如日志、临时文件、数据文件等），区分是应用生成的文件还是系统磁盘容量不足。  \n\n证据：  \n- 系统日志显示磁盘使用率超阈值 → 基础设施问题。  \n- 应用日志含“disk full”错误 → 应用问题（如日志未轮转、缓存堆积）。  \n\n止损动作：  \n-"
+    },
+    {
+      "id": "agent-03-05",
+      "run": 2,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "磁盘",
+        "空间",
+        "文件"
+      ],
+      "latency_ms": 9958.33,
+      "answer_preview": "磁盘告警常见根因及排查顺序：  \n1. **日志文件过大**（证据：/var/log占用高，日志持续增长）→ 清理日志、配置logrotate。  \n2. **临时文件堆积**（证据：/tmp占用高，大量未清理文件）→ 删除旧文件、设置定时清理。  \n3. **数据文件增长过快**（证据：数据库文件持续膨胀，无归档策略）→ 清理过期数据、扩容或归档。  \n4. **备份文件占用**（证据：备份目录历史文件多，未压缩转移）→ 删除旧备份、优化备份策略。  \n5. **应用缓存文件过多**（证据：缓存目录空间占用高，未过期清理）→ 清理过期缓存、调整缓存策略。  \n**止损动作**：优先清理日志/"
+    },
+    {
+      "id": "agent-03-06",
+      "run": 2,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "磁盘",
+        "空间",
+        "文件"
+      ],
+      "latency_ms": 8005.19,
+      "answer_preview": "**HighDiskUsage临时止损措施**  \n1. **摘除高磁盘实例**：立即停止占用磁盘资源的异常实例，避免影响其他服务。  \n2. **启用降级模式**：减少非核心功能，优先保障关键服务运行。  \n3. **清理临时数据**：删除冗余日志或缓存文件，快速释放磁盘空间。  \n4. **切换备用存储**：若主存储故障，切换至备用存储路径或临时挂载点。  \n5. **监控阈值调整**：临时降低磁盘使用告警阈值，防止误触发止损。  \n\n**优先级**：先摘除故障实例，再清理数据，最后调整监控策略。"
+    },
+    {
+      "id": "agent-04-01",
+      "run": 2,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "服务",
+        "日志"
+      ],
+      "latency_ms": 7495.1,
+      "answer_preview": "**第一步检查**：  \n1. **确认故障**：通过监控和日志确认服务确实不可用（如接口503）。  \n2. **健康检查**：检查所有实例健康检查状态是否通过（如`HealthCheckFailed`告警）。  \n3. **实例状态**：排查是否部分实例故障（摘除故障实例）或全部故障（启用备用服务）。  \n\n**证据**：监控告警（如`HighErrorRate`、`AllInstancesDown`）、日志异常、健康检查结果。  \n**止损动作**：若部分实例故障，摘除；若全部故障，切换备用服务或维护页面。"
+    },
+    {
+      "id": "agent-04-02",
+      "run": 2,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 22371.93,
+      "answer_preview": "**服务宕机排查顺序**：  \n1. **确认服务状态**：检查健康检查端点或监控系统，确认服务是否完全不可用。  \n2. **系统资源检查**：查询`system-metrics`日志，排查CPU、内存、磁盘IO是否过载（参考步骤4）。  \n3. **应用日志分析**：通过`query_logs`获取`ap-guangzhou`的`application-logs`，筛选`level:ERROR`或`crash`关键词（参考步骤2）。  \n4. **数据库状态检查**：查询`database-slow-query`日志，确认是否有阻塞操作或连接池耗尽（参考步骤3）。  \n5. **依赖服务验"
+    },
+    {
+      "id": "agent-04-03",
+      "run": 2,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 8701.17,
+      "answer_preview": "**排查顺序与证据收集**  \n1. **应用日志**：查询最近15分钟`application-logs`，过滤`ERROR/FATAL`及`status:500`，定位错误类型与时间。  \n2. **系统事件日志**：检查`system-events`中`restart/crash/oom_kill`记录，确认是否因崩溃或资源耗尽触发。  \n3. **依赖服务状态**：扫描`application-logs`中`downstream_service/database/redis/mq`相关错误，验证依赖服务可用性。  \n\n**止损动作**：立即回滚版本、重启服务、隔离故障依赖或启用备用服务"
+    },
+    {
+      "id": "agent-04-04",
+      "run": 2,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "服务",
+        "日志"
+      ],
+      "latency_ms": 9384.0,
+      "answer_preview": "**排查顺序**：  \n1. **检查基础设施**：确认健康检查是否通过（如数据库连接、网络服务状态），查看相关告警（如 `HealthCheckFailed`、`DatabaseConnectionFailed`）。  \n2. **验证应用状态**：检查应用日志，确认是否有崩溃、配置错误或服务实例异常。  \n3. **网络与负载均衡**：重启网络服务、修正路由配置或切换备用网络（参考 `修复网络` 步骤）。  \n4. **流量切换**：启用备用域名或CDN，隔离故障区域。  \n\n**止损动作**：  \n- 若基础设施异常，优先执行网络修复或切换备用服务。  \n- 若应用异常，摘除故障实例或触"
+    },
+    {
+      "id": "agent-04-05",
+      "run": 2,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 8045.94,
+      "answer_preview": "服务宕机常见根因及排查建议：  \n1. **内存溢出（OOM）**：检查JVM堆内存使用（`jmap -heap <pid>`），分析GC日志（`jstat -gc <pid>`），排查内存泄漏。  \n2. **频繁GC**：高GC频率导致CPU飙升，检查GC策略及对象分配模式。  \n3. **CPU过载**：监控`HighCPUUsage`告警，排查线程死锁或无限循环。  \n4. **响应延迟**：结合`SlowResponse`与`FrequentGC`，定位资源争用或瓶颈。  \n**止损动作**：优先重启服务，调整JVM参数（如堆大小、GC类型），联系运维团队确认依赖服务状态。"
+    },
+    {
+      "id": "agent-04-06",
+      "run": 2,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 8808.56,
+      "answer_preview": "**ServiceUnavailable 临时止损措施**  \n1. **立即回滚**：若为新版本故障，回滚至稳定版本。  \n2. **重启依赖服务**：检查数据库/Redis/MQ状态，重启故障服务。  \n3. **启用熔断机制**：跳过非关键依赖，返回降级响应。  \n4. **清理资源**：释放磁盘空间、文件描述符，杀掉占用端口进程。  \n5. **临时切换备用服务**：启用备用实例或维护页面，通知用户异常。  \n6. **检查网络连通性**：验证DNS解析、防火墙规则及安全组配置。  \n\n**证据**：通过 `query_logs` 确认错误日志，结合 `get_current_time"
+    },
+    {
+      "id": "agent-05-01",
+      "run": 2,
+      "category": "latency",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "响应",
+        "日志"
+      ],
+      "latency_ms": 8442.01,
+      "answer_preview": "第一步检查服务状态日志，查询最近15分钟的ERROR/FATAL日志及500状态记录，定位是否有应用崩溃、依赖服务故障或数据库连接异常等直接导致响应超时的错误信息。"
+    },
+    {
+      "id": "agent-05-02",
+      "run": 2,
+      "category": "latency",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "响应",
+        "日志"
+      ],
+      "latency_ms": 11613.18,
+      "answer_preview": "**排查顺序**：  \n1. **紧急止损**：检查CPU/内存/网络资源是否过载，执行扩容、限流或重启实例。  \n2. **定位根因**：分析P99响应时间、错误率及监控指标（如慢SQL、缓存命中率）。  \n3. **临时优化**：优化数据库查询（索引/N+1问题）、调整超时时间，增加缓存。  \n4. **验证效果**：确认P99响应时间回落至正常，错误率下降，持续监控30分钟。  \n**证据**：资源使用率、慢查询日志、缓存命中率、错误率变化。"
+    },
+    {
+      "id": "agent-05-03",
+      "run": 2,
+      "category": "latency",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "日志"
+      ],
+      "latency_ms": 9130.53,
+      "answer_preview": "排查顺序及证据收集：  \n1. **获取告警时间**：使用`get_current_time`确定告警发生时间。  \n2. **应用日志**：查询`application-logs`（时间范围：告警前30分钟，条件：`response_time>3000 OR slow_query:true`）。  \n3. **数据库慢查询**：检查`database-slow-query`（时间范围：与告警时间一致，条件：`query_time>1000`）。  \n4. **系统资源**：分析`system-metrics`（条件：`cpu_usage/memory_usage/disk_io`）。  \n*"
+    },
+    {
+      "id": "agent-05-04",
+      "run": 2,
+      "category": "latency",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "延迟",
+        "日志"
+      ],
+      "latency_ms": 10488.9,
+      "answer_preview": "**排查顺序**：  \n1. **应用日志**：检查慢查询、代码性能警告、第三方API调用记录。  \n2. **系统资源**：分析CPU、内存、磁盘IO、网络带宽使用情况。  \n\n**证据区分**：  \n- **应用问题**：慢查询日志、代码执行慢、API调用超时、缓存穿透。  \n- **基础设施问题**：CPU/内存过高、磁盘IO瓶颈、网络延迟或丢包。  \n\n**止损动作**：  \n- 应用层：优化SQL/代码，调整超时策略，启用缓存。  \n- 基础设施：扩容资源，优化网络路由，负载均衡。"
+    },
+    {
+      "id": "agent-05-05",
+      "run": 2,
+      "category": "latency",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.0,
+      "matched_keywords": [],
+      "latency_ms": 10417.08,
+      "answer_preview": "**排查顺序**：  \n1. **网络问题**：检查路由配置、负载均衡器状态（证据：路由错误或配置异常）。  \n2. **数据库连接**：确认数据库主从复制状态，排查连接失败告警（证据：`DatabaseConnectionFailed`）。  \n3. **流量异常**：验证是否因流量突增触发限流或熔断（证据：监控显示流量峰值）。  \n4. **服务依赖**：检查依赖服务健康状态（证据：健康检查失败告警）。  \n5. **配置变更**：回溯近期配置更新（证据：变更记录）。  \n\n**止损动作**：  \n- 立即切换备用网络或启用CDN（参考参考资料1）。  \n- 摘除故障实例，启用降级模式（参"
+    },
+    {
+      "id": "agent-05-06",
+      "run": 2,
+      "category": "latency",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "响应",
+        "延迟"
+      ],
+      "latency_ms": 12108.14,
+      "answer_preview": "**SlowResponse临时止损措施**  \n1. **摘除故障实例**：确认响应慢的实例并下线，避免影响整体性能（证据：健康检查失败或高错误率）。  \n2. **熔断降级**：触发熔断机制，停止调用非核心依赖，保障核心功能可用。  \n3. **切换备用网络/域名**：重启网络服务或修正路由配置，切换至备用网络/域名（证据：网络延迟异常）。  \n4. **回滚版本**：若无法快速修复，执行灰度发布或快速回滚至稳定版本。  \n**优先级**：先摘除实例和熔断降级，再网络切换，最后回滚。"
+    },
+    {
+      "id": "agent-01-01",
+      "run": 3,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 6162.51,
+      "answer_preview": "**排查顺序**:  \n1. **查询系统日志**：使用`query_logs`工具，参数为地域`ap-guangzhou`，日志主题`system-metrics`，时间范围与告警时间一致，查询条件`cpu_usage>80 AND service_name:order-service`，定位高CPU进程及关联错误。  \n**证据**: 日志中的高CPU进程PID、启动时间及异常堆栈。  \n**止损动作**: 若发现死循环或无限递归，立即重启服务并回滚版本；若流量突增，启动扩容或限流。"
+    },
+    {
+      "id": "agent-01-02",
+      "run": 3,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 12018.27,
+      "answer_preview": "排查顺序：  \n1. **获取当前时间**，定位告警时段。  \n2. **查询系统日志**（地域：ap-guangzhou，主题：system-metrics，时间范围：告警前30分钟，条件：cpu_usage>80）。  \n3. **分析CPU消耗进程**，提取进程名、PID、占用率、启动时间及所属服务。  \n4. **查询应用日志**（主题：application-logs，时间同步，条件：ERROR/WARN）。  \n5. **检查常见原因**：死循环（重启服务、回滚代码）、流量突增（扩容/限流）、定时任务重叠（调整执行时间）、数据库慢查询（优化SQL/加索引）。  \n6. **紧急处理"
+    },
+    {
+      "id": "agent-01-03",
+      "run": 3,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 9296.71,
+      "answer_preview": "根据内部知识库，HighCPUUsage告警的证据收集步骤未明确，但可参考HighMemoryUsage的排查逻辑。建议优先收集以下证据：  \n1. **系统监控日志**：查询CPU使用率>90%的时间段（工具：query_logs，参数：memory_usage:>90 或 event:CPU_high）。  \n2. **应用日志**：查找线程阻塞、死锁或频繁Full GC记录（工具：query_logs，条件：CPU overload 或 thread_dump）。  \n3. **进程状态**：检查进程是否存在大量线程、锁竞争或死循环（工具：top/htop、jstack）。  \n4. *"
+    },
+    {
+      "id": "agent-01-04",
+      "run": 3,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "CPU",
+        "进程",
+        "负载"
+      ],
+      "latency_ms": 8358.44,
+      "answer_preview": "排查顺序：  \n1. **系统日志分析**：查`system-metrics`日志，确认CPU飙升时间点及进程信息（如PID、进程名）。  \n2. **进程占用分析**：定位高CPU进程，判断是否为应用进程（如业务服务）或系统进程（如kernal、irq）。  \n3. **应用日志核查**：检查`application-logs`是否有错误/警告，确认是否因代码逻辑（如死循环）导致。  \n4. **流量与资源监控**：结合流量突增（多进程高负载）或基础设施资源不足（如磁盘IO瓶颈）判断。  \n\n**止损动作**：  \n- 立即扩容/限流（流量问题）；  \n- 重启高CPU进程（应用故障）；  "
+    },
+    {
+      "id": "agent-01-05",
+      "run": 3,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 10555.84,
+      "answer_preview": "排查顺序及常见根因：  \n1. **死循环/无限递归**（证据：单进程CPU近100%，日志含重复错误堆栈）  \n2. **流量突增**（证据：多进程CPU同步升高，请求量激增）  \n3. **定时任务重叠**（证据：周期性CPU峰值，日志含任务执行记录）  \n4. **数据库慢查询**（证据：应用CPU高但业务逻辑简单，日志含慢SQL）  \n**止损动作**：立即扩容/限流/重启实例，分析日志定位根源，优化SQL或调整任务调度。"
+    },
+    {
+      "id": "agent-01-06",
+      "run": 3,
+      "category": "cpu",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "CPU"
+      ],
+      "latency_ms": 9584.39,
+      "answer_preview": "**HighCPUUsage临时止损措施**  \n1. **摘除故障实例**：确认高CPU实例并隔离，避免影响整体服务。  \n2. **启用备用服务**：切换至备用服务或维护页面，保障基础可用性。  \n3. **快速回滚**：若无法立即修复，执行最近稳定版本回滚。  \n4. **熔断降级**：触发熔断机制，关闭非核心功能，保留核心服务运行。  \n\n**依据**：紧急处理流程（摘除实例、启用备用）、预防措施（回滚、熔断降级）。"
+    },
+    {
+      "id": "agent-02-01",
+      "run": 3,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 6569.69,
+      "answer_preview": "**第一步检查系统监控日志**，确认内存使用率是否持续超过85%或出现OOM事件。使用`query_logs`工具，参数包括地域`ap-guangzhou`、日志主题`system-metrics`、时间范围最近30分钟，查询条件`memory_usage>85 OR oom_kill:true`。同步分析GC频率、大对象分配记录，定位内存突增或泄漏迹象。"
+    },
+    {
+      "id": "agent-02-02",
+      "run": 3,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 9244.18,
+      "answer_preview": "排查顺序：  \n1. **查系统日志**：通过`query_logs`定位内存>85%或OOM事件时间范围。  \n2. **查应用日志**：搜索`OutOfMemoryError`或`GC overhead`记录。  \n3. **分析内存使用**：提取堆内存、GC频率、大对象分配等数据，确认内存泄漏特征（如持续上升、Full GC后未释放）。  \n4. **获取堆转储**：重启前执行内存快照，使用MAT工具分析对象引用链。  \n**止损动作**：立即重启应用释放内存，同步扩容或限流。  \n**证据**：日志中持续GC记录、堆转储中长存对象引用。"
+    },
+    {
+      "id": "agent-02-03",
+      "run": 3,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 9283.26,
+      "answer_preview": "排查顺序及证据收集：  \n1. **系统监控日志**：查询`system-metrics`日志（时间范围最近30分钟），筛选`memory_usage>85`或`oom_kill:true`，确认内存阈值触发时间及OOM事件。  \n2. **应用日志**：检查`application-logs`中`OutOfMemoryError`或`GC overhead`记录，定位内存泄漏或GC异常。  \n3. **内存使用分析**：提取JVM堆内存使用、GC频率/耗时、大对象分配记录，判断是否内存泄漏或缓存溢出。  \n4. **JVM配置检查**：确认`-Xmx`、`-XX:NewRatio`等参数是否"
+    },
+    {
+      "id": "agent-02-04",
+      "run": 3,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "内存",
+        "GC",
+        "OOM"
+      ],
+      "latency_ms": 8652.94,
+      "answer_preview": "排查顺序：  \n1. **系统监控日志**：检查内存使用率是否持续超标（基础设施资源不足）或突发峰值（流量突增）。  \n2. **应用日志**：定位OOM错误、GC过载或内存泄漏（应用代码问题）。  \n3. **JVM参数与GC日志**：分析堆内存配置、GC频率及耗时（应用调优需求）。  \n4. **基础设施指标**：确认服务器/容器资源上限、Swap使用率（基础设施瓶颈）。  \n\n**止损动作**：  \n- 重启应用释放内存（临时缓解）。  \n- 扩容或限流（基础设施层面）。  \n- 调整JVM参数（应用层面）。  \n\n**区分关键**：应用日志中OOM/GC异常指向应用问题；系统日志中资源"
+    },
+    {
+      "id": "agent-02-05",
+      "run": 3,
+      "category": "memory",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "内存",
+        "GC"
+      ],
+      "latency_ms": 10352.86,
+      "answer_preview": "**内存泄漏常见根因**：  \n1. **缓存未释放**：缓存对象未主动清理，导致内存持续增长。  \n2. **监听器/回调未注销**：事件监听器或回调未移除，造成隐式引用。  \n3. **静态集合类膨胀**：静态Map/List等容器持续添加对象，无法被GC回收。  \n4. **对象引用未置空**：局部变量或容器引用未显式置空，导致GC无法回收。  \n5. **GC策略不当**：老年代回收不及时，或内存分配策略不匹配应用特征。  \n\n**排查顺序**：先检查缓存/监听器，再通过`jstat -gc`分析GC频率，使用`jmap -dump`生成堆转储定位对象持有链。  \n\n**止损动作**："
+    },
+    {
+      "id": "agent-02-06",
+      "run": 3,
+      "category": "memory",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "内存"
+      ],
+      "latency_ms": 9525.39,
+      "answer_preview": "**HighMemoryUsage 临时止损措施**  \n1. **熔断降级**：触发熔断机制，停止非核心功能，释放内存资源。  \n2. **摘除故障实例**：隔离内存超限的实例，避免影响整体服务。  \n3. **启用备用服务**：切换至备用服务或维护页面，保障基础可用性。  \n4. **调整JVM参数**：临时修改堆内存参数（如-Xmx），缓解内存压力。  \n5. **检查内存泄漏**：通过日志分析定位泄漏源，快速修复。  \n\n**排查顺序**：先熔断降级+备用服务，再分析内存使用峰值及泄漏点。"
+    },
+    {
+      "id": "agent-03-01",
+      "run": 3,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "磁盘",
+        "空间",
+        "文件"
+      ],
+      "latency_ms": 13392.69,
+      "answer_preview": "**第一步：查询系统磁盘使用情况**  \n使用`query_logs`工具，参数为地域`ap-guangzhou`、日志主题`system-metrics`、时间范围最近30分钟，查询`disk_usage > 80 OR filesystem:full`，定位具体磁盘分区及告警时间。  \n**证据**：日志中若显示`disk_full:true`或`filesystem:full`，确认磁盘空间不足的根源。  \n**止损动作**：若已满，立即清理临时文件或日志（如`/tmp`、`/var/log`），并检查日志轮转配置。"
+    },
+    {
+      "id": "agent-03-02",
+      "run": 3,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "磁盘",
+        "文件"
+      ],
+      "latency_ms": 7701.8,
+      "answer_preview": "**磁盘告警排查顺序**  \n1. **获取告警时间**：记录告警发生时间，用于日志定位。  \n2. **查询系统日志**：通过`query_logs`获取磁盘使用率>80%或文件系统满的记录。  \n3. **分析应用日志**：检查`No space left on device`或`disk full`相关错误。  \n4. **定位占用源**：结合日志分析目录占用（如日志/临时文件/数据文件）。  \n\n**止损动作**：  \n- 立即清理日志（如清空或压缩）；  \n- 删除临时文件或旧备份；  \n- 限制缓存文件大小，防止持续增长。"
+    },
+    {
+      "id": "agent-03-03",
+      "run": 3,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "磁盘",
+        "文件"
+      ],
+      "latency_ms": 7877.79,
+      "answer_preview": "当前知识库仅包含内存使用率过高（HighMemoryUsage）的处理方案，未提供磁盘使用率过高（HighDiskUsage）的证据收集指引。建议核实告警类型是否准确，或补充相关磁盘监控日志查询方法。若为磁盘问题，需收集：1. 磁盘使用率监控数据；2. 文件系统日志；3. 进程磁盘IO统计；4. 大文件存储记录。"
+    },
+    {
+      "id": "agent-03-04",
+      "run": 3,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "磁盘",
+        "空间",
+        "文件"
+      ],
+      "latency_ms": 9362.41,
+      "answer_preview": "**排查顺序**：  \n1. **查应用日志**（步骤3）：定位是否有 `No space left on device` 或 `disk full` 错误，判断是否为应用主动写入导致。  \n2. **查系统日志**（步骤2）：确认磁盘使用率是否持续超阈值，判断是否为基础设施容量不足。  \n3. **分析占用**（步骤4）：通过日志确定是日志/临时文件/数据文件等应用生成内容，还是系统级存储配置问题。  \n\n**证据**：  \n- 应用日志中有明确空间错误 → **应用问题**。  \n- 系统日志显示磁盘持续满，且无应用日志错误 → **基础设施问题**。  \n\n**止损动作**：  \n- 清"
+    },
+    {
+      "id": "agent-03-05",
+      "run": 3,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "磁盘",
+        "空间",
+        "文件"
+      ],
+      "latency_ms": 7200.48,
+      "answer_preview": "磁盘告警常见根因及排查顺序：  \n1. **日志文件过大**（优先检查）：日志目录占用高，轮转失败或级别过高。  \n2. **临时文件堆积**：/tmp目录空间满，临时文件未清理。  \n3. **数据文件增长**：数据库或业务数据激增，无归档策略。  \n4. **备份文件占用**：历史备份未清理或未转移。  \n5. **缓存文件过多**：缓存目录未定期清理，策略不合理。  \n\n**止损动作**：立即清理日志/临时文件，检查备份策略，扩容或迁移数据。"
+    },
+    {
+      "id": "agent-03-06",
+      "run": 3,
+      "category": "disk",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "磁盘",
+        "空间"
+      ],
+      "latency_ms": 8998.27,
+      "answer_preview": "**HighDiskUsage临时止损措施**  \n1. **确认故障**: 检查监控确认磁盘使用率超阈值（如>85%）。  \n2. **摘除故障实例**: 停止高负载实例，避免影响其他服务。  \n3. **启用备用服务**: 切换至备用实例或维护页面，保障基础可用性。  \n4. **临时扩容**: 若集群支持，快速增加临时存储节点。  \n5. **清理缓存**: 执行异步清理策略，释放磁盘空间。  \n**证据**: 监控告警`HighDiskUsage`、实例健康检查状态。  \n**止损动作**: 优先隔离故障节点，确保核心服务可用，后续分析根因并优化存储策略。"
+    },
+    {
+      "id": "agent-04-01",
+      "run": 3,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "服务",
+        "日志"
+      ],
+      "latency_ms": 5106.96,
+      "answer_preview": "第一步应确认故障：通过监控和日志验证服务不可用，检查健康检查状态（如`HealthCheckFailed`告警）。若实例部分故障，摘除异常实例；若全部故障，立即启用备用服务或维护页面。优先排查网络服务、路由配置及负载均衡器状态。"
+    },
+    {
+      "id": "agent-04-02",
+      "run": 3,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 13980.98,
+      "answer_preview": "**服务宕机排查顺序**  \n1. **确认服务状态**（证据：服务是否可访问/端口是否响应）  \n   - 止损：重启服务或切换至备机。  \n\n2. **检查系统资源**（证据：`system-metrics`日志中CPU/内存/磁盘IO异常）  \n   - 止损：扩容资源或清理缓存。  \n\n3. **分析应用日志**（证据：`application-logs`中错误/异常/崩溃记录）  \n   - 止损：定位具体错误类型（如OOM、线程阻塞）。  \n\n4. **排查数据库连接**（证据：`database-slow-query`或连接池耗尽日志）  \n   - 止损：优化SQL/增加连接池"
+    },
+    {
+      "id": "agent-04-03",
+      "run": 3,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 7311.83,
+      "answer_preview": "排查顺序及证据收集：  \n1. **服务状态日志**：查询`ap-guangzhou`区域`application-logs`，时间范围最近15分钟，筛选`level:ERROR/FATAL`或`status:500`，定位错误类型及服务名。  \n2. **系统事件日志**：检查`system-events`日志中`event:restart/crash/oom_kill`，确认是否因系统异常触发。  \n3. **依赖服务状态**：查询`application-logs`中`downstream_service/database/redis/mq`相关错误，识别依赖故障。  \n4. **配置与"
+    },
+    {
+      "id": "agent-04-04",
+      "run": 3,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 7893.26,
+      "answer_preview": "**排查顺序**：  \n1. **检查基础设施**：查看健康检查是否通过，确认网络服务、路由、负载均衡器配置是否异常（参考修复网络步骤）。  \n2. **应用层验证**：检查实例状态，确认应用服务是否正常运行，查看日志排查代码或依赖故障。  \n**证据**：  \n- 健康检查失败（`HealthCheckFailed`）指向基础设施；  \n- 应用日志错误或依赖服务异常指向应用问题。  \n**止损动作**：  \n- 先切换备用网络/地域（参考流量切换）；  \n- 若确认应用故障，启用降级或回滚（参考决策处理）。"
+    },
+    {
+      "id": "agent-04-05",
+      "run": 3,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "服务",
+        "日志"
+      ],
+      "latency_ms": 6638.76,
+      "answer_preview": "服务宕机常见根因排查顺序：  \n1. **内存泄漏**（检查JVM堆内存使用及GC日志，确认OOMError）  \n2. **频繁GC**（通过jstat监控GC频率，关联HighCPUUsage告警）  \n3. **CPU过载**（排查HighCPUUsage告警，检查是否有死循环或线程阻塞）  \n4. **响应延迟**（分析SlowResponse告警，检查代码逻辑或数据库瓶颈）。  \n**止损动作**：优先重启服务，临时调整JVM参数（如-Xmx），并生成堆转储定位内存泄漏。"
+    },
+    {
+      "id": "agent-04-06",
+      "run": 3,
+      "category": "availability",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 1.0,
+      "matched_keywords": [
+        "服务",
+        "日志",
+        "依赖"
+      ],
+      "latency_ms": 8073.47,
+      "answer_preview": "**排查顺序与止损动作**  \n1. **立即回滚或重启服务**：若应用崩溃，回滚至稳定版本；若数据库连接失败，重启数据库并调整连接池。  \n2. **启用熔断机制**：快速降级非关键依赖，切换备用服务，返回降级响应。  \n3. **检查资源状态**：清理磁盘/内存，释放文件描述符，杀掉占用端口进程。  \n4. **临时显示维护页面**：通知用户服务异常，避免流量继续涌入。  \n\n**证据**：通过日志查询（query_logs）定位具体故障原因，如错误类型、依赖服务状态等。"
+    },
+    {
+      "id": "agent-05-01",
+      "run": 3,
+      "category": "latency",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "日志"
+      ],
+      "latency_ms": 4871.98,
+      "answer_preview": "第一步应检查服务状态日志，使用query_logs工具查询最近15分钟的错误/致命日志及服务状态，确认是否存在应用崩溃、配置错误或依赖服务异常。优先排查日志中的ERROR/FATAL记录及下游服务状态，快速定位是否因应用层故障或依赖服务不可用导致超时。"
+    },
+    {
+      "id": "agent-05-02",
+      "run": 3,
+      "category": "latency",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "响应"
+      ],
+      "latency_ms": 9005.89,
+      "answer_preview": "**排查顺序**：  \n1. **立即操作**：扩容/限流/降级/重启实例（5分钟内）。  \n2. **定位根因**：检查P99响应时间、错误率、资源使用（CPU/内存/网络）及数据库慢查询。  \n3. **临时优化**：优化SQL/缓存策略/外部API超时/减少同步等待。  \n4. **监控观察**：持续30分钟确认响应时间稳定，错误率下降。  \n5. **长期优化**：代码性能调优、引入缓存/消息队列、完善监控。  \n**验证**：P99<1秒，错误率下降，用户投诉减少。"
+    },
+    {
+      "id": "agent-05-03",
+      "run": 3,
+      "category": "latency",
+      "success": false,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.3333,
+      "matched_keywords": [
+        "日志"
+      ],
+      "latency_ms": 17661.99,
+      "answer_preview": "排查顺序及证据收集：  \n1. **当前时间**：通过`get_current_time`确认告警发生时间。  \n2. **应用性能日志**：查询`response_time>3000`或`slow_query:true`的记录（时间范围：最近30分钟）。  \n3. **数据库慢查询日志**：筛选`query_time>1000`的记录（时间范围与告警一致）。  \n4. **系统资源监控**：检查`cpu_usage`、`memory_usage`、`disk_io`指标。  \n\n**止损动作**：优先优化数据库慢查询或调整API超时设置，临时扩容资源。"
+    },
+    {
+      "id": "agent-05-04",
+      "run": 3,
+      "category": "latency",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "延迟",
+        "日志"
+      ],
+      "latency_ms": 8850.67,
+      "answer_preview": "**排查顺序**：  \n1. **查应用日志**（步骤2）：确认是否有慢查询或代码性能警告。  \n2. **查系统资源**（步骤4）：分析CPU/内存/磁盘IO是否过载。  \n3. **查网络日志**：确认是否存在跨地域延迟或丢包。  \n\n**证据区分**：  \n- **应用问题**：慢查询日志、代码性能警告、第三方API超时。  \n- **基础设施问题**：系统资源高负载、网络延迟/丢包、跨地域访问延迟。  \n\n**止损动作**：  \n- 优化SQL/代码，调整超时参数；  \n- 扩容资源或优化网络路由。"
+    },
+    {
+      "id": "agent-05-05",
+      "run": 3,
+      "category": "latency",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "响应",
+        "延迟"
+      ],
+      "latency_ms": 9383.29,
+      "answer_preview": "**接口延迟升高常见根因排查顺序：**  \n1. **网络问题**：路由配置错误、负载均衡器配置异常（证据：网络服务重启后延迟未改善）。  \n2. **数据库连接**：数据库主从延迟或连接池耗尽（证据：`DatabaseConnectionFailed`告警）。  \n3. **服务实例健康状态**：部分实例健康检查失败导致流量不均（证据：`HealthCheckFailed`告警）。  \n4. **熔断/限流触发**：因错误率过高触发熔断降级（证据：`HighErrorRate`告警）。  \n5. **缓存失效**：缓存击穿或穿透导致后端压力激增（证据：QPS突增且响应时间骤升）。  \n\n**"
+    },
+    {
+      "id": "agent-05-06",
+      "run": 3,
+      "category": "latency",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "响应",
+        "延迟"
+      ],
+      "latency_ms": 6749.24,
+      "answer_preview": "**SlowResponse临时止损措施**  \n1. **网络修复**：重启网络服务、修正路由配置、切换备用网络（证据：网络延迟监控异常）。  \n2. **流量切换**：启用备用域名或切换备用地域（证据：主区域响应时间超标）。  \n3. **摘除故障实例**：隔离异常实例，避免影响整体性能（证据：实例健康检查失败）。  \n4. **启用备用服务**：若全栈故障，切换至维护页面或备用服务（证据：AllInstancesDown告警）。  \n**优先级**：网络修复 > 流量切换 > 摘除实例 > 启用备用服务。"
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "generated_at": "2026-07-15T22:26:30.636525+08:00",
+  "dataset_size": 120,
+  "dataset_split": "test",
+  "label_review": {
+    "pending": 120
+  },
+  "experiments": [
+    {
+      "name": "BM25 baseline",
+      "splitter": "plain",
+      "chunk_size": 1200,
+      "overlap": 0,
+      "chunks": 17,
+      "metrics": {
+        "queries": 120,
+        "hit_at_5": 0.8917,
+        "mrr_at_5": 0.5775,
+        "p50_retrieval_latency_ms": 0.369,
+        "p95_retrieval_latency_ms": 0.483,
+        "failures": 13,
+        "error_attribution": {
+          "ranking_error": 12,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 1.0,
+          "cpu": 0.9167,
+          "disk": 0.7083,
+          "latency": 0.875,
+          "memory": 0.9583
+        },
+        "errors": [
+          {
+            "id": "rag-01-18-01",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-01-18-04",
+            "category": "cpu",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-02-18-04",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-03-17-01",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-17-02",
+            "category": "disk",
+            "error_type": "semantic_miss",
+            "best_relevant_rank": null
+          },
+          {
+            "id": "rag-03-17-04",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-03-17-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 9
+          },
+          {
+            "id": "rag-03-17-06",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-19-03",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-20-02",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-17-02",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-05-17-03",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          },
+          {
+            "id": "rag-05-17-05",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          }
+        ]
+      }
+    },
+    {
+      "name": "Initial BGE",
+      "splitter": "markdown-header",
+      "chunk_size": 800,
+      "overlap": 100,
+      "chunks": 59,
+      "metrics": {
+        "queries": 120,
+        "hit_at_5": 0.9583,
+        "mrr_at_5": 0.6879,
+        "p50_retrieval_latency_ms": 2.376,
+        "p95_retrieval_latency_ms": 2.607,
+        "failures": 5,
+        "error_attribution": {
+          "ranking_error": 4,
+          "semantic_miss": 1
+        },
+        "category_hit_rate": {
+          "availability": 1.0,
+          "cpu": 1.0,
+          "disk": 0.9167,
+          "latency": 0.9167,
+          "memory": 0.9583
+        },
+        "errors": [
+          {
+            "id": "rag-02-17-02",
+            "category": "memory",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-03-17-05",
+            "category": "disk",
+            "error_type": "semantic_miss",
+            "best_relevant_rank": null
+          },
+          {
+            "id": "rag-03-20-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-18-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 8
+          },
+          {
+            "id": "rag-05-19-06",
+            "category": "latency",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 10
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tuned BGE",
+      "splitter": "plain",
+      "chunk_size": 1200,
+      "overlap": 0,
+      "chunks": 17,
+      "metrics": {
+        "queries": 120,
+        "hit_at_5": 0.9833,
+        "mrr_at_5": 0.7606,
+        "p50_retrieval_latency_ms": 0.692,
+        "p95_retrieval_latency_ms": 0.741,
+        "failures": 2,
+        "error_attribution": {
+          "ranking_error": 2
+        },
+        "category_hit_rate": {
+          "availability": 1.0,
+          "cpu": 1.0,
+          "disk": 0.9167,
+          "latency": 1.0,
+          "memory": 1.0
+        },
+        "errors": [
+          {
+            "id": "rag-03-17-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 7
+          },
+          {
+            "id": "rag-03-20-05",
+            "category": "disk",
+            "error_type": "ranking_error",
+            "best_relevant_rank": 6
+          }
+        ]
+      }
+    }
+  ],
+  "improvement": {
+    "initial_hit_at_5": 0.9583,
+    "optimized_hit_at_5": 0.9833,
+    "absolute_percentage_points": 2.5
+  }
+}

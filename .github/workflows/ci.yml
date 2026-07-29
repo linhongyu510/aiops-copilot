@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Verify repository cleanliness
+        shell: bash
+        run: |
+          if git ls-files | grep -E '(^|/)(\.env|\.venv|\.runtime|volumes|uploads|htmlcov)/|\.pyc$|\.log$'; then
+            echo "::error::Runtime data, secrets, or build artifacts are tracked"
+            exit 1
+          fi
+      - name: Install
+        run: uv sync --frozen --extra dev
+      - name: Lint
+        run: uv run ruff check app mcp_servers evaluation tests
+      - name: Test
+        run: uv run pytest tests -q --no-cov

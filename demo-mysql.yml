@@ -1,0 +1,27 @@
+name: aiops-demo-mysql
+
+services:
+  oncall-mysql:
+    # 与 Docker Hub 官方 mysql:8.4 manifest digest 核验一致，并固定摘要保证可复现。
+    image: docker.m.daocloud.io/library/mysql:8.4@sha256:c831a0f11348d402b43d77453e17d770be2eef356615a2823fe0f5a0d6c8b9af
+    container_name: oncall-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: local_demo_root
+      MYSQL_DATABASE: observability
+      MYSQL_USER: oncall_reader
+      MYSQL_PASSWORD: oncall_reader_demo
+      TZ: Asia/Shanghai
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./examples/mysql/001_observability.sql:/docker-entrypoint-initdb.d/001_observability.sql:ro
+      - oncall-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  oncall-mysql-data:

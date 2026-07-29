@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-07-15T14:46:37.597096+08:00",
+  "base_url": "http://127.0.0.1:9900",
+  "unique_task_count": 1,
+  "runs": 1,
+  "task_count": 1,
+  "task_successes": 1,
+  "task_success_rate": 1.0,
+  "tool_calls": 1,
+  "tool_call_success_rate": 1.0,
+  "average_latency_ms": 48394.52,
+  "p50_latency_ms": 48394.52,
+  "p95_latency_ms": 48394.52,
+  "run_summaries": [
+    {
+      "run": 1,
+      "task_count": 1,
+      "task_successes": 1,
+      "task_success_rate": 1.0
+    }
+  ],
+  "results": [
+    {
+      "id": "agent-01-01",
+      "run": 1,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "负载"
+      ],
+      "latency_ms": 48394.52,
+      "answer_preview": "### 告警处理流程总结：服务响应过长 + 内存占用过高\n\n#### **1. 紧急处理（5分钟内）**\n- **快速恢复服务**：  \n  - **重启高内存实例**（如内存突增导致OOM，需重启释放内存）  \n  - **扩容**（如内存/响应瓶颈由流量或资源不足引起，需增加实例或升级规格）  \n  - **限流**（若为流量峰值导致，启用限流保护核心服务）  \n\n- **临时调整参数**：  \n  - **JVM参数**：增加堆内存（`-Xmx`）或调整GC算法（如G1GC）  \n  - **缓存策略**：临时清理缓存或设置更短的缓存过期时间  \n\n---\n\n#### **2. 短期排查"
+    }
+  ]
+}

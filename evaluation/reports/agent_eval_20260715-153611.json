@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-07-15T15:36:11.600635+08:00",
+  "base_url": "http://127.0.0.1:9900",
+  "unique_task_count": 1,
+  "runs": 1,
+  "task_count": 1,
+  "task_successes": 1,
+  "task_success_rate": 1.0,
+  "tool_calls": 1,
+  "tool_call_success_rate": 1.0,
+  "average_latency_ms": 9009.3,
+  "p50_latency_ms": 9009.3,
+  "p95_latency_ms": 9009.3,
+  "run_summaries": [
+    {
+      "run": 1,
+      "task_count": 1,
+      "task_successes": 1,
+      "task_success_rate": 1.0
+    }
+  ],
+  "results": [
+    {
+      "id": "agent-01-01",
+      "run": 1,
+      "category": "cpu",
+      "success": true,
+      "response_ok": true,
+      "tool_selection_ok": true,
+      "called_tools": [
+        "retrieve_knowledge"
+      ],
+      "expected_tools": [
+        "retrieve_knowledge"
+      ],
+      "tool_calls": 1,
+      "tool_successes": 1,
+      "keyword_coverage": 0.6667,
+      "matched_keywords": [
+        "CPU",
+        "进程"
+      ],
+      "latency_ms": 9009.3,
+      "answer_preview": "第一步应检查系统日志，使用`query_logs`工具，参数为地域`ap-guangzhou`、日志主题`system-metrics`、时间范围最近30分钟，查询条件`cpu_usage>80`，定位高CPU进程及关联服务。"
+    }
+  ]
+}

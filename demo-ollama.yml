@@ -1,0 +1,27 @@
+name: aiops-demo-ollama
+
+services:
+  oncall-ollama:
+    # 与 Docker Hub 官方 manifest 核验一致，并固定摘要保证本地评测可复现。
+    image: ollama/ollama:latest@sha256:57f573b47f1f71ebb445789f279fe3e596a8beab182f7cf486db9205bad87c5a
+    container_name: oncall-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - oncall-ollama-data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+
+volumes:
+  oncall-ollama-data:

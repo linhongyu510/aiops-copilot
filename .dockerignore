@@ -1,0 +1,15 @@
+.git
+.github
+.venv
+.runtime
+.pytest_cache
+.ruff_cache
+htmlcov
+logs
+uploads
+volumes
+screenshots
+evaluation/reports
+*.log
+*.pid
+.env

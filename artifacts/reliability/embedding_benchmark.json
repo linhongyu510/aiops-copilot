@@ -1,0 +1,16 @@
+{
+  "model": "BAAI/bge-small-zh-v1.5",
+  "gpu": null,
+  "results": [
+    {
+      "device": "cpu",
+      "samples": 256,
+      "batch_size": 32,
+      "rounds": 3,
+      "average_ms": 350.89,
+      "p95_ms": 356.25,
+      "samples_per_second": 729.57
+    }
+  ],
+  "cuda_speedup": null
+}
