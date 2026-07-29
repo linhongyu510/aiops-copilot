@@ -142,7 +142,20 @@ CLS/Monitor/Ops 的监听地址与端口可分别通过 MCP_CLS_HOST/PORT、MCP_
 ```powershell
 .\.venv\Scripts\python.exe -m evaluation.review_labels export
 .\.venv\Scripts\python.exe -m evaluation.review_labels validate
+.\.venv\Scripts\python.exe -m evaluation.incident_review validate
+.\.venv\Scripts\python.exe -m evaluation.review_status
 ```
+
+获授权且已预脱敏的真实告警应按 `evaluation/datasets/REVIEW_GUIDE.md` 操作。复制
+`anonymized_alerts_template.csv` 后填入数据，再显式确认来源授权：
+
+```powershell
+.\.venv\Scripts\python.exe -m evaluation.import_anonymized_alerts `
+  path\to\authorized_redacted_alerts.csv `
+  --acknowledge-authorized-source
+```
+
+导入器会拦截常见邮箱、IP、手机号和凭据模式，并将记录保持为 `pending`；只有命名复核人批准后才能声明为“经人工复核”。仓库当前没有获授权真实告警。
 
 离线工程冒烟评测：
 

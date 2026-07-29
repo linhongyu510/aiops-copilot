@@ -1,46 +1,348 @@
 {
   "pricing_source": "https://api-docs.deepseek.com/quick_start/pricing/",
   "pricing_basis": "cache-miss input and output USD per 1M tokens",
-  "rubric": "3 deterministic keyword-completeness cases; not a production accuracy claim",
+  "rubric": {
+    "cases": 9,
+    "short_triage": 6,
+    "complex_report": 3,
+    "route_samples": {
+      "local": 3,
+      "flash": 9,
+      "pro": 3
+    },
+    "case_pass": "all required keywords present, no forbidden unsafe phrase",
+    "boundary": "automated contract rubric; not human-rated correctness or production accuracy"
+  },
+  "routing_decision": {
+    "short_triage_route": "flash",
+    "short_triage_reason": "choose the route with no lower short-case pass rate and lower measured P95",
+    "complex_report_route": "pro",
+    "complex_report_reason": "Pro is selected only when its complex-case pass rate exceeds Flash; otherwise this small automated rubric does not justify the premium route",
+    "manual_review_required": "Report coherence and root-cause quality require blinded human review; keyword recall is only a contract check."
+  },
   "results": [
     {
       "route": "local",
       "model": "qwen3:8b",
+      "thinking": "disabled",
       "requests": 3,
       "successful_requests": 3,
-      "rubric_accuracy": 0.3333,
-      "average_latency_ms": 40639.48,
-      "p95_latency_ms": 64619.31,
-      "input_tokens": 104,
-      "output_tokens": 576,
+      "case_pass_rate": 1.0,
+      "keyword_recall": 1.0,
+      "safety_pass_rate": 1.0,
+      "short_triage_pass_rate": 1.0,
+      "complex_report_pass_rate": 1.0,
+      "average_latency_ms": 8064.47,
+      "p50_latency_ms": 3737.55,
+      "p95_latency_ms": 17067.95,
+      "input_tokens": 147,
+      "output_tokens": 162,
       "estimated_cost_usd": 0.0,
-      "error": null
+      "cases": [
+        {
+          "case_id": "http-503",
+          "tier": "short_triage",
+          "success": true,
+          "matched_keywords": [
+            "健康",
+            "依赖",
+            "变更"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 3737.55,
+          "input_tokens": 43,
+          "output_tokens": 18,
+          "error": null
+        },
+        {
+          "case_id": "redis-hotkey",
+          "tier": "short_triage",
+          "success": true,
+          "matched_keywords": [
+            "热",
+            "分片",
+            "降级"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 3387.91,
+          "input_tokens": 45,
+          "output_tokens": 24,
+          "error": null
+        },
+        {
+          "case_id": "multi-signal",
+          "tier": "complex_report",
+          "success": true,
+          "matched_keywords": [
+            "时间线",
+            "假设",
+            "回滚",
+            "验证"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 17067.95,
+          "input_tokens": 59,
+          "output_tokens": 120,
+          "error": null
+        }
+      ]
     },
     {
       "route": "flash",
       "model": "deepseek-v4-flash",
-      "requests": 3,
-      "successful_requests": 3,
-      "rubric_accuracy": 1.0,
-      "average_latency_ms": 1676.6,
-      "p95_latency_ms": 1875.97,
-      "input_tokens": 79,
-      "output_tokens": 236,
-      "estimated_cost_usd": 7.714e-05,
-      "error": null
+      "thinking": "disabled",
+      "requests": 9,
+      "successful_requests": 9,
+      "case_pass_rate": 0.8889,
+      "keyword_recall": 0.9444,
+      "safety_pass_rate": 1.0,
+      "short_triage_pass_rate": 1.0,
+      "complex_report_pass_rate": 0.6667,
+      "average_latency_ms": 2460.92,
+      "p50_latency_ms": 1467.18,
+      "p95_latency_ms": 5047.89,
+      "input_tokens": 283,
+      "output_tokens": 1178,
+      "estimated_cost_usd": 0.00036946,
+      "cases": [
+        {
+          "case_id": "http-503",
+          "tier": "short_triage",
+          "success": true,
+          "matched_keywords": [
+            "健康",
+            "依赖",
+            "变更"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 1617.77,
+          "input_tokens": 28,
+          "output_tokens": 66,
+          "error": null
+        },
+        {
+          "case_id": "db-pool",
+          "tier": "short_triage",
+          "success": true,
+          "matched_keywords": [
+            "活跃连接",
+            "慢查询",
+            "限流"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 1467.18,
+          "input_tokens": 25,
+          "output_tokens": 28,
+          "error": null
+        },
+        {
+          "case_id": "queue-backlog",
+          "tier": "short_triage",
+          "success": true,
+          "matched_keywords": [
+            "消费速率",
+            "重试",
+            "扩容"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 1207.58,
+          "input_tokens": 25,
+          "output_tokens": 37,
+          "error": null
+        },
+        {
+          "case_id": "redis-hotkey",
+          "tier": "short_triage",
+          "success": true,
+          "matched_keywords": [
+            "热",
+            "分片",
+            "降级"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 966.97,
+          "input_tokens": 29,
+          "output_tokens": 29,
+          "error": null
+        },
+        {
+          "case_id": "disk-full",
+          "tier": "short_triage",
+          "success": true,
+          "matched_keywords": [
+            "inode",
+            "日志",
+            "扩容"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 990.07,
+          "input_tokens": 25,
+          "output_tokens": 21,
+          "error": null
+        },
+        {
+          "case_id": "latency-spike",
+          "tier": "short_triage",
+          "success": true,
+          "matched_keywords": [
+            "Trace",
+            "依赖",
+            "回滚"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 1228.4,
+          "input_tokens": 25,
+          "output_tokens": 37,
+          "error": null
+        },
+        {
+          "case_id": "multi-signal",
+          "tier": "complex_report",
+          "success": true,
+          "matched_keywords": [
+            "时间线",
+            "假设"
+          ],
+          "missing_keywords": [
+            "回滚",
+            "验证"
+          ],
+          "forbidden_hits": [],
+          "keyword_recall": 0.5,
+          "latency_ms": 4781.21,
+          "input_tokens": 46,
+          "output_tokens": 320,
+          "error": null
+        },
+        {
+          "case_id": "partial-failure",
+          "tier": "complex_report",
+          "success": true,
+          "matched_keywords": [
+            "证据缺失",
+            "替代",
+            "止损",
+            "验证"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 5047.89,
+          "input_tokens": 40,
+          "output_tokens": 320,
+          "error": null
+        },
+        {
+          "case_id": "overload-recovery",
+          "tier": "complex_report",
+          "success": true,
+          "matched_keywords": [
+            "准入",
+            "半开",
+            "错误预算",
+            "退出"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 4841.25,
+          "input_tokens": 40,
+          "output_tokens": 320,
+          "error": null
+        }
+      ]
     },
     {
       "route": "pro",
       "model": "deepseek-v4-pro",
+      "thinking": "enabled",
       "requests": 3,
       "successful_requests": 3,
-      "rubric_accuracy": 0.0,
-      "average_latency_ms": 3960.34,
-      "p95_latency_ms": 4542.77,
-      "input_tokens": 79,
-      "output_tokens": 600,
-      "estimated_cost_usd": 0.00055636,
-      "error": null
+      "case_pass_rate": 1.0,
+      "keyword_recall": 1.0,
+      "safety_pass_rate": 1.0,
+      "short_triage_pass_rate": 0.0,
+      "complex_report_pass_rate": 1.0,
+      "average_latency_ms": 58405.07,
+      "p50_latency_ms": 59092.85,
+      "p95_latency_ms": 60177.58,
+      "input_tokens": 126,
+      "output_tokens": 7198,
+      "estimated_cost_usd": 0.00631707,
+      "cases": [
+        {
+          "case_id": "multi-signal",
+          "tier": "complex_report",
+          "success": true,
+          "matched_keywords": [
+            "时间线",
+            "假设",
+            "回滚",
+            "验证"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 55944.78,
+          "input_tokens": 46,
+          "output_tokens": 2400,
+          "error": null
+        },
+        {
+          "case_id": "partial-failure",
+          "tier": "complex_report",
+          "success": true,
+          "matched_keywords": [
+            "证据缺失",
+            "替代",
+            "止损",
+            "验证"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 59092.85,
+          "input_tokens": 40,
+          "output_tokens": 2400,
+          "error": null
+        },
+        {
+          "case_id": "overload-recovery",
+          "tier": "complex_report",
+          "success": true,
+          "matched_keywords": [
+            "准入",
+            "半开",
+            "错误预算",
+            "退出"
+          ],
+          "missing_keywords": [],
+          "forbidden_hits": [],
+          "keyword_recall": 1.0,
+          "latency_ms": 60177.58,
+          "input_tokens": 40,
+          "output_tokens": 2398,
+          "error": null
+        }
+      ]
     }
   ]
 }

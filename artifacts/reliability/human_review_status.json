@@ -1,0 +1,36 @@
+{
+  "rag_queries": {
+    "rows": 600,
+    "review_status": {
+      "pending": 600
+    },
+    "source_kind": {
+      "rule_seeded": 600
+    }
+  },
+  "synthetic_incidents": {
+    "rows": 6,
+    "review_status": {
+      "pending": 6
+    },
+    "source_kind": {
+      "synthetic_fault_fixture": 6
+    }
+  },
+  "anonymized_real_alerts": {
+    "rows": 0,
+    "review_status": {},
+    "source_kind": {}
+  },
+  "human_approved_total": 0,
+  "claim_boundary": {
+    "may_claim_human_reviewed_labels": false,
+    "may_claim_anonymized_real_alerts": false,
+    "allowed_current_wording": "rule-generated reproducible evaluation set and synthetic fault fixtures",
+    "blocked_wording": [
+      "human-labeled dataset",
+      "real production incident benchmark"
+    ]
+  },
+  "remaining_external_input": "An authorized source owner must supply pre-redacted alert rows and a named reviewer must approve labels; the repository cannot invent either."
+}

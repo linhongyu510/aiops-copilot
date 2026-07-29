@@ -93,7 +93,7 @@ API 身份决定会话命名空间；viewer 只能读指标和状态，operator 
 - 把简历里的测试数、覆盖率和工具数固定为本次全量验证结果，后续代码变化后重新生成。
 - 准备一个过载测试图：并发数、拒绝率、P95 与下游错误率，避免只讲实现没有效果数据。
 
-### P1：分布式状态已完成，集中观测仍需补齐
+### P1：已完成
 
 - RAG 对话与诊断工作流已接入 PostgreSQL checkpoint；Redis 承载 SSE replay、幂等生产者租约和分布式 admission control，双客户端验证证据位于 `artifacts/reliability/`。
 - OpenTelemetry 已通过 ASGI/HTTPX 与 W3C header 把 AIOps 只读探针、MCP `windos_health` 和 WINDOS HTTP 请求串成同一 Trace；Collector、Jaeger、Prometheus、Grafana 的实测证据位于 `artifacts/reliability/observability_stack.json`。
@@ -109,5 +109,5 @@ API 身份决定会话命名空间；viewer 只能读指标和状态，operator 
 ### P3：工程项完成，人工数据项待真实输入
 
 - 为 Replanner、Milvus 容器集成和请求取消传播补测试，将覆盖率提升到 70% 以上。
-- 引入脱敏真实告警和人工复核标签，避免把规则标签称为人工标注。
+- 已补授权确认、脱敏模式拦截、真实告警导入模板、人工复核指南和机器可读声明边界；当前没有获授权的真实告警或已审批标签，须由数据所有者与命名复核人提供，不能由代码伪造。
 - 若投递岗位第 6 条比重较高，再补异构推理或批处理实验；没有数据时不要写 GPU 性能优化。
