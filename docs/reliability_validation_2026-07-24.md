@@ -15,7 +15,7 @@
 2. 单端点 503：明确标为合成故障注入，其余成功证据保留，证明部分失败降级。
 3. WINDOS 不可达：保留来源、端点和异常类型，不伪造健康结论。
 
-固定脚本对 1/4/8/16 并发进行 admission benchmark。16 并发、容量 8 时拒绝率为 50%，已接纳请求 P95 约 94 ms；原始数据、CSV 和图位于 `artifacts/reliability/load_benchmark.*`。该实验测量的是可重复的治理层负载，不应描述为生产容量。
+固定脚本通过真实网络端口请求 `/api/chat_stream`，对 1/4/8/16 并发各执行 8 轮 SSE。容量 8、排队预算 20 ms、确定性下游耗时 80 ms 时，16 并发共 128 请求，71 个完成、57 个返回 429（拒绝率 44.53%），已接纳请求 P95 为 369.28 ms，下游合成错误率为 5.63%，进程 RSS 增量约 1 MiB。原始 JSON、CSV 和图位于 `artifacts/reliability/load_benchmark.*`。该实验验证真实 HTTP/SSE、middleware 与 admission-control 路径，但模型响应为确定性桩，不应描述为生产容量或真实模型吞吐。
 
 ## P1：持久化、追踪与故障恢复
 
@@ -27,7 +27,7 @@
 
 ## P2：规模、路由与错误预算
 
-- 并发实验产出吞吐、拒绝率、P50/P95、下游错误和内存字段，脚本为 `evaluation/reliability_benchmark.py`。
+- 真实 HTTP/SSE 并发实验产出吞吐、拒绝率、全量与已接纳 P50/P95、下游错误、SSE 事件数和内存字段，脚本为 `evaluation/http_sse_benchmark.py`；`evaluation/reliability_benchmark.py` 仅保留为纯治理层微基准。
 - 三模型真实小样本对照：本地 Qwen3 8B 平均约 40.6 s、短指令 rubric 33%；DeepSeek V4 Flash 平均约 1.68 s、rubric 100%、估算成本约 $0.000077/轮；Pro 平均约 3.96 s，短关键词 rubric 不适合评价其长报告质量。当前路由结论是短工具链优先 Flash，复杂综合报告才使用 Pro。
 - 工具指标已按 error class 聚合；`/api/metrics/reliability` 返回成功率、P95、错误预算和依赖 guard 状态，前端以 WINDOS 统一风格展示。
 

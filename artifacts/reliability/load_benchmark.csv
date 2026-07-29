@@ -1,5 +1,5 @@
-﻿concurrency,requests,accepted,rejected,downstream_errors,rejection_rate,throughput_rps,p50_ms,p95_ms,memory_delta_mb
-1,8,8,0,0,0.0,10.84,92.38,93.53,0.031
-4,32,32,0,1,0.0,42.73,93.64,94.85,0.012
-8,64,64,0,3,0.0,86.02,92.79,94.29,0.004
-16,128,64,64,3,0.5,171.59,61.02,94.01,0.027
+﻿concurrency,requests,accepted,rejected,downstream_errors,rejection_rate,downstream_error_rate,throughput_rps,p50_ms,p95_ms,accepted_p50_ms,accepted_p95_ms,memory_delta_mb,sse_events
+1,8,8,0,0,0.0,0.0,9.85,102.57,106.84,102.57,106.84,0.52,8
+4,32,32,0,1,0.0,0.0312,32.97,112.91,152.88,112.91,152.88,0.336,32
+8,64,64,0,3,0.0,0.0469,51.29,135.57,226.31,135.57,226.31,0.859,64
+16,128,71,57,4,0.4453,0.0563,66.09,153.5,279.36,173.01,369.28,1.0,71
