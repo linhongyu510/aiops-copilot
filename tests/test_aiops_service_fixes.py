@@ -4,6 +4,7 @@ import asyncio
 from types import SimpleNamespace
 
 import pytest
+from langgraph.checkpoint.memory import MemorySaver
 
 from app.config import config
 from app.services.aiops_service import AIOpsService
@@ -19,7 +20,7 @@ class _FakeGraph:
         self.configs.append(config)
         yield {"replanner": {"response": "诊断报告"}}
 
-    def get_state(self, config):  # noqa: ARG002
+    async def aget_state(self, config):  # noqa: ARG002
         return SimpleNamespace(values={"response": "诊断报告"})
 
 
@@ -30,7 +31,7 @@ class _SlowGraph:
         yield {"planner": {"plan": ["步骤1"], "degraded": False}}
         await asyncio.sleep(60)
 
-    def get_state(self, config):  # noqa: ARG002
+    async def aget_state(self, config):  # noqa: ARG002
         return SimpleNamespace(values={})
 
 
@@ -39,6 +40,16 @@ def _make_service(graph) -> AIOpsService:
     service = AIOpsService.__new__(AIOpsService)
     service.graph = graph
     return service
+
+
+def test_configure_checkpointer_rebuilds_real_diagnosis_graph() -> None:
+    service = AIOpsService()
+    replacement = MemorySaver()
+
+    service.configure_checkpointer(replacement)
+
+    assert service.checkpointer is replacement
+    assert service.graph.checkpointer is replacement
 
 
 async def test_each_execute_uses_unique_uuid_thread_id():

@@ -40,6 +40,7 @@ async def lifespan(app: FastAPI):
 
     checkpointer = await checkpoint_runtime.start()
     chat.rag_agent_service.configure_checkpointer(checkpointer)
+    aiops.aiops_service.configure_checkpointer(checkpointer)
 
     # 连接 Milvus
     logger.info("🔌 正在连接 Milvus...")

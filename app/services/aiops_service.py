@@ -30,6 +30,17 @@ class AIOpsService:
         self.graph = self._build_graph()
         logger.info("Plan-Execute-Replan Service 初始化完成")
 
+    def configure_checkpointer(self, checkpointer: Any) -> None:
+        """Bind the lifecycle-managed checkpointer before serving requests."""
+        if checkpointer is self.checkpointer:
+            return
+        self.checkpointer = checkpointer
+        self.graph = self._build_graph()
+        logger.info(
+            "Plan-Execute-Replan checkpoint 已切换: {}",
+            type(checkpointer).__name__,
+        )
+
     def _build_graph(self):
         """构建 Plan-Execute-Replan 工作流"""
         logger.info("构建工作流图...")
@@ -199,7 +210,7 @@ class AIOpsService:
                     yield self._format_replanner_event(node_output)
 
         # 获取最终状态
-        final_state = self.graph.get_state(config_dict)
+        final_state = await self.graph.aget_state(config_dict)
         final_response = ""
 
         # 安全地获取响应（处理 values 可能为 None 的情况）
