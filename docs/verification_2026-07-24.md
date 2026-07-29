@@ -6,7 +6,7 @@
 
 | 检查 | 结果 |
 |---|---|
-| `python -m pytest tests -q` | 122 passed，语句覆盖率 72.16%（包含真实 Milvus 容器契约检查） |
+| `python -m pytest tests -q` | 135 passed，语句覆盖率 73.16%（包含真实 Milvus 容器契约检查） |
 | `ruff check app mcp_servers evaluation tests` | passed |
 | `uv lock --check` | passed，232 packages resolved |
 | `node --check static/app.js` | passed |

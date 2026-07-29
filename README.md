@@ -161,7 +161,7 @@ uv sync --extra dev --extra local-embeddings
 
 测试覆盖 SQL 只读规则、MCP 错误分类与重试、工具/请求指标、配置环境隔离、上传路径安全、Agent/API 流程、运行时分块上限，以及 600 条数据集稳定生成和防泄漏切分。
 
-当前可复现基线为 **122 个自动化测试全部通过，语句覆盖率 72.16%，19 个工具（17 MCP + 2 本地），Ruff 与前端 JavaScript 语法检查通过**。数字由 JUnit、Coverage JSON 和源码 AST 自动生成到 `artifacts/project_evidence.json`，避免简历口径漂移。测试覆盖 API 鉴权/RBAC、请求 ID、过载拒绝、SSE 事件游标与幂等回放、熔断/半开恢复/隔离舱、PostgreSQL checkpoint、Tracing 接入、前端交互契约及 Replanner/向量服务。
+当前可复现基线为 **135 个自动化测试全部通过，语句覆盖率 73.16%，19 个工具（17 MCP + 2 本地），Ruff 与前端 JavaScript 语法检查通过**。数字由 JUnit、Coverage JSON 和源码 AST 自动生成到 `artifacts/project_evidence.json`，避免简历口径漂移。测试覆盖 API 鉴权/RBAC、请求 ID、过载拒绝、SSE 事件游标与幂等回放、熔断/半开恢复/隔离舱、PostgreSQL checkpoint、Tracing 接入、前端交互契约及 Replanner/向量服务。
 
 ## 项目边界
 
@@ -169,7 +169,7 @@ uv sync --extra dev --extra local-embeddings
 - MySQL 和 Tavily 工具在缺少配置时会明确返回不可用，不会伪造结果。
 - `evaluation/datasets/rag_queries.jsonl` 当前由规则种子生成；只有复核并将 `review_status` 改为 `approved` 后，才能表述为“人工标注评测集”。
 - Milvus 运行数据默认写入 `.runtime/`；旧的 `volumes/` 不会自动删除或迁移。
-- 会话状态、指标与并发控制目前仍是单进程内存态；`/production/readiness` 会如实暴露持久化会话和分布式指标阻断项，不把本机演示宣称为多副本生产系统。
+- RAG 对话会话可切换 PostgreSQL checkpoint；Plan–Execute–Replan 诊断状态、SSE replay、指标、熔断与并发控制目前仍是单进程内存态。`/production/readiness` 会如实暴露这些阻断项，不把本机演示宣称为多副本生产系统。
 
 简历写法及证据清单见 [`docs/resume_project.md`](docs/resume_project.md)。
 针对抖音服务架构后端实习岗位的映射、演示路径与下一阶段计划见 [`docs/backend_internship_pitch.md`](docs/backend_internship_pitch.md)。

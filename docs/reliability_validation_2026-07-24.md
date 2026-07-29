@@ -2,7 +2,7 @@
 
 ## 固化工程基线
 
-- AIOps：122 passed，语句覆盖率 72.16%，Ruff 与 JavaScript 语法检查通过。
+- AIOps：135 passed，语句覆盖率 73.16%，Ruff 与 JavaScript 语法检查通过。
 - 工具：19 个，其中 17 个 MCP 工具、2 个本地工具。
 - 机器可读证据：`artifacts/project_evidence.json`、`artifacts/pytest.xml`、`artifacts/coverage.json`。
 - 数字由 `scripts/project_evidence.py` 从测试产物和源码生成；代码变化后必须重新生成，不能手工沿用旧值。
@@ -19,7 +19,7 @@
 
 ## P1：持久化、追踪与故障恢复
 
-- PostgreSQL checkpoint：使用 LangGraph `AsyncPostgresSaver`；两个独立 saver 交叉写读同一 thread，结果一致，证据为 `artifacts/reliability/checkpoint_consistency.json`。
+- PostgreSQL checkpoint：RAG 会话使用 LangGraph `AsyncPostgresSaver`；两个独立 saver 在测试图上交叉写读同一 thread，结果一致，证据为 `artifacts/reliability/checkpoint_consistency.json`。Plan–Execute–Replan 诊断图在本次记录时仍为进程内 checkpoint。
 - Windows 兼容：`app.run` 强制 Uvicorn 使用 SelectorEventLoop，已在 PostgreSQL required 模式真实启动，生产就绪检查返回 `persistent_sessions=postgres`。
 - OpenTelemetry：FastAPI、HTTPX、MCP 和 WINDOS 依赖调用已接入 span 与 W3C header 传播；默认不配置 exporter，避免假称已部署集中式 Trace 后端。
 - 依赖保护：实现 CLOSED/OPEN/HALF_OPEN 熔断、单探针半开恢复、隔离舱和错误分类；测试覆盖开路、拒绝、恢复以及调用方错误不计入熔断。
@@ -33,7 +33,7 @@
 
 ## P3：覆盖率、数据真实性与异构边界
 
-- Replanner、真实 Milvus 容器契约、向量搜索、embedding、文件 API、checkpoint、Tracing、SSE 可靠性与取消传播测试将覆盖率提升至 72.16%。
+- Replanner、真实 Milvus 容器契约、向量搜索、embedding、文件 API、checkpoint、Tracing、SSE 可靠性与取消传播测试将覆盖率提升至 73.16%。
 - `evaluation/incident_review.py` 已生成 `evaluation/datasets/incident_cases_review.csv`。当前 6 条均为 `synthetic_fault_fixture` 且 `pending`，禁止描述成真实告警或人工标注；真实 reviewer 必须由人工填写。
 - RTX 5070 Laptop GPU 可被系统识别，但当前 PyTorch 是 CPU 构建，CUDA 不可用。本地 BGE CPU 实测约 729.57 samples/s，证据为 `artifacts/reliability/embedding_benchmark.json`；不得在简历中写 GPU 性能优化。
 

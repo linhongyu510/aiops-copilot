@@ -18,11 +18,11 @@
 
 > **AIOps Copilot｜多工具诊断 Agent 平台｜核心开发｜2025.10–2026.03｜LangGraph / MCP / RAG / SSE / FastAPI / Prometheus**
 >
-> - 基于 LangGraph 设计 Plan–Execute–Replan 诊断工作流（Planner/Executor/Replanner 状态图 + checkpoint 断点恢复），与 ReAct 对话 Agent 按问题复杂度分流；工作流设置最大步骤数与强制收敛条件，端到端 P50/P95 为 9.36/17.36 秒。
+> - 基于 LangGraph 设计 Plan–Execute–Replan 诊断工作流（Planner/Executor/Replanner 状态图），与 ReAct 对话 Agent 按问题复杂度分流；RAG 会话支持 PostgreSQL checkpoint，诊断工作流使用请求级独立 thread、最大步骤数与强制收敛条件，端到端 P50/P95 为 9.36/17.36 秒。
 > - 通过 FastMCP 统一编排 19 个工具（17 个 MCP + 2 个本地，3 个 MCP Server）；自研客户端拦截器实现单次执行超时（30s）、错误分类重试（熔断/舱壁/参数错误不重试）、熔断器与舱壁隔离；MySQL 只读边界（单条 SELECT、限行 200、schema 白名单）。
 > - SSE 事件带单调递增 ID，支持 Last-Event-ID 断线重放与 X-Idempotency-Key 幂等；replay buffer 有界并在 terminal 事件后按 TTL 驱逐；同一操作并发重连返回 409 去重，避免弱网重连重复执行整个 Agent。
 > - 建立防泄漏评测方法论：600 条查询按问题模板隔离 train/dev/test=360/120/120，dev 上完成 54 组对照实验锁定配置，在 120 条 held-out test 上将 BGE Hit@5 从 95.83% 提升至 98.33%、MRR@5 从 68.79% 提升至 76.06%；30 条 Agent 任务 × 3 轮，任务成功率 80%、工具调用成功率 100%。
-> - 可靠性治理：入口有界并发 + 429 准入控制（排队 1s 超时返回 Retry-After）、API Key RBAC 三级（viewer/operator/admin）、Prometheus 指标 + SLO 错误预算 + OpenTelemetry 追踪；122 个自动化测试通过，语句覆盖率 72.16%。
+> - 可靠性治理：入口有界并发 + 429 准入控制（排队 1s 超时返回 Retry-After）、API Key RBAC 三级（viewer/operator/admin）、Prometheus 指标 + SLO 错误预算 + OpenTelemetry 追踪；135 个自动化测试通过，语句覆盖率 73.16%。
 
 版面紧张时保留第 1、3、4 条：工作流编排、流式工程、评测方法论——这三条与 WindOS 项目的差异最大。
 
@@ -40,7 +40,7 @@
 | 架构特征 | "LLM 意图理解 + OR-Tools 确定性排程"混合架构 | MCP 统一工具协议 + 拦截器治理（超时/分类重试/熔断/舱壁） |
 | 检索口径 | Milvus 5,247 条知识索引，Hit@5 92% | 600 条防泄漏数据集、54 组 dev 实验、held-out test Hit@5 98.33% |
 | 流式工程 | 6 类 SSE 业务事件实时返回 | 事件 ID + Last-Event-ID 重放 + 幂等键 + 有界 replay buffer + 409 去重 |
-| 可靠性 | 不作为主线 | 429 准入控制、RBAC 三级、SLO 错误预算、122 测试 / 72.16% 覆盖率 |
+| 可靠性 | 不作为主线 | 429 准入控制、RBAC 三级、SLO 错误预算、135 测试 / 73.16% 覆盖率 |
 | 面试标签 | "懂业务约束和算法落地" | "懂 Agent 基础设施、流式工程和评测方法论" |
 
 讲述原则：ReAct 分步决策、多轮 Memory/指代消解、Milvus 索引构建这些角度留给 WindOS；AIOps Copilot 的第一句从"工具治理与流式协议"讲起，两个项目的第一句不重复技术名词。
@@ -54,8 +54,8 @@
 ### 1. LangGraph Plan–Execute–Replan 诊断工作流与 checkpoint
 
 - `app/agent/aiops/` 拆为 `planner.py`、`executor.py`、`replanner.py`、`state.py`：Planner 生成步骤计划，Executor 逐步执行并把结果写回状态，Replanner 根据证据决定继续、重规划或收敛输出。
-- 使用 LangGraph checkpointer 持久化会话状态，默认 `MemorySaver`，可切换 PostgreSQL checkpoint（`app/services/aiops_service.py`、`app/services/rag_agent_service.py` 的 `configure_checkpointer`）；thread_id 不复用调用方 session_id，避免跨请求 checkpoint 污染（`aiops_service.py:87` 注释）。
-- 测试覆盖 Replanner 与 PostgreSQL checkpoint（见 `resume_project.md` 工程验证一节）。
+- RAG 会话默认 `MemorySaver`，可切换 PostgreSQL checkpoint；诊断工作流当前仍使用进程内 `MemorySaver`，并为每次请求生成独立 thread_id，避免跨请求状态污染。
+- 测试覆盖 Replanner、RAG checkpoint 生命周期及独立 PostgreSQL 双连接交叉读写；这不等价于诊断工作流已完成多副本恢复。
 
 ### 2. ReAct 对话 Agent
 
@@ -143,19 +143,19 @@ MCP 把工具发现、参数 schema 和调用协议统一了：Agent 启动时�
 
 ## 30 秒电梯陈述
 
-> “我做了一个可评测的多工具 Agent 平台，用运维诊断做验证场景。核心是按复杂度分流的双工作流：开放问答走 ReAct，多证据排障走 LangGraph 的 Plan–Execute–Replan 状态图，带 checkpoint 断点恢复。工具层用 FastMCP 统一编排 19 个工具，模型按任务路由 Flash 和 Pro。我最花时间的不是调通，而是评测和可靠性：600 条按模板防泄漏切分的 RAG 数据集、30 条任务 3 轮的端到端评测、SSE 断线重放、429 准入控制和只读安全边界——每个能力都有量化数字和测试兜底。”
+> “我做了一个可评测的多工具 Agent 平台，用运维诊断做验证场景。核心是按复杂度分流的双工作流：开放问答走 ReAct，多证据排障走 LangGraph 的 Plan–Execute–Replan 状态图；RAG 会话可切换 PostgreSQL checkpoint。工具层用 FastMCP 统一编排 19 个工具，模型按任务路由 Flash 和 Pro。我最花时间的不是调通，而是评测和可靠性：600 条按模板防泄漏切分的 RAG 数据集、30 条任务 3 轮的端到端评测、SSE 断线重放、429 准入控制和只读安全边界——每个能力都有量化数字和测试兜底。”
 
 ## 与“调 API 套壳项目”的差异化
 
 | 维度 | 套壳 Demo | 本项目 |
 |---|---|---|
 | 工作流 | 单次 prompt + function calling 循环 | LangGraph 状态图，Plan/Execute/Replan 分工，最大步骤数与强制收敛 |
-| 会话状态 | 内存 list 或没有 | LangGraph checkpointer，可切换 PostgreSQL，双实例交叉读写已验证 |
+| 会话状态 | 内存 list 或没有 | RAG 会话可切换 PostgreSQL；诊断工作流当前仍为进程内 checkpoint |
 | 工具层 | 硬编码几个函数 | MCP 协议统一发现 19 个工具，错误分类重试、指标集中在拦截器 |
 | 输出 | 一次性返回 | SSE 流式 + 事件 ID + Last-Event-ID 重放 + 幂等 + 取消传播 |
 | 效果证明 | 截几张对话图 | 600 条防泄漏数据集、54 组 dev 实验、held-out test、30 条任务 × 3 轮、失败归因 |
 | 可靠性 | 不考虑 | 429 准入控制、熔断/半开、RBAC、只读 SQL 双防线 |
-| 质量门禁 | 没有测试 | 122 个测试、72.16% 语句覆盖率、Ruff、CI，数字自动生成到 `artifacts/project_evidence.json` |
+| 质量门禁 | 没有测试 | 135 个测试、73.16% 语句覆盖率、Ruff、CI，数字自动生成到 `artifacts/project_evidence.json` |
 
 一句话版本：
 
@@ -165,7 +165,7 @@ MCP 把工具发现、参数 schema 和调用协议统一了：Agent 启动时�
 
 ### 有仓库证据、可以直接写的数字
 
-- 122 个自动化测试全部通过，语句覆盖率 72.16%，Ruff 通过。
+- 135 个自动化测试全部通过，语句覆盖率 73.16%，Ruff 通过。
 - 19 个工具（17 MCP + 2 本地），3 个 MCP Server 实际注册。
 - RAG 主口径：120 条 held-out test，BGE Hit@5 95.83%→98.33%、MRR@5 68.79%→76.06%；BM25 对照 89.17%/57.75%；dev 上 54 组实验。
 - RAG 扩展语料回归口径：70.00%/49.90%→90.00%/59.40%（仅限“扩展语料上的规则标签回归结果”表述）。

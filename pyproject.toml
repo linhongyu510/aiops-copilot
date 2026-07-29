@@ -2,7 +2,7 @@
 name = "aiops-copilot"
 version = "1.4.0"
 description = "Evidence-driven intelligent OnCall and WINDOS reliability control plane"
-authors = [{name = "chief"}]
+authors = [{name = "hylin"}]
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 dependencies = [

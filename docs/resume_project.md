@@ -55,7 +55,7 @@
 - 当前 17 个 MCP 工具已由三个 Server 实际注册；加上知识检索和时间工具共 19 个。
 - MySQL 演示库已实查出 incident_history、service_alerts、service_metrics 3 张表。
 - 本地 BGE 与 Milvus 已完成 10 份 Runbook 索引。
-- 当前自动化测试 122 个全部通过，Ruff 通过，整体语句覆盖率 72.16%；已覆盖 API/鉴权、SSE 游标与幂等回放、过载保护、熔断半开恢复、PostgreSQL checkpoint、Tracing、Replanner、真实 Milvus 容器契约、向量服务与请求取消传播。
+- 当前自动化测试 135 个全部通过，Ruff 通过，整体语句覆盖率 73.16%；已覆盖 API/鉴权、SSE 游标与幂等回放、过载保护、熔断半开恢复、PostgreSQL checkpoint、Tracing、Replanner、真实 Milvus 容器契约、向量服务与请求取消传播。
 
 ## 30 秒项目介绍
 
@@ -89,7 +89,7 @@ MCP 把工具发现、参数 schema 和调用协议统一起来，Agent 不需�
 
 ### 项目最大的不足
 
-目前知识库只有 10 份 Runbook，日志与监控是模拟服务；600 条查询和新增故障样例仍待人工复核，旧的 30 条 Agent 基线主要覆盖知识检索；整体语句覆盖率为 72.16%，真实生产告警与人工排障计时尚未补齐。会话可切换 PostgreSQL checkpoint，但指标与 admission control 仍是单进程状态，生产就绪接口会主动暴露这些阻断项。
+目前知识库只有 10 份 Runbook，日志与监控是模拟服务；600 条查询和新增故障样例仍待人工复核，旧的 30 条 Agent 基线主要覆盖知识检索；整体语句覆盖率为 73.16%，真实生产告警与人工排障计时尚未补齐。RAG 会话可切换 PostgreSQL checkpoint，但诊断图、SSE replay、指标与 admission control 仍是单进程状态，生产就绪接口会主动暴露这些阻断项。
 
 ## 针对岗位调整
 
@@ -126,7 +126,7 @@ MCP 把工具发现、参数 schema 和调用协议统一起来，Agent 不需�
 **技术栈：** LangGraph / DeepSeek V4 / RAG / MCP / Milvus / FastAPI
 
 - 构建 ReAct 对话与 Plan–Execute–Replan 诊断双工作流，通过 MCP 统一发现并编排日志、监控、只读 MySQL、联网检索与 WINDOS 治理面等 19 个本地/MCP 工具，形成“告警解析—证据检索—动态规划—工具执行—重规划—建议生成”闭环；按任务将 DeepSeek V4 Flash 非思考模式用于工具链、V4 Pro 思考模式用于最终报告。
-- 实现有界并发与 429 过载保护、分类重试/指数退避/抖动、熔断/半开探测/隔离舱、只读 SQL/schema/行数边界、API Key RBAC、请求 ID、OpenTelemetry 和 Prometheus 指标；SSE 支持事件 ID、游标、幂等回放、断线重试与取消传播；122 个自动化测试通过，语句覆盖率 72.16%。
+- 实现有界并发与 429 过载保护、分类重试/指数退避/抖动、熔断/半开探测/隔离舱、只读 SQL/schema/行数边界、API Key RBAC、请求 ID、OpenTelemetry 和 Prometheus 指标；SSE 支持事件 ID、游标、幂等回放、断线重试与取消传播；135 个自动化测试通过，语句覆盖率 73.16%。
 - 构建 600 条可复现 RAG 查询，按模板隔离 train/dev/test，在 dev 上完成 54 组 Chunk/Overlap/Top-K 对照实验；锁定参数后在 120 条 held-out test 上将 BGE Hit@5 从 95.83% 提升至 98.33%、MRR@5 从 68.79% 提升至 76.06%，并对 30 条 Agent 任务进行 3 轮离线评测与失败归因。
 
 ### 排序与讲述策略
@@ -141,7 +141,7 @@ MCP 把工具发现、参数 schema 和调用协议统一起来，Agent 不需�
 1. 人工复核 600 条标签，保留 reviewer、notes 和修改记录。
 2. 新增 10–20 条脱敏真实告警，成对记录纯人工排查与 Agent 辅助排查耗时。
 3. 在已加入的日志、监控、MySQL、Web Search 合成故障场景上运行并保存完整报告，再用真实后端故障演练补充外部有效性证据。
-4. 当前覆盖率已达到 72.16%，已越过 70% 目标；已补真实 Milvus 容器契约与端到端取消传播测试，下一步继续覆盖容器重启和连接恢复。
+4. 当前覆盖率已达到 73.16%，已越过 70% 目标；已补真实 Milvus 容器契约与端到端取消传播测试，下一步继续覆盖容器重启和连接恢复。
 5. 鉴权、角色控制、限流、请求指标和只读审计边界已经补齐；下一步接入真实可观测性后端、跨进程会话/指标、熔断与提示注入策略。
 
 ## 证据索引
