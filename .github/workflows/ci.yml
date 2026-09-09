@@ -21,15 +21,20 @@ jobs:
             exit 1
           fi
       - name: Install
-        run: uv sync --frozen --extra dev --extra local-embeddings
+        # The test suite imports fastapi / langchain / pydantic-settings / redis,
+        # so the full runtime extras are required, not just [dev].
+        run: uv sync --frozen --extra full --extra dev --extra local-embeddings
       - name: Verify lock file
         run: uv lock --check
       - name: Lint
-        run: uv run ruff check app mcp_servers evaluation tests
+        run: uv run ruff check app aiops_core mcp_servers evaluation tests quickstart.py
       - name: Frontend syntax
         run: node --check static/app.js
       - name: Compose contract
         run: docker compose -f compose.yml --profile full config --quiet
+      - name: Offline quickstart smoke
+        # The zero-dependency path must keep working without keys or Docker.
+        run: uv run python quickstart.py --mode demo
       - name: Test
         run: >
           uv run python -m pytest tests -q
@@ -46,7 +51,7 @@ jobs:
           python-version: "3.13"
       - uses: astral-sh/setup-uv@v6
       - name: Install
-        run: uv sync --frozen --extra dev
+        run: uv sync --frozen --extra full --extra dev
       - name: Start PostgreSQL and Redis
         run: docker compose -f reliability-stack.yml up -d --wait
       - name: Verify cross-instance state
