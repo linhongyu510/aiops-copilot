@@ -161,8 +161,83 @@ def has_llm_key() -> bool:
 # --------------------------------------------------------------------------- #
 
 
+MIN_PYTHON = (3, 11)
+# ``aiops_core`` itself needs only pydantic + loguru on top of the stdlib.
+CORE_REQUIREMENTS = ("pydantic", "loguru")
+
+
+def python_version_of(python: Path) -> tuple[int, int] | None:
+    """Return the (major, minor) version of an interpreter, or None if unknown."""
+    result = subprocess.run(
+        [str(python), "-c", "import sys; print(sys.version_info[0], sys.version_info[1])"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return None
+    try:
+        major, minor = result.stdout.split()[:2]
+        return int(major), int(minor)
+    except (ValueError, IndexError):
+        return None
+
+
+def missing_core_requirements(python: Path) -> list[str]:
+    return [name for name in CORE_REQUIREMENTS if not has_module(python, name)]
+
+
+def install_core_requirements(python: Path) -> bool:
+    """Install the two small packages the offline core needs.
+
+    Tries pip first, then `uv pip` — uv-created virtualenvs have no pip inside.
+    """
+    info("正在安装离线内核依赖（pydantic、loguru）…")
+    packages = ["pydantic>=2.12,<2.13", "loguru>=0.7.2"]
+    attempts: list[list[str]] = [
+        [str(python), "-m", "pip", "install", "--quiet", *packages],
+    ]
+    if shutil.which("uv"):
+        attempts.append(
+            ["uv", "pip", "install", "--quiet", "--python", str(python), *packages]
+        )
+
+    last_output = ""
+    for command in attempts:
+        result = subprocess.run(
+            command, cwd=PROJECT_ROOT, capture_output=True, text=True
+        )
+        if result.returncode == 0:
+            ok("离线内核依赖安装完成")
+            return True
+        last_output = (result.stderr or result.stdout or "").strip()
+
+    warn("自动安装失败")
+    tail = last_output.splitlines()
+    if tail:
+        info(tail[-1])
+    return False
+
+
 def run_demo(python: Path) -> int:
     step("离线诊断演示（无需密钥、无需 Docker）")
+
+    version = python_version_of(python)
+    if version is not None and version < MIN_PYTHON:
+        fail(
+            f"当前解释器为 Python {version[0]}.{version[1]}，"
+            f"本项目要求 {MIN_PYTHON[0]}.{MIN_PYTHON[1]}+"
+        )
+        info("请用较新的解释器运行，例如：python3.11 quickstart.py --mode demo")
+        info("或先创建虚拟环境：uv sync --extra dev")
+        return 1
+
+    missing = missing_core_requirements(python)
+    if missing:
+        warn(f"缺少离线内核依赖：{', '.join(missing)}")
+        if not install_core_requirements(python):
+            info(f"请手动安装后重试：{python} -m pip install pydantic loguru")
+            return 1
+
     alert = PROJECT_ROOT / "tests" / "fixtures" / "kafka_lag_alert.json"
     if not alert.exists():
         fail(f"缺少示例告警文件：{alert}")
@@ -413,7 +488,9 @@ def main() -> int:
 
     print(_paint("\n  AIOps Copilot · 一键启动", "1;36"))
     python = venv_python()
-    info(f"解释器：{python}")
+    version = python_version_of(python)
+    version_label = f"{version[0]}.{version[1]}" if version else "未知"
+    info(f"解释器：{python}（Python {version_label}）")
 
     ensure_env_file()
 

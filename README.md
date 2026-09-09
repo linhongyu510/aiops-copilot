@@ -13,6 +13,8 @@
 
 ## 60 秒跑起来
 
+需要 **Python 3.11+**。
+
 ```bash
 git clone https://github.com/linhongyu510/aiops-copilot.git
 cd aiops-copilot
@@ -27,7 +29,7 @@ python quickstart.py
 python quickstart.py --mode demo
 ```
 
-它会读入一条 Kafka 积压告警，输出「Skill 匹配 → 执行计划 → 验收清单 → Runbook 依据」的完整诊断报告。整条链路确定性、可复现，不调用任何大模型。
+它会读入一条 Kafka 积压告警，输出「Skill 匹配 → 执行计划 → 验收清单 → Runbook 依据」的完整诊断报告。整条链路确定性、可复现，不调用任何大模型。缺少内核依赖（`pydantic`、`loguru`）时脚本会自动补装。
 
 完整服务栈（Web 控制台 + MCP 工具 + 向量检索）：
 
