@@ -60,7 +60,7 @@ def test_frontend_contains_required_interaction_targets_once() -> None:
     assert "themeToggleBtn" in APP_JS
 
 
-def test_frontend_uses_windos_design_tokens_and_safe_rendering() -> None:
+def test_frontend_uses_design_tokens_and_safe_rendering() -> None:
     for token in ("--blue:", "--marine:", "--surface:", "--line:"):
         assert token in STYLES
 
@@ -104,4 +104,21 @@ def test_frontend_assets_are_versioned_and_local() -> None:
     assert style_versions == script_versions, "CSS 与 JS 的版本号必须同步递增"
     assert re.fullmatch(r"\d+\.\d+\.\d+", style_versions[0]), "版本号应为 x.y.z"
 
-    assert "WINDOS" in INDEX_HTML
+
+def test_frontend_is_vendor_neutral() -> None:
+    """前端不得硬编码任何可选集成的品牌或工具名，否则未启用该集成的部署会点出死按钮。"""
+    for asset_name, asset in (("index.html", INDEX_HTML), ("styles.css", STYLES)):
+        assert "windos" not in asset.lower(), f"{asset_name} 不应引用可选集成"
+
+
+def test_no_dead_style_hooks_for_removed_markup() -> None:
+    """删除展示模块时必须同步删掉样式，避免留下无对应元素的死规则。"""
+    for selector in (
+        ".hero-grid",
+        ".hero-evidence-card",
+        ".evidence-flow",
+        ".hero-trust-row",
+        ".topbar-scope",
+    ):
+        assert selector not in STYLES, f"{selector} 的样式已无对应元素，应删除"
+        assert selector.lstrip(".") not in INDEX_HTML

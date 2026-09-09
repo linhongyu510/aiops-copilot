@@ -1,4 +1,9 @@
-"""Verify API → MCP → WINDOS tracing and centralized metrics."""
+"""Verify API → MCP tracing and centralized metrics.
+
+The expected span names are derived from the probe response (`probe_tool`)
+instead of being hardcoded, so this check works for any deployment
+regardless of which read-only tool the probe happens to use.
+"""
 
 from __future__ import annotations
 
@@ -45,10 +50,10 @@ async def verify(
         grafana_response.raise_for_status()
         grafana = grafana_response.json()
 
+    probe_tool = probe.get("probe_tool", "")
     required_operations = {
         "GET /api/observability/trace-probe",
-        "mcp.windos_health",
-        "windos.http",
+        f"mcp.{probe_tool}" if probe_tool else "mcp",
     }
     result = {
         "trace_id": trace_id,

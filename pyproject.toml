@@ -1,7 +1,7 @@
 [project]
 name = "aiops-copilot"
 version = "2.0.0"
-description = "Evidence-driven intelligent OnCall and WINDOS reliability control plane"
+description = "Evidence-driven AIOps OnCall agent with hybrid RAG and governed read-only tools"
 authors = [{name = "hylin"}]
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
@@ -127,7 +127,8 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["app*", "aiops_core*"]
+# integrations 必须打包：app/agent/tool_registry.py 会按需导入 integrations.loader。
+include = ["app*", "aiops_core*", "integrations*"]
 
 
 

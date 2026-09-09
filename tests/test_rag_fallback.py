@@ -43,18 +43,37 @@ async def test_summary_retries_one_transient_connection_error(monkeypatch) -> No
 
 
 @pytest.mark.asyncio
-async def test_explicit_windos_tool_fallback_does_not_use_rag() -> None:
+async def test_explicit_read_only_tool_fallback_does_not_use_rag() -> None:
+    """显式点名的只读工具可在模型不可用时直接执行（资格来自注册中心元数据）。"""
     service = RagAgentService.__new__(RagAgentService)
 
     class Tool:
-        name = "windos_diagnose_overview"
+        name = "prom_active_alerts"
 
         async def ainvoke(self, arguments):
             assert arguments == {}
-            return {"system": "WINDOS", "mode": "read_only_diagnosis"}
+            return {"alerts": [], "mode": "read_only"}
 
     service.mcp_tools = [Tool()]
-    result = await service._explicit_read_only_tool_fallback("请使用 windos_diagnose_overview 检查")
+    result = await service._explicit_read_only_tool_fallback("请使用 prom_active_alerts 检查")
     assert result is not None
     assert "只读工具" in result
-    assert "WINDOS" in result
+    assert "prom_active_alerts" in result
+
+
+@pytest.mark.asyncio
+async def test_fallback_refuses_tools_that_are_not_registered_read_only() -> None:
+    """未注册工具按保守缺省视为不安全，不得在无模型兜底路径里被直接执行。"""
+    service = RagAgentService.__new__(RagAgentService)
+
+    class Tool:
+        name = "unregistered_write_tool"
+
+        async def ainvoke(self, arguments):  # pragma: no cover - must not run
+            raise AssertionError("unsafe tool must not be invoked")
+
+    service.mcp_tools = [Tool()]
+    result = await service._explicit_read_only_tool_fallback(
+        "请使用 unregistered_write_tool 处理"
+    )
+    assert result is None

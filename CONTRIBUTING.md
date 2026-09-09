@@ -30,6 +30,7 @@ pre-commit install
 - 行宽 100，遵循 `pyproject.toml` 中的 ruff / black 配置。
 - 新增工具必须在注册中心声明 `read_only`、`risk_level` 和所需角色。**任何变更类工具（`risk_level > 0`）都必须经 ActionGovernor 提案与人工审批**，不得绕过。
 - 外部依赖（Milvus / Redis / Prometheus / K8s 等）缺失时应**明确返回不可用**，不要伪造数据或静默回退到演示数据。
+- **不要把特定外部平台写进核心**。对接自建或第三方系统请新建 `integrations/<name>/`，声明 `TOOL_SPECS` / `TOOL_GROUPS` 并实现 `register_mcp_tools(mcp)`，通过 `AIOPS_ENABLED_INTEGRATIONS` 开关启用；核心目录、profile 默认工具与前端都不得出现该平台的名字或工具前缀。
 - 修改检索链路时，必须保留 `trace.degradations` 的降级语义：单分支失败不得影响其他分支的证据。
 
 ## 测试要求

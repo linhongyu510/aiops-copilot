@@ -104,7 +104,7 @@ Dense 与 BM25 **并发**执行（互不依赖）；任一分支失败只降级�
 
 ### 安全与治理
 
-- **只读优先**：当前 39 个工具（36 MCP + 3 本地）全部只读。
+- **只读优先**：核心目录 33 个工具（31 MCP + 2 本地）全部只读。
 - **变更必须审批**：`risk_level > 0` 的工具调用一律生成待审批提案，无人工批准绝不执行。
 - **工具级 RBAC**：viewer / operator / admin 按工具元数据校验，viewer 无法触发数据外发类工具。
 - **Prompt 注入防御**：工具输出统一围栏包裹并清除注入行；红队评测集（36 样本 × 5 类攻击）要求 ASR=0。
@@ -135,6 +135,22 @@ AIOPS_CORS_ORIGINS=https://your-demo.example.com
 ```
 
 客户端通过 `X-API-Key` 或 Bearer Token 传入。日志只保留密钥指纹，不记录原始密钥。完整配置项见 [`.env.example`](./.env.example)。
+
+### 可选集成
+
+核心不依赖任何外部平台。要接入自建系统，在 `integrations/` 下新增一个目录，
+然后按需启用：
+
+```dotenv
+AIOPS_ENABLED_INTEGRATIONS=windos
+```
+
+集成需要提供三样东西：`TOOL_SPECS`（声明 `read_only` / `risk_level`，供路由、
+RBAC 与审批复用）、`TOOL_GROUPS`（路由关键词，启用时自动合并）、
+`register_mcp_tools(mcp)`（挂载工具）。未启用的集成不会被导入，行为与该目录不
+存在完全一致。
+
+[`integrations/windos/`](./integrations/windos/) 是一个完整示例，可直接作为模板。
 
 ---
 
@@ -171,6 +187,7 @@ python -m evaluation.injection_redteam                           # 注入红队�
 - incident 状态机与变更提案默认单进程内存态；`AIOPS_COORDINATION_BACKEND=redis` 时切换为 Redis 共享。指标 registry 与熔断状态仍是单进程内存态，`/production/readiness` 会如实暴露这些阻断项。
 - 自治诊断仅使用只读工具集，不执行任何变更。
 - 事件记忆检索使用 n-gram TF-IDF（无模型依赖、确定性），替换为 embedding 检索的接口已预留。
+- `integrations/windos/` 对接的是作者另一套独立自建系统，克隆者无法访问；它默认关闭，仅作为集成契约的参考实现保留。
 
 ---
 

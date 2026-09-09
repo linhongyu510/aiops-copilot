@@ -25,6 +25,7 @@ import json
 import os
 import platform
 import shutil
+import signal
 import socket
 import subprocess
 import sys
@@ -355,7 +356,10 @@ def wait_for_api(port: int, timeout: int = 90) -> bool:
 def start_api(python: Path, port: int) -> bool:
     step("启动 FastAPI 服务")
     if port_in_use(port):
+        # Reusing whatever already holds the port silently serves stale code
+        # after an edit, so say plainly what is being reused and how to restart.
         ok(f"端口 {port} 已有服务在运行，复用它")
+        info(f"若刚修改过代码，先执行 python {Path(__file__).name} --stop 再重新启动")
         return True
     if spawn("api", [str(python), "-m", "app.run"]) is None:
         return False
@@ -422,35 +426,86 @@ def print_summary(port: int, milvus: bool, mcp: list[str], llm: bool) -> None:
     print(_paint(f"{line}\n", "36"))
 
 
+def process_alive(pid: int) -> bool:
+    """Return True while the process still exists."""
+    if IS_WINDOWS:
+        result = subprocess.run(
+            ["tasklist", "/FI", f"PID eq {pid}", "/NH"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return str(pid) in (result.stdout or "")
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def terminate(name: str, pid: int) -> bool:
+    """Stop one service, escalating to SIGKILL when it ignores SIGTERM.
+
+    A plain SIGTERM is not enough on its own: uvicorn's reloader and worker can
+    keep the port bound, which made `--stop` report success while the old build
+    kept serving requests. So the exit is verified rather than assumed.
+    """
+    try:
+        if IS_WINDOWS:
+            subprocess.run(
+                ["taskkill", "/F", "/PID", str(pid)],
+                capture_output=True,
+                check=False,
+            )
+        else:
+            os.kill(pid, signal.SIGTERM)
+    except ProcessLookupError:
+        info(f"{name} 已不在运行")
+        return False
+    except PermissionError:
+        warn(f"{name}（pid {pid}）无权限停止，请手动处理")
+        return False
+
+    for _ in range(20):  # up to ~5s of graceful shutdown
+        if not process_alive(pid):
+            ok(f"已停止 {name}（pid {pid}）")
+            return True
+        time.sleep(0.25)
+
+    if not IS_WINDOWS:
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+        for _ in range(12):
+            if not process_alive(pid):
+                ok(f"已强制停止 {name}（pid {pid}）")
+                return True
+            time.sleep(0.25)
+
+    warn(f"{name}（pid {pid}）仍在运行，请手动检查")
+    return False
+
+
 def stop_services() -> int:
     step("停止后台服务")
-    if not PID_DIR.exists():
+    pid_files = sorted(PID_DIR.glob("*.pid")) if PID_DIR.exists() else []
+    if not pid_files:
         ok("没有由本脚本启动的服务")
         return 0
 
     stopped = 0
-    for pid_file in sorted(PID_DIR.glob("*.pid")):
+    for pid_file in pid_files:
         name = pid_file.stem
         try:
             pid = int(pid_file.read_text(encoding="utf-8").strip())
         except (ValueError, OSError):
             pid_file.unlink(missing_ok=True)
             continue
-        try:
-            if IS_WINDOWS:
-                subprocess.run(
-                    ["taskkill", "/F", "/PID", str(pid)],
-                    capture_output=True,
-                    check=False,
-                )
-            else:
-                os.kill(pid, 15)
-            ok(f"已停止 {name}（pid {pid}）")
+        if terminate(name, pid):
             stopped += 1
-        except ProcessLookupError:
-            info(f"{name} 已不在运行")
-        except PermissionError:
-            warn(f"{name}（pid {pid}）无权限停止，请手动处理")
         pid_file.unlink(missing_ok=True)
 
     if stopped == 0:

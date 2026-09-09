@@ -150,43 +150,6 @@ TOOL_CATALOG: dict[str, ToolSpec] = {
             "查询主机或服务在时间区间内的内存使用率曲线与压力水位",
             ("内存", "memory", "指标", "监控"),
         ),
-        # ---- WINDOS 治理 ----
-        _spec(
-            "windos_health",
-            "windos",
-            "查询 WINDOS 生产就绪健康状态与就绪检查结果",
-            ("windos", "生产就绪", "健康"),
-        ),
-        _spec(
-            "windos_queue_status",
-            "windos",
-            "查询 WINDOS 调度队列状态与积压情况",
-            ("windos", "排程", "队列"),
-        ),
-        _spec(
-            "windos_agent_metrics",
-            "windos",
-            "查询 WINDOS agent 工具调用指标",
-            ("windos", "agent", "指标"),
-        ),
-        _spec(
-            "windos_governance_status",
-            "windos",
-            "查询 WINDOS 治理状态",
-            ("windos", "治理"),
-        ),
-        _spec(
-            "windos_recent_audit",
-            "windos",
-            "查询 WINDOS 近期审计记录",
-            ("windos", "审计"),
-        ),
-        _spec(
-            "windos_diagnose_overview",
-            "windos",
-            "WINDOS 综合诊断总览，聚合健康、队列、治理等多项只读检查",
-            ("windos", "生产就绪", "总览", "诊断"),
-        ),
         # ---- Prometheus ----
         _spec(
             "prom_query",
@@ -382,10 +345,6 @@ TOOL_GROUPS: tuple[tuple[tuple[str, ...], tuple[str, ...]], ...] = (
         ("resolve_dns", "inspect_tls_certificate", "probe_http"),
     ),
     (
-        ("windos", "生产就绪", "排程", "治理"),
-        ("windos_",),
-    ),
-    (
         ("联网", "互联网", "最新", "搜索网页"),
         ("web_search",),
     ),
@@ -400,22 +359,42 @@ DEFAULT_TOOL_PREFIXES = (
     "query_cpu_metrics",
     "query_memory_metrics",
     "prom_active_alerts",
-    "windos_diagnose_overview",
     "web_search",
 )
 
 
+def _integration_tool_groups() -> tuple[tuple[tuple[str, ...], tuple[str, ...]], ...]:
+    """Routing hints contributed by enabled optional integrations.
+
+    Imported lazily and defensively: the core must route correctly even when no
+    integration is enabled or one of them fails to import.
+    """
+    try:
+        from integrations.loader import extra_tool_groups
+
+        return extra_tool_groups()
+    except Exception:  # noqa: BLE001 - integrations must never break routing
+        return ()
+
+
 def _active_tool_groups() -> tuple[tuple[tuple[str, ...], tuple[str, ...]], ...]:
-    """返回当前 profile 的 tool_groups；profile 未配置则回落到常量。"""
+    """返回当前 profile 的 tool_groups；profile 未配置则回落到常量。
+
+    启用的可选集成会把自己的路由关键词追加在后面，因此核心目录里不需要出现
+    任何具体厂商的工具前缀。
+    """
     try:
         from app.agent.profiles import get_active_profile
 
         profile = get_active_profile()
     except Exception:  # noqa: BLE001 - profile 层若出错必须不影响路由
-        return TOOL_GROUPS
+        return TOOL_GROUPS + _integration_tool_groups()
     if not profile.has_tool_groups():
-        return TOOL_GROUPS
-    return tuple((group.keywords, group.prefixes) for group in profile.tool_groups)
+        return TOOL_GROUPS + _integration_tool_groups()
+    return (
+        tuple((group.keywords, group.prefixes) for group in profile.tool_groups)
+        + _integration_tool_groups()
+    )
 
 
 def _active_default_prefixes() -> tuple[str, ...]:

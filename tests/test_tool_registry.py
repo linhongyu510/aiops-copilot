@@ -25,12 +25,21 @@ def _named_tools(*names: str, description_template: str = "{name} 的描述") ->
 
 
 def test_catalog_covers_full_tool_contract():
-    """目录覆盖全部 36 个工具契约（34 MCP + 2 本地），且均为只读零风险"""
-    assert len(TOOL_CATALOG) == 39
+    """核心目录覆盖 33 个厂商无关工具，且均为只读零风险。
+
+    另有 6 个 WINDOS 工具属于可选集成（integrations/windos），仅在
+    AIOPS_ENABLED_INTEGRATIONS 启用时注册，因此不计入核心目录。
+    """
+    assert len(TOOL_CATALOG) == 33
     assert all(spec.read_only for spec in TOOL_CATALOG.values())
     assert all(spec.risk_level == 0 for spec in TOOL_CATALOG.values())
     for required in ("retrieve_knowledge", "get_current_time", "web_search"):
         assert required in TOOL_CATALOG
+
+
+def test_catalog_is_vendor_neutral():
+    """核心目录不得包含任何特定外部平台的工具，否则克隆者无法开箱运行。"""
+    assert not [name for name in TOOL_CATALOG if name.startswith("windos_")]
 
 
 def test_spec_validation_rejects_risky_readonly_and_bad_role():

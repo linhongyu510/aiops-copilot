@@ -1,4 +1,31 @@
-# WINDOS AI 自动运维演示
+# WINDOS 集成（可选）
+
+> **这是一个可选集成，不是本项目的组成部分。** WINDOS 是一套独立的自建系统，
+> 克隆本仓库的人默认无法访问它。本目录的价值在于演示「如何把一个外部平台接入
+> AIOps Copilot」这一契约，可作为你自己写集成时的模板。
+>
+> 默认不加载。启用方式：在 `.env` 中设置 `AIOPS_ENABLED_INTEGRATIONS=windos`。
+> 未启用时，这里的 6 个工具不会注册，核心 Agent 的行为与本目录不存在时完全一致。
+
+## 集成契约
+
+- `TOOL_SPECS`：声明每个工具的 `read_only` / `risk_level`，供路由、工具级 RBAC
+  和变更审批复用；
+- `TOOL_GROUPS`：贡献路由关键词，启用时自动追加到注册中心，核心目录无需知道
+  本集成的存在；
+- `register_mcp_tools(mcp)`：由 `mcp_servers/ops_server.py` 在启用时调用；
+- 依赖不可用时返回显式错误，不伪造数值。
+
+## 复现降级证据
+
+```bash
+python -m integrations.windos.capture_scenarios --output-dir artifacts
+```
+
+会依次采集正常、单端点 503 和整体不可达三种情形的证据快照。
+
+---
+
 
 ## 当前范围
 

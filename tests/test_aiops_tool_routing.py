@@ -123,7 +123,7 @@ async def test_executor_binds_pruned_tools_within_limit(monkeypatch):
 async def test_executor_fallback_tools_present_without_keyword_hit(monkeypatch):
     """步骤与输入都无关键词命中时，兜底工具（含本地工具）仍可用"""
     mcp_tools = _named_tools(
-        "search_log", "prom_active_alerts", "windos_diagnose_overview",
+        "search_log", "prom_active_alerts", "get_current_time",
         *[f"mysql_tool_{i}" for i in range(15)],
     )
     llm = _RecordingLLM()

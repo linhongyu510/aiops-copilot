@@ -14,6 +14,8 @@ x-mcp-environment: &mcp-environment
   MCP_CLS_HOST: 0.0.0.0
   MCP_MONITOR_HOST: 0.0.0.0
   MCP_OPS_HOST: 0.0.0.0
+  # Optional integrations are off unless AIOPS_ENABLED_INTEGRATIONS names them.
+  AIOPS_ENABLED_INTEGRATIONS: ${AIOPS_ENABLED_INTEGRATIONS:-}
   WINDOS_BASE_URL: ${WINDOS_BASE_URL:-http://host.docker.internal:8002}
   WINDOS_API_KEY: ${WINDOS_API_KEY:-}
   PROMETHEUS_URL: ${PROMETHEUS_URL:-http://prometheus:9090}

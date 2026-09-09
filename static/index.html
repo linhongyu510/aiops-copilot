@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0b1017">
-    <meta name="description" content="与 WINDOS 联动的证据驱动智能运维与 OnCall 诊断工作台">
-    <title>AIOps Copilot · WINDOS 可靠性控制面</title>
+    <meta name="description" content="证据驱动的智能运维与 OnCall 诊断工作台">
+    <title>AIOps Copilot · 智能运维诊断工作台</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="stylesheet" href="/static/styles.css?v=4.1.0">
+    <link rel="stylesheet" href="/static/styles.css?v=4.2.0">
     <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
@@ -20,13 +21,8 @@
                 <div class="brand-mark" aria-hidden="true"><span>AI</span></div>
                 <div>
                     <div class="brand-title">AIOps Copilot</div>
-                    <div class="brand-subtitle">WINDOS RELIABILITY PLANE</div>
+                    <div class="brand-subtitle">EVIDENCE-DRIVEN ONCALL</div>
                 </div>
-            </div>
-
-            <div class="topbar-scope">
-                <span class="scope-dot"></span>
-                <div><strong>海上风电智能运维</strong><small>只读诊断 · 证据驱动</small></div>
             </div>
 
             <div class="topbar-spacer"></div>
@@ -61,10 +57,6 @@
                         <span class="nav-glyph" aria-hidden="true">⌁</span>
                         <span><strong>智能问答</strong><small>知识检索与诊断</small></span>
                     </button>
-                    <button class="sidebar-workspace" type="button" data-prompt="请使用 windos_diagnose_overview 工具检查 WINDOS 当前运行状态，严格基于工具结果说明健康、生产就绪、队列和治理状态">
-                        <span class="nav-glyph" aria-hidden="true">W</span>
-                        <span><strong>WINDOS 体检</strong><small>只读可靠性快照</small></span>
-                    </button>
                     <button class="sidebar-workspace" id="ragInspectorBtn" type="button">
                         <span class="nav-glyph" aria-hidden="true">R2</span>
                         <span><strong>RAG 检索实验台</strong><small>Rewrite · RRF · Reranker</small></span>
@@ -80,7 +72,7 @@
                             <span class="status-dot"></span>
                             <div><strong>控制面在线</strong><small id="serviceDetail">正在检查依赖...</small></div>
                         </div>
-                        <p>所有 WINDOS 工具默认只读；变更操作不在当前授权范围内。</p>
+                        <p>所有工具默认只读；变更操作不在当前授权范围内。</p>
                     </div>
                 </div>
             </aside>
@@ -132,37 +124,15 @@
 
                 <div class="chat-container">
                     <section class="welcome-greeting" id="welcomeGreeting">
-                        <div class="hero-grid">
-                            <div class="hero-copy">
-                                <div class="hero-badge"><span></span> EVIDENCE-FIRST INCIDENT RESPONSE</div>
-                                <h1>从告警到证据，<br><em>让诊断路径可复盘。</em></h1>
-                                <p>统一编排 WINDOS 健康与治理状态、内部 Runbook、日志、监控指标和只读数据库，输出事实、假设与建议边界。</p>
-                                <div class="hero-trust-row">
-                                    <span><i class="ok"></i> 只读工具链</span>
-                                    <span><i class="info"></i> 失败隔离</span>
-                                    <span><i class="scheme"></i> 请求追踪</span>
-                                </div>
-                            </div>
-                            <div class="hero-evidence-card">
-                                <div class="evidence-card-head"><span>诊断证据面</span><b>LIVE</b></div>
-                                <div class="evidence-flow">
-                                    <div><i></i><span>健康与就绪</span><strong>3 checks</strong></div>
-                                    <div><i></i><span>队列与 Worker</span><strong>read-only</strong></div>
-                                    <div><i></i><span>日志与指标</span><strong>MCP</strong></div>
-                                    <div><i></i><span>审计与治理</span><strong>traceable</strong></div>
-                                </div>
-                                <p>单项依赖异常会保留在证据快照中，不会覆盖其他成功结果。</p>
-                            </div>
+                        <div class="welcome-intro">
+                            <h1>证据驱动的运维诊断</h1>
+                            <p>编排内部 Runbook、日志、监控指标与只读数据库，输出可追溯的排查结论。所有工具默认只读。</p>
                         </div>
 
                         <div class="section-heading">
                             <div><span>快速开始</span><strong>选择一个常见诊断场景</strong></div>
-                            <small>点击后将直接发起诊断提问</small>
                         </div>
                         <div class="capability-grid">
-                            <button class="suggestion-card windos" data-prompt="请使用 windos_diagnose_overview 工具检查 WINDOS 当前运行状态，重点说明健康状态、生产就绪阻断项、排程队列和治理模式。严格基于工具结果，不执行任何变更。">
-                                <span class="card-code">W-01</span><strong>WINDOS 系统体检</strong><small>健康、队列、审计与生产闸门</small><i>→</i>
-                            </button>
                             <button class="suggestion-card" data-prompt="请根据内部运维知识库，给出 CPU 使用率持续过高的排查步骤">
                                 <span class="card-code">CPU</span><strong>高 CPU 排查</strong><small>定位异常进程与资源瓶颈</small><i>→</i>
                             </button>
@@ -192,7 +162,7 @@
                             </div>
                             <div class="input-wrapper">
                                 <label class="input-label" for="messageInput">描述故障或提出诊断问题</label>
-                                <input type="text" id="messageInput" placeholder="例如：检查 WINDOS 为什么服务可用但未达到生产就绪…" maxlength="2000" class="message-input" autocomplete="off">
+                                <input type="text" id="messageInput" placeholder="例如：Pod 因内存限制反复重启应该如何排查？" maxlength="2000" class="message-input" autocomplete="off">
                                 <div class="input-bottom-bar">
                                     <div class="tools-btn-wrapper">
                                         <button class="tools-btn" id="toolsBtn" title="更多选项" aria-label="更多选项">＋</button>
@@ -264,6 +234,6 @@
         </div>
     </div>
 
-    <script src="/static/app.js?v=4.1.0"></script>
+    <script src="/static/app.js?v=4.2.0"></script>
 </body>
 </html>

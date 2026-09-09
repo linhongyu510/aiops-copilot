@@ -1,4 +1,10 @@
-"""Capture normal, partial-503 and unreachable WINDOS evidence."""
+"""Capture normal, partial-503 and unreachable WINDOS evidence.
+
+Ships with the optional WINDOS integration; it exercises that integration's
+degradation behaviour and is not part of the core evaluation suite.
+
+Usage: python -m integrations.windos.capture_scenarios --output-dir artifacts
+"""
 
 from __future__ import annotations
 
@@ -10,24 +16,24 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-import mcp_servers.ops_server as ops
 from app.reliability import dependency_guards
+from integrations import windos
 
 
 async def _reset_client() -> None:
-    if ops._windos_client is not None:
-        await ops._windos_client.aclose()
-    ops._windos_client = None
-    ops._windos_client_signature = None
+    if windos._client is not None:
+        await windos._client.aclose()
+    windos._client = None
+    windos._client_signature = None
     dependency_guards.reset()
 
 
 async def capture(output_dir: Path) -> dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
     original_url = os.getenv("WINDOS_BASE_URL")
-    normal = await ops.windos_diagnose_overview.fn()
+    normal = await windos.diagnose_overview()
 
-    original_get = ops._windos_get
+    original_get = windos.windos_get
 
     async def one_503(path: str, parameters=None):
         if path == "/api/v1/agent/metrics/tools":
@@ -41,16 +47,16 @@ async def capture(output_dir: Path) -> dict[str, Any]:
             }
         return await original_get(path, parameters)
 
-    ops._windos_get = one_503
+    windos.windos_get = one_503
     try:
-        partial = await ops.windos_diagnose_overview.fn()
+        partial = await windos.diagnose_overview()
     finally:
-        ops._windos_get = original_get
+        windos.windos_get = original_get
 
     try:
         os.environ["WINDOS_BASE_URL"] = "http://127.0.0.1:1"
         await _reset_client()
-        unreachable = await ops.windos_diagnose_overview.fn()
+        unreachable = await windos.diagnose_overview()
     finally:
         if original_url is None:
             os.environ.pop("WINDOS_BASE_URL", None)

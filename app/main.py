@@ -13,7 +13,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 try:
-    from fastapi import FastAPI, Request
+    from fastapi import FastAPI, Request, Response
     from fastapi.concurrency import run_in_threadpool
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import FileResponse, JSONResponse
@@ -167,6 +167,19 @@ app.include_router(rag.router, prefix="/api", tags=["RAG检索"])
 
 # 挂载静态文件
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    """Serve the site icon.
+
+    Browsers request /favicon.ico from the document root regardless of the
+    <link rel="icon"> tag, so without this route every page load logged a 404.
+    """
+    icon_path = os.path.join(STATIC_DIR, "favicon.svg")
+    if os.path.exists(icon_path):
+        return FileResponse(icon_path, media_type="image/svg+xml")
+    return Response(status_code=204)
 
 
 @app.get("/")

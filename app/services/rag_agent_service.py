@@ -24,6 +24,7 @@ from loguru import logger
 from typing_extensions import TypedDict
 
 from app.agent.mcp_client import get_mcp_client_with_retry
+from app.agent.tool_registry import tool_registry
 from app.agent.tool_router import dynamic_tool_router
 from app.config import config
 from app.core.llm_factory import llm_factory
@@ -259,15 +260,23 @@ class RagAgentService:
         raise RuntimeError("模型摘要重试状态异常")
 
     async def _explicit_read_only_tool_fallback(self, question: str) -> str | None:
-        """Execute an explicitly named safe tool when the model router is unavailable."""
-        safe_tools = {
-            "windos_health",
-            "windos_queue_status",
-            "windos_agent_metrics",
-            "windos_governance_status",
-            "windos_diagnose_overview",
-        }
-        requested = next((name for name in safe_tools if name in question), None)
+        """Execute an explicitly named safe tool when the model router is unavailable.
+
+        Eligibility comes from the tool registry (``read_only`` and ``risk_level``),
+        not from a hardcoded vendor list, so any integration — first-party or
+        third-party — participates as soon as it registers itself as read-only.
+        """
+        requested = next(
+            (
+                tool.name
+                for tool in self.mcp_tools
+                if tool.name
+                and tool.name in question
+                and tool_registry.spec_for(tool.name).read_only
+                and tool_registry.spec_for(tool.name).risk_level == 0
+            ),
+            None,
+        )
         if requested is None:
             return None
         tool = next(

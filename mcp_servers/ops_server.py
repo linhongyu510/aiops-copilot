@@ -10,7 +10,6 @@ import re
 import socket
 import ssl
 import time
-import uuid
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Any, Literal
@@ -20,23 +19,25 @@ import httpx
 from dotenv import load_dotenv
 from fastmcp import FastMCP
 from loguru import logger
-from opentelemetry.propagate import inject
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.url import make_url
 from tavily import AsyncTavilyClient
 
-from app.observability.tracing import dependency_span
-from app.reliability import dependency_guards
+from integrations.loader import register_enabled_mcp_tools
 
 load_dotenv()
 
 mcp = FastMCP("Ops")
 
+# Optional integrations attach their own read-only tools here. Nothing is loaded
+# unless AIOPS_ENABLED_INTEGRATIONS names it, so the default server exposes only
+# the vendor-neutral diagnostics defined in this module.
+_integration_tools = register_enabled_mcp_tools(mcp)
+if _integration_tools:
+    logger.info(f"集成工具已注册：{list(_integration_tools)}")
+
 _engine: Engine | None = None
-_windos_client: httpx.AsyncClient | None = None
-_windos_client_signature: tuple[str, int] | None = None
-_windos_client_lock = asyncio.Lock()
 _IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_$]*$")
 _RESOURCE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,252}$")
 _READ_ONLY_PREFIXES = ("select", "show", "describe", "desc", "explain")
@@ -64,9 +65,6 @@ def _settings() -> dict[str, Any]:
         "max_rows": max(1, int(os.getenv("MYSQL_MAX_ROWS", "200"))),
         "tavily_api_key": os.getenv("TAVILY_API_KEY", "").strip(),
         "web_max_results": max(1, int(os.getenv("WEB_SEARCH_MAX_RESULTS", "5"))),
-        "windos_base_url": os.getenv("WINDOS_BASE_URL", "http://127.0.0.1:8002").rstrip("/"),
-        "windos_api_key": os.getenv("WINDOS_API_KEY", "").strip(),
-        "windos_timeout": max(1, int(os.getenv("WINDOS_TIMEOUT_SECONDS", "8"))),
         "prometheus_url": os.getenv("PROMETHEUS_URL", "http://127.0.0.1:9090").rstrip("/"),
         "kubernetes_api_url": os.getenv("KUBERNETES_API_URL", "").rstrip("/"),
         "kubernetes_token": os.getenv("KUBERNETES_TOKEN", "").strip(),
@@ -83,135 +81,6 @@ def _settings() -> dict[str, Any]:
             if value.strip()
         },
         "diagnostic_timeout": max(1, int(os.getenv("DIAGNOSTIC_TIMEOUT_SECONDS", "8"))),
-    }
-
-
-async def _windos_get(path: str, parameters: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Call a WINDOS read-only endpoint and retain provenance for the Agent report."""
-    settings = _settings()
-    headers = {
-        "Accept": "application/json",
-        "X-Request-ID": f"aiops-{uuid.uuid4().hex}",
-    }
-    if settings["windos_api_key"]:
-        headers["X-API-Key"] = settings["windos_api_key"]
-    inject(headers)
-    started = time.perf_counter()
-    client = await _get_windos_client()
-    guard = dependency_guards.get("windos-api")
-    with dependency_span(
-        "windos.http",
-        {"http.request.method": "GET", "url.path": path, "peer.service": "windos"},
-    ) as span:
-        response = await guard.call(
-            lambda: client.get(path, params=parameters, headers=headers),
-            failure_predicate=lambda item: item.status_code in {500, 502, 504},
-        )
-        span.set_attribute("http.response.status_code", response.status_code)
-    try:
-        payload: Any = response.json()
-    except ValueError:
-        payload = {"text": response.text[:2000]}
-    return {
-        "source": "windos_live_api",
-        "endpoint": path,
-        "read_only": True,
-        "http_status": response.status_code,
-        "ok": response.is_success,
-        "latency_ms": round((time.perf_counter() - started) * 1000, 2),
-        "data": payload,
-    }
-
-
-async def _get_windos_client() -> httpx.AsyncClient:
-    """Reuse connections while rebuilding the pool when endpoint settings change."""
-    global _windos_client, _windos_client_signature
-    settings = _settings()
-    signature = (settings["windos_base_url"], settings["windos_timeout"])
-    if _windos_client is not None and _windos_client_signature == signature:
-        return _windos_client
-    async with _windos_client_lock:
-        if _windos_client is not None and _windos_client_signature != signature:
-            await _windos_client.aclose()
-            _windos_client = None
-        if _windos_client is None:
-            timeout = httpx.Timeout(settings["windos_timeout"])
-            limits = httpx.Limits(max_connections=20, max_keepalive_connections=10)
-            _windos_client = httpx.AsyncClient(
-                base_url=settings["windos_base_url"],
-                timeout=timeout,
-                limits=limits,
-            )
-            _windos_client_signature = signature
-        return _windos_client
-
-
-@mcp.tool()
-async def windos_health() -> dict[str, Any]:
-    """检查 WINDOS API 存活、综合就绪和生产配置闸门；全部为只读检查。"""
-    paths = ("/api/v1/health", "/api/v1/ready", "/api/v1/production/readiness")
-    values = await asyncio.gather(*(_windos_get(path) for path in paths), return_exceptions=True)
-    results = [
-        {"ok": False, "error_type": type(value).__name__, "error": str(value)}
-        if isinstance(value, Exception)
-        else value
-        for value in values
-    ]
-    return {
-        "system": "WINDOS",
-        "read_only": True,
-        "checks": dict(zip(paths, results, strict=True)),
-    }
-
-
-@mcp.tool()
-async def windos_queue_status() -> dict[str, Any]:
-    """只读查询 WINDOS 异步排程队列、任务状态分布、Worker 心跳和积压时间。"""
-    return await _windos_get("/api/v1/schedule/queue/status")
-
-
-@mcp.tool()
-async def windos_agent_metrics() -> dict[str, Any]:
-    """只读查询 WINDOS Agent 各工具成功率、错误/超时及 P50/P95 延迟。"""
-    return await _windos_get("/api/v1/agent/metrics/tools")
-
-
-@mcp.tool()
-async def windos_governance_status() -> dict[str, Any]:
-    """只读查询 WINDOS 运行模式、审计、身份、持久化与集成治理状态。"""
-    return await _windos_get("/api/v1/governance/status")
-
-
-@mcp.tool()
-async def windos_recent_audit(limit: int = 20) -> dict[str, Any]:
-    """只读查询 WINDOS 最近审计事件，用于关联故障前的配置或操作变更。"""
-    return await _windos_get("/api/v1/audit/recent", {"limit": min(max(1, limit), 100)})
-
-
-@mcp.tool()
-async def windos_diagnose_overview() -> dict[str, Any]:
-    """并行收集 WINDOS 健康、队列、Agent 指标与治理状态，生成自动运维诊断证据快照。"""
-    checks = {
-        "health": _windos_get("/api/v1/health"),
-        "ready": _windos_get("/api/v1/ready"),
-        "production_readiness": _windos_get("/api/v1/production/readiness"),
-        "queue": _windos_get("/api/v1/schedule/queue/status"),
-        "agent_metrics": _windos_get("/api/v1/agent/metrics/tools"),
-        "governance": _windos_get("/api/v1/governance/status"),
-    }
-    values = await asyncio.gather(*checks.values(), return_exceptions=True)
-    evidence: dict[str, Any] = {}
-    for name, value in zip(checks, values, strict=True):
-        evidence[name] = (
-            {"ok": False, "error_type": type(value).__name__, "error": str(value)}
-            if isinstance(value, Exception)
-            else value
-        )
-    return {
-        "system": "WINDOS",
-        "mode": "read_only_diagnosis",
-        "automatic_changes_permitted": False,
-        "evidence": evidence,
     }
 
 

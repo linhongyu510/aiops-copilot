@@ -304,7 +304,8 @@ def test_tool_router_exposes_at_most_eight_relevant_tools() -> None:
     assert {"k8s_list_pods", "k8s_get_events", "k8s_get_logs"}.issubset(
         {tool.name for tool in selected}
     )
-    assert len(TOOL_METADATA) == 39
+    # 33 个厂商无关工具；WINDOS 的 6 个工具已下沉为可选集成，不计入核心目录。
+    assert len(TOOL_METADATA) == 33
     assert all(item["read_only"] is True for item in TOOL_METADATA.values())
 
 

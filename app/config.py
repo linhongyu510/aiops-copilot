@@ -168,6 +168,9 @@ class Settings(BaseSettings):
     prometheus_url: str = Field("", validation_alias="AIOPS_PROMETHEUS_URL")
     tool_slo_success_rate: float = Field(0.99, validation_alias="AIOPS_TOOL_SLO_SUCCESS_RATE")
     tool_slo_p95_ms: float = Field(5000.0, validation_alias="AIOPS_TOOL_SLO_P95_MS")
+    # Pin the tool used by /api/observability/trace-probe. Empty means "pick the
+    # first registered read-only tool", so the probe stays vendor-neutral.
+    trace_probe_tool: str = Field("", validation_alias="AIOPS_TRACE_PROBE_TOOL")
 
     # Dependency isolation / circuit breaking
     dependency_max_concurrency: int = Field(8, validation_alias="AIOPS_DEPENDENCY_MAX_CONCURRENCY")

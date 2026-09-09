@@ -5,6 +5,7 @@ from fastapi.responses import PlainTextResponse
 from opentelemetry import trace
 
 from app.agent.mcp_client import get_mcp_client_with_retry
+from app.agent.tool_registry import tool_registry
 from app.config import config
 from app.observability import llm_metrics, request_metrics, retrieval_metrics, tool_metrics
 from app.observability.tracing import dependency_span
@@ -71,26 +72,48 @@ async def get_retrieval_metrics() -> dict:
 
 @router.get("/observability/trace-probe")
 async def trace_probe() -> dict:
-    """Run a read-only MCP → WINDOS call to verify trace propagation."""
+    """Verify trace propagation through one read-only MCP call.
+
+    The probe only needs *some* read-only tool to cross the API → MCP boundary;
+    it is not tied to any particular integration. ``AIOPS_TRACE_PROBE_TOOL``
+    pins a specific tool when a deployment wants a stable probe target,
+    otherwise the first registered read-only tool is used.
+    """
     try:
         client = await get_mcp_client_with_retry()
         tools = await client.get_tools()
-        windos_health = next(
-            (tool for tool in tools if tool.name == "windos_health"),
-            None,
-        )
-        if windos_health is None:
-            raise RuntimeError("windos_health tool is unavailable")
+
+        preferred = config.trace_probe_tool.strip()
+        probe_tool = None
+        if preferred:
+            probe_tool = next((tool for tool in tools if tool.name == preferred), None)
+            if probe_tool is None:
+                raise RuntimeError(f"configured trace probe tool is unavailable: {preferred}")
+        else:
+            probe_tool = next(
+                (
+                    tool
+                    for tool in tools
+                    if tool.name
+                    and tool_registry.spec_for(tool.name).read_only
+                    and tool_registry.spec_for(tool.name).risk_level == 0
+                ),
+                None,
+            )
+        if probe_tool is None:
+            raise RuntimeError("no read-only MCP tool is available for the trace probe")
+
         with dependency_span(
             "observability.trace_probe",
-            {"probe.target": "mcp-ops/windos_health"},
+            {"probe.target": f"mcp/{probe_tool.name}"},
         ):
-            result = await windos_health.ainvoke({})
+            result = await probe_tool.ainvoke({})
         span_context = trace.get_current_span().get_span_context()
         return {
             "ok": True,
             "trace_id": (f"{span_context.trace_id:032x}" if span_context.is_valid else None),
-            "path": ["aiops-api", "mcp-ops", "windos"],
+            "path": ["aiops-api", "mcp", probe_tool.name],
+            "probe_tool": probe_tool.name,
             "result": result,
         }
     except Exception as exc:
