@@ -126,6 +126,80 @@ def generate_time_series(
     return result_time.strftime(format_str)
 
 
+# 单次查询允许返回的最大数据点数，防止时间范围过大导致输出无界膨胀
+MAX_DATA_POINTS = 1000
+
+
+def parse_interval_minutes(interval: str) -> int | None:
+    """解析聚合间隔为分钟数。
+
+    支持 "1m"、"5m"、"1h" 等格式；无法解析或小于 1 分钟时返回 None，
+    由调用方返回明确的错误信息（interval=0 会导致时间序列循环永不推进）。
+
+    Args:
+        interval: 聚合间隔字符串（如 "1m"、"5m"、"1h"）
+
+    Returns:
+        int | None: 聚合间隔分钟数；非法输入返回 None
+    """
+    try:
+        if interval.endswith("m"):
+            minutes = int(interval[:-1])
+        elif interval.endswith("h"):
+            minutes = int(interval[:-1]) * 60
+        else:
+            return None
+    except (AttributeError, TypeError, ValueError):
+        return None
+    return minutes if minutes >= 1 else None
+
+
+def validate_series_request(
+    service_name: str, metric_name: str, interval: str, start_dt: datetime, end_dt: datetime
+) -> dict[str, Any] | None:
+    """校验时间序列查询参数，非法时返回带 error 的响应字典，合法时返回 None。
+
+    Args:
+        service_name: 服务名称
+        metric_name: 指标名称
+        interval: 聚合间隔字符串
+        start_dt: 开始时间
+        end_dt: 结束时间
+
+    Returns:
+        dict | None: 参数非法时返回错误响应，合法时返回 None
+    """
+    interval_minutes = parse_interval_minutes(interval)
+    if interval_minutes is None:
+        return {
+            "service_name": service_name,
+            "metric_name": metric_name,
+            "interval": interval,
+            "data_points": [],
+            "statistics": {},
+            "error": (
+                f"非法的 interval 参数: {interval!r}，"
+                '请使用 "1m"、"5m"、"1h" 等格式，且聚合间隔不小于 1 分钟'
+            ),
+        }
+
+    # 限制数据点数量，防止时间范围过大导致输出无界膨胀
+    total_minutes = (end_dt - start_dt).total_seconds() / 60
+    if total_minutes / interval_minutes + 1 > MAX_DATA_POINTS:
+        return {
+            "service_name": service_name,
+            "metric_name": metric_name,
+            "interval": interval,
+            "data_points": [],
+            "statistics": {},
+            "error": (
+                f"按 interval={interval!r} 查询该时间范围将生成超过 {MAX_DATA_POINTS} 个数据点，"
+                "请增大 interval 或缩小时间范围"
+            ),
+        }
+    return None
+
+
 # ============================================================
 # 监控数据查询工具
 # ============================================================
@@ -201,12 +275,13 @@ def query_cpu_metrics(
     start_dt = parse_time_or_default(start_time, default_offset_hours=-1)
     end_dt = parse_time_or_default(end_time, default_offset_hours=0)
 
-    # 解析间隔时间（interval: 1m, 5m, 1h 等）
-    interval_minutes = 1  # 默认 1 分钟
-    if interval.endswith("m"):
-        interval_minutes = int(interval[:-1])
-    elif interval.endswith("h"):
-        interval_minutes = int(interval[:-1]) * 60
+    # 校验聚合间隔与数据点上限（非法时返回明确错误，避免死循环/无界输出）
+    validation_error = validate_series_request(
+        service_name, "cpu_usage_percent", interval, start_dt, end_dt
+    )
+    if validation_error is not None:
+        return validation_error
+    interval_minutes = parse_interval_minutes(interval)
 
     # 动态生成 CPU 使用率数据：从低到高逐渐增长
     data_points = []
@@ -351,12 +426,13 @@ def query_memory_metrics(
     start_dt = parse_time_or_default(start_time, default_offset_hours=-1)
     end_dt = parse_time_or_default(end_time, default_offset_hours=0)
 
-    # 解析间隔时间（interval: 1m, 5m, 1h 等）
-    interval_minutes = 1  # 默认 1 分钟
-    if interval.endswith("m"):
-        interval_minutes = int(interval[:-1])
-    elif interval.endswith("h"):
-        interval_minutes = int(interval[:-1]) * 60
+    # 校验聚合间隔与数据点上限（非法时返回明确错误，避免死循环/无界输出）
+    validation_error = validate_series_request(
+        service_name, "memory_usage_percent", interval, start_dt, end_dt
+    )
+    if validation_error is not None:
+        return validation_error
+    interval_minutes = parse_interval_minutes(interval)
 
     # 动态生成内存使用率数据：从低到高逐渐增长
     data_points = []

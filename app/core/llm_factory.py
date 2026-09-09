@@ -1,8 +1,21 @@
-"""Create OpenAI-compatible chat models without leaking provider-specific options."""
+"""Create OpenAI-compatible chat models without leaking provider-specific options.
 
-from langchain_openai import ChatOpenAI
+需要 ``[llm]`` extra（``langchain-openai``）。缺失时抛
+:class:`aiops_core._optional.OptionalDependencyMissing`。
+"""
+
+try:
+    from langchain_openai import ChatOpenAI
+except ImportError as _exc:  # pragma: no cover - depends on install profile
+    from aiops_core._optional import OptionalDependencyMissing
+
+    raise OptionalDependencyMissing(
+        "创建 LLM 客户端需要 `[llm]` extra。"
+        "\n    pip install 'aiops-copilot[llm]'"
+    ) from _exc
 
 from app.config import config
+from app.observability.llm_metrics import LLMMetricsCallback
 
 
 class LLMFactory:
@@ -56,7 +69,22 @@ class LLMFactory:
             max_tokens=max_tokens if max_tokens is not None else config.llm_max_tokens,
             timeout=config.llm_timeout_seconds,
             max_retries=config.llm_max_retries,
+            # Model-level callbacks are inherited by bind_tools/with_structured_output
+            # derived runnables, so a single handler covers every derived chain.
+            callbacks=[LLMMetricsCallback(selected_model)],
         )
 
 
 llm_factory = LLMFactory()
+
+
+def structured_output(llm: ChatOpenAI, schema):
+    """Structured output with a method the configured provider actually supports.
+
+    DeepSeek's OpenAI-compatible endpoint rejects ``response_format``-based
+    methods (``json_schema`` / ``json_object``) with HTTP 400, so route through
+    function calling, which it does support. Other providers keep the default.
+    """
+    if config.llm_provider.strip().lower() == "deepseek":
+        return llm.with_structured_output(schema, method="function_calling")
+    return llm.with_structured_output(schema)

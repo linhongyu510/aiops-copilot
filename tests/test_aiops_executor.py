@@ -1,8 +1,10 @@
 """F2：Executor 多轮（链式）工具调用循环"""
 
+import asyncio
 import importlib
+import time
 
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage, ToolMessage
 from langchain_core.tools import tool
 
 from app.config import config
@@ -18,17 +20,30 @@ def _tool_call_msg(name: str, args: dict, call_id: str) -> AIMessage:
     )
 
 
+def _multi_tool_call_msg(calls: list[tuple[str, dict, str]]) -> AIMessage:
+    """一轮内包含多个 tool_calls 的 AIMessage"""
+    return AIMessage(
+        content="",
+        tool_calls=[
+            {"name": name, "args": args, "id": call_id, "type": "tool_call"}
+            for name, args, call_id in calls
+        ],
+    )
+
+
 class _ScriptedLLM:
     """按脚本依次返回响应的假 LLM；bind_tools 返回自身"""
 
     def __init__(self, responses: list[AIMessage]):
         self._responses = list(responses)
         self.calls = 0
+        self.seen_messages: list[list] = []
 
     def bind_tools(self, tools):  # noqa: ARG002
         return self
 
-    async def ainvoke(self, messages):  # noqa: ARG002
+    async def ainvoke(self, messages):
+        self.seen_messages.append(list(messages))
         idx = min(self.calls, len(self._responses) - 1)
         self.calls += 1
         return self._responses[idx]
@@ -148,3 +163,123 @@ async def test_executor_failure_keeps_event_structure(monkeypatch):
 
     assert result["plan"] == []
     assert "执行失败" in result["past_steps"][0][1]
+
+
+
+async def test_executor_parallel_tool_calls_in_one_round(monkeypatch):
+    """同一轮内多个 tool_calls 全部执行，ToolMessage 顺序与 tool_calls 一致"""
+    calls: list = []
+
+    # 工具名需匹配 tool_router.DEFAULT_TOOL_PREFIXES，否则会被 select_relevant_tools 过滤
+    @tool
+    async def query_cpu_metrics(service: str) -> str:
+        """查询服务 CPU 使用率"""
+        calls.append(("query_cpu_metrics", service))
+        return "cpu=85%"
+
+    @tool
+    async def query_memory_metrics(service: str) -> str:
+        """查询服务内存使用率"""
+        calls.append(("query_memory_metrics", service))
+        return "mem=70%"
+
+    llm = _ScriptedLLM(
+        [
+            _multi_tool_call_msg(
+                [
+                    ("query_cpu_metrics", {"service": "svc"}, "c1"),
+                    ("query_memory_metrics", {"service": "svc"}, "c2"),
+                ]
+            ),
+            AIMessage(content="汇总：CPU 85%，内存 70%"),
+        ]
+    )
+    _patch_dependencies(monkeypatch, llm, [query_cpu_metrics, query_memory_metrics])
+
+    result = await executor_module.executor(_state())
+
+    # 两个工具都被执行
+    assert sorted(name for name, _ in calls) == ["query_cpu_metrics", "query_memory_metrics"]
+    # 最终一轮 LLM 收到的消息中，ToolMessage 顺序与 tool_calls 一致
+    final_messages = llm.seen_messages[-1]
+    tool_msgs = [m for m in final_messages if isinstance(m, ToolMessage)]
+    assert [m.tool_call_id for m in tool_msgs] == ["c1", "c2"]
+    assert [m.content for m in tool_msgs] == ["cpu=85%", "mem=70%"]
+    assert result["past_steps"][0][1] == "汇总：CPU 85%，内存 70%"
+
+
+async def test_executor_parallel_tool_call_failure_isolated(monkeypatch):
+    """并行执行时单个工具抛异常不影响其他工具，错误转为文本结果"""
+
+    @tool
+    async def search_log_ok(x: str) -> str:
+        """正常工具"""
+        return f"ok:{x}"
+
+    @tool
+    async def search_log_fail(x: str) -> str:
+        """必然失败的工具"""
+        raise RuntimeError("下游服务超时")
+
+    llm = _ScriptedLLM(
+        [
+            _multi_tool_call_msg(
+                [
+                    ("search_log_ok", {"x": "a"}, "c1"),
+                    ("search_log_fail", {"x": "b"}, "c2"),
+                ]
+            ),
+            AIMessage(content="部分工具失败后的总结"),
+        ]
+    )
+    _patch_dependencies(monkeypatch, llm, [search_log_ok, search_log_fail])
+
+    await executor_module.executor(_state())
+
+    final_messages = llm.seen_messages[-1]
+    tool_msgs = [m for m in final_messages if isinstance(m, ToolMessage)]
+    assert [m.tool_call_id for m in tool_msgs] == ["c1", "c2"]
+    # 成功工具结果不受影响
+    assert tool_msgs[0].content == "ok:a"
+    # 失败工具的错误转为文本，而非中断整轮
+    assert "search_log_fail 执行失败" in tool_msgs[1].content
+    assert "下游服务超时" in tool_msgs[1].content
+
+
+async def test_executor_parallel_tool_calls_run_concurrently(monkeypatch):
+    """两个各 sleep 0.2s 的工具并行执行，总耗时应显著小于串行的 0.4s"""
+    barrier = asyncio.Event()
+
+    @tool
+    async def search_log_slow_a(x: str) -> str:
+        """慢工具 A"""
+        await asyncio.sleep(0.2)
+        return "a-done"
+
+    @tool
+    async def search_log_slow_b(x: str) -> str:
+        """慢工具 B"""
+        await asyncio.sleep(0.2)
+        barrier.set()  # 标记 B 在 A 的 sleep 窗口内启动过
+        return "b-done"
+
+    llm = _ScriptedLLM(
+        [
+            _multi_tool_call_msg(
+                [
+                    ("search_log_slow_a", {"x": "1"}, "c1"),
+                    ("search_log_slow_b", {"x": "2"}, "c2"),
+                ]
+            ),
+            AIMessage(content="完成"),
+        ]
+    )
+    _patch_dependencies(monkeypatch, llm, [search_log_slow_a, search_log_slow_b])
+
+    start = time.perf_counter()
+    await executor_module.executor(_state())
+    elapsed = time.perf_counter() - start
+
+    # 串行需 ~0.4s；并行应明显更短（留足调度余量）
+    assert elapsed < 0.38, f"工具调用未并行执行，耗时 {elapsed:.3f}s"
+    assert barrier.is_set()

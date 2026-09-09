@@ -125,8 +125,9 @@ async def diagnose_stream(payload: AIOpsRequest, request: Request):
     Returns:
         SSE 事件流
     """
-    # session_id 仅用于日志关联；诊断是无状态批式任务，
-    # 每次请求的 LangGraph thread_id 由 aiops_service 生成 uuid4，避免跨请求状态污染
+    # session_id 用于日志关联与 LangGraph thread_id 复用：提供时同一 session 的
+    # 多次诊断共享同一 checkpoint 槽位（每轮执行前会清空旧 checkpoint，避免状态污染）；
+    # 未提供时由 aiops_service 生成 uuid4 thread_id
     public_session_id = payload.session_id or "anonymous"
     session_id = scoped_session_id(request, public_session_id)
     operation_key = (

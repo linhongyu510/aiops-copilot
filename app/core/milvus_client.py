@@ -1,16 +1,33 @@
-"""Milvus 客户端工厂模块"""
+"""Milvus 客户端工厂模块
+
+需要 ``[rag]`` extra（``pymilvus``）。缺失时抛
+:class:`aiops_core._optional.OptionalDependencyMissing`。
+"""
+
+import re
 
 from loguru import logger
-from pymilvus import (
-    Collection,
-    CollectionSchema,
-    DataType,
-    FieldSchema,
-    MilvusClient,
-    MilvusException,
-    connections,
-    utility,
-)
+
+try:
+    from pymilvus import (
+        Collection,
+        CollectionSchema,
+        DataType,
+        FieldSchema,
+        Function,
+        FunctionType,
+        MilvusClient,
+        MilvusException,
+        connections,
+        utility,
+    )
+except ImportError as _exc:  # pragma: no cover - depends on install profile
+    from aiops_core._optional import OptionalDependencyMissing
+
+    raise OptionalDependencyMissing(
+        "Milvus 检索栈需要 `[rag]` extra。"
+        "\n    pip install 'aiops-copilot[rag]'"
+    ) from _exc
 
 from app.config import config
 
@@ -20,7 +37,7 @@ class MilvusClientManager:
 
     # schema 常量
     ID_MAX_LENGTH: int = 100
-    CONTENT_MAX_LENGTH: int = 8000
+    CONTENT_MAX_LENGTH: int = 65535
     DEFAULT_SHARD_NUMBER: int = 2
 
     def __init__(self) -> None:
@@ -54,6 +71,7 @@ class MilvusClientManager:
             # 创建客户端
             uri = f"http://{config.milvus_host}:{config.milvus_port}"
             self._client = MilvusClient(uri=uri)
+            self._validate_server_version(str(utility.get_server_version()))
 
             logger.info("成功连接到 Milvus")
 
@@ -68,6 +86,15 @@ class MilvusClientManager:
 
                 # 检查向量维度是否匹配
                 schema = self._collection.schema
+                field_names = {field.name for field in schema.fields}
+                required_fields = {"id", "vector", "content", "sparse_vector", "metadata"}
+                missing_fields = required_fields - field_names
+                if missing_fields:
+                    raise RuntimeError(
+                        "Milvus collection schema 不兼容，拒绝原地修改: "
+                        f"collection={self.collection_name}, missing={sorted(missing_fields)}。"
+                        "请使用新的版本化 collection 名称重建。"
+                    )
                 vector_field = None
                 existing_dim = None
                 for field in schema.fields:
@@ -82,14 +109,11 @@ class MilvusClientManager:
                 ):
                     existing_dim = vector_field.params["dim"]
                     if existing_dim != self.vector_dim:
-                        logger.warning(
-                            f"检测到向量维度不匹配！当前 collection 维度: {existing_dim}, 配置维度: {self.vector_dim}"
+                        raise RuntimeError(
+                            "Milvus collection 向量维度不匹配，拒绝自动删除数据: "
+                            f"collection={self.collection_name}, existing={existing_dim}, "
+                            f"configured={self.vector_dim}。请使用新的版本化 collection 名称重建索引。"
                         )
-                        logger.info(f"正在删除旧 collection '{self.collection_name}'...")
-                        _ = utility.drop_collection(self.collection_name)
-                        logger.info(f"正在重新创建 collection '{self.collection_name}'...")
-                        self._create_collection()
-                        logger.info(f"成功重新创建 collection，维度: {self.vector_dim}")
                     else:
                         logger.info(f"向量维度匹配: {self.vector_dim}")
 
@@ -117,6 +141,15 @@ class MilvusClientManager:
         result = utility.has_collection(self.collection_name)
         return bool(result)  # type: ignore[arg-type]
 
+    @staticmethod
+    def _validate_server_version(version: str) -> None:
+        numbers = tuple(int(value) for value in re.findall(r"\d+", version)[:3])
+        normalized = numbers + (0,) * (3 - len(numbers))
+        if normalized < (2, 6, 0):
+            raise RuntimeError(
+                f"Milvus Server {version} 不支持 RAG v2 BM25/Jieba 合同；需要 2.6.x"
+            )
+
     def _create_collection(self) -> None:
         """创建 biz collection"""
         # 定义字段
@@ -136,17 +169,32 @@ class MilvusClientManager:
                 name="content",
                 dtype=DataType.VARCHAR,
                 max_length=self.CONTENT_MAX_LENGTH,
+                enable_analyzer=True,
+                enable_match=True,
+                analyzer_params={
+                    "tokenizer": "jieba",
+                    "filter": ["removepunct"],
+                },
             ),
+            FieldSchema(name="sparse_vector", dtype=DataType.SPARSE_FLOAT_VECTOR),
             FieldSchema(
                 name="metadata",
                 dtype=DataType.JSON,
             ),
         ]
 
+        bm25_function = Function(
+            name="content_bm25",
+            function_type=FunctionType.BM25,
+            input_field_names=["content"],
+            output_field_names=["sparse_vector"],
+        )
+
         # 创建 schema
         schema = CollectionSchema(
             fields=fields,
-            description="Business knowledge collection",
+            functions=[bm25_function],
+            description="AIOps RAG 2.0 dense and BM25 knowledge collection",
             enable_dynamic_field=False,
         )
 
@@ -165,18 +213,56 @@ class MilvusClientManager:
         if self._collection is None:
             raise RuntimeError("Collection 未初始化")
 
-        index_params = {
-            "metric_type": "L2",  # 欧氏距离
-            "index_type": "IVF_FLAT",
-            "params": {"nlist": 128},
+        dense_index_params = {
+            "metric_type": config.milvus_metric_type,
+            "index_type": "HNSW",
+            "params": {"M": 32, "efConstruction": 200},
         }
 
         _ = self._collection.create_index(
             field_name="vector",
-            index_params=index_params,
+            index_params=dense_index_params,
+        )
+        _ = self._collection.create_index(
+            field_name="sparse_vector",
+            index_params={
+                "metric_type": "BM25",
+                "index_type": "SPARSE_INVERTED_INDEX",
+                "params": {"inverted_index_algo": "DAAT_MAXSCORE"},
+            },
         )
 
-        logger.info("成功为 vector 字段创建索引")
+        logger.info("成功创建 dense HNSW 与 sparse BM25 索引")
+
+    def publish_alias(self, collection_name: str | None = None) -> str:
+        """Atomically point the stable read alias at a validated collection."""
+        target = collection_name or self.collection_name
+        alias = config.milvus_collection_alias
+        if not utility.has_collection(target):
+            raise ValueError(f"collection 不存在: {target}")
+        alias_owner = next(
+            (
+                existing
+                for existing in utility.list_collections()
+                if alias in set(utility.list_aliases(existing))
+            ),
+            None,
+        )
+        if alias_owner == target:
+            return alias
+        if alias_owner is None:
+            utility.create_alias(target, alias)
+        else:
+            utility.alter_alias(target, alias)
+        logger.info("Milvus alias '{}' now points to '{}'", alias, target)
+        return alias
+
+    def rollback_alias(self, collection_name: str) -> str:
+        """Move the stable alias back to an explicitly named existing collection."""
+        if not utility.has_collection(collection_name):
+            raise ValueError(f"collection 不存在: {collection_name}")
+        utility.alter_alias(collection_name, config.milvus_collection_alias)
+        return config.milvus_collection_alias
 
     def _load_collection(self) -> None:
         """加载 collection 到内存"""
@@ -222,6 +308,15 @@ class MilvusClientManager:
         if self._collection is None:
             raise RuntimeError("Collection 未初始化，请先调用 connect()")
         return self._collection
+
+    def get_read_collection(self) -> Collection:
+        """Resolve the stable alias on every request so rollback is immediate."""
+        alias = config.milvus_collection_alias
+        alias_exists = any(
+            alias in set(utility.list_aliases(collection_name))
+            for collection_name in utility.list_collections()
+        )
+        return Collection(alias) if alias_exists else self.get_collection()
 
     def health_check(self) -> bool:
         """

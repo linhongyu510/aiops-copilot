@@ -1,0 +1,13 @@
+{
+  "s1": {
+    "tool": "kafka_lag",
+    "summary": "consumergroup checkout-order 落后 orders 12345 条",
+    "status": "warn"
+  },
+  "s2": "重新平衡耗时 8.4s；已收敛",
+  "s3": {
+    "tool": "throughput_probe",
+    "summary": "消费者吞吐从 100 msg/s 恢复到 950 msg/s",
+    "status": "ok"
+  }
+}

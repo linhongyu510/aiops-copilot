@@ -7,6 +7,7 @@ from app.config import config
 from app.services.vector_embedding_service import (
     DashScopeEmbeddings,
     LocalSentenceTransformerEmbeddings,
+    QueryEmbeddingCache,
     create_embedding_service,
 )
 
@@ -63,12 +64,27 @@ def test_local_embedding_encode_and_validation() -> None:
 
 
 def test_embedding_factory_routes_provider(monkeypatch) -> None:
+    # The factory wraps the selected backend in the query cache, so routing is
+    # asserted on the backend behind the wrapper.
+    monkeypatch.setattr(config, "embedding_query_cache_size", 128)
     monkeypatch.setattr(config, "embedding_provider", "local")
-    assert isinstance(create_embedding_service(), LocalSentenceTransformerEmbeddings)
+    local_service = create_embedding_service()
+    assert isinstance(local_service, QueryEmbeddingCache)
+    assert isinstance(local_service.inner, LocalSentenceTransformerEmbeddings)
+
     monkeypatch.setattr(config, "embedding_provider", "dashscope")
     monkeypatch.setattr(config, "dashscope_api_key", "fixture")
     monkeypatch.setattr(module, "OpenAI", FakeOpenAI)
-    assert isinstance(create_embedding_service(), DashScopeEmbeddings)
+    dashscope_service = create_embedding_service()
+    assert isinstance(dashscope_service, QueryEmbeddingCache)
+    assert isinstance(dashscope_service.inner, DashScopeEmbeddings)
+
     monkeypatch.setattr(config, "embedding_provider", "unknown")
     with pytest.raises(ValueError, match="EMBEDDING_PROVIDER"):
         create_embedding_service()
+
+
+def test_embedding_factory_returns_bare_backend_when_cache_disabled(monkeypatch) -> None:
+    monkeypatch.setattr(config, "embedding_query_cache_size", 0)
+    monkeypatch.setattr(config, "embedding_provider", "local")
+    assert isinstance(create_embedding_service(), LocalSentenceTransformerEmbeddings)

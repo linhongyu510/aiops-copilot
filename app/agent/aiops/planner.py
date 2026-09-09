@@ -11,10 +11,13 @@ from langchain_core.prompts import ChatPromptTemplate
 from loguru import logger
 from pydantic import BaseModel, Field
 
+from app.agent.aiops.models import PlanStep, normalize_plan
 from app.agent.mcp_client import get_mcp_client_with_retry
+from app.agent.tool_router import select_relevant_tools
 from app.config import config
-from app.core.llm_factory import llm_factory
-from app.tools import get_current_time, retrieve_knowledge
+from app.core.llm_factory import llm_factory, structured_output
+from app.services.incident_memory_service import incident_memory_service
+from app.tools import analyze_topology, get_current_time, retrieve_knowledge
 
 from .state import PlanExecuteState
 from .utils import format_tools_description
@@ -26,8 +29,9 @@ DEFAULT_PLAN = ["收集相关信息", "分析数据", "生成报告"]
 class Plan(BaseModel):
     """计划的输出格式"""
 
-    steps: list[str] = Field(
-        description="完成任务所需的不同步骤。这些步骤应该按顺序执行，每一步都建立在前一步的基础上。"
+    steps: list[PlanStep] = Field(
+        description="完成任务所需的步骤列表。每步包含描述、可选的工具提示与依赖，"
+        "相互独立的步骤依赖填空列表，它们会被并行执行"
     )
 
 
@@ -48,18 +52,19 @@ planner_prompt = ChatPromptTemplate.from_messages(
                 {experience_context}
 
                 对于给定的任务，请创建一个简单的、逐步的计划来完成它。计划应该：
-                - 将任务分解为逻辑上独立的步骤
+                - 将任务分解为逻辑上独立的步骤，每一步建立在前面的基础上
                 - 每个步骤应该明确使用哪些工具(如果需要工具的话)来获取信息, 最好能同时提供工具执行所需要的参数
-                - 步骤之间应该有清晰的依赖关系
+                - **相互独立的步骤（彼此不需要对方的输出）必须把 depends_on 填为空列表**，这些步骤会被并行执行，显著缩短排查时间
+                - 只有确实需要等待另一步输出时才在 depends_on 中填写该步骤的序号（1-based：依赖"步骤1"填 1）
                 - 步骤描述要具体、可操作
                 - **如果有相关经验文档，请参考其中的方法和步骤制定计划**
 
                 示例输入："分析当前系统的性能问题"
                 示例输出（假设有对应工具）：
-                步骤1: 使用 get_metrics 工具收集系统的 CPU 和内存使用情况
-                步骤2: 使用 query_logs 工具检查最近的错误日志
-                步骤3: 使用 query_database 工具分析慢查询日志
-                步骤4: 综合以上信息生成性能分析报告
+                步骤1: 使用 get_metrics 工具收集系统的 CPU 和内存使用情况 (depends_on: [])
+                步骤2: 使用 query_logs 工具检查最近的错误日志 (depends_on: [])
+                步骤3: 使用 query_database 工具分析慢查询日志，关联步骤1/2 的异常时段 (depends_on: [1, 2])
+                步骤4: 综合以上信息生成性能分析报告 (depends_on: [1, 2, 3])
             """).strip(),
         ),
         ("placeholder", "{messages}"),
@@ -98,7 +103,7 @@ async def planner(state: PlanExecuteState) -> dict[str, Any]:
 
         # 步骤2: 获取可用工具列表
         # 获取本地工具
-        local_tools = [get_current_time, retrieve_knowledge]
+        local_tools = [get_current_time, retrieve_knowledge, analyze_topology]
 
         # 获取 MCP 工具
         mcp_client = await get_mcp_client_with_retry()
@@ -108,22 +113,92 @@ async def planner(state: PlanExecuteState) -> dict[str, Any]:
         all_tools = local_tools + mcp_tools
         logger.info(f"可用工具数量: 本地 {len(local_tools)} + MCP {len(mcp_tools)}")
 
+        # 按用户输入裁剪工具，只把相关工具描述注入规划 prompt
+        exposed_tools = select_relevant_tools(
+            input_text, all_tools, limit=config.aiops_max_exposed_tools
+        )
+        logger.info(f"规划注入工具描述数量: {len(exposed_tools)} / {len(all_tools)}")
+
         # 格式化工具描述
-        tools_description = format_tools_description(all_tools)
+        tools_description = format_tools_description(exposed_tools)
 
-        # 步骤3: 格式化经验文档上下文
+        # 步骤3: 组装经验上下文 = runbook 检索 + 历史相似事件（P0.3）+ 匹配预案（P2.4）
+        context_sections: list[str] = []
         if experience_docs:
-            experience_context = dedent(f"""
-                ## 相关经验文档
+            context_sections.append(
+                dedent(f"""
+                    ## 相关经验文档
 
-                以下是从知识库中检索到的相关经验和最佳实践，请参考这些经验制定执行计划：
+                    以下是从知识库中检索到的相关经验和最佳实践，请参考这些经验制定执行计划：
 
-                {experience_docs}
+                    {experience_docs}
+                """).strip()
+            )
+        try:
+            recalled_episodes = incident_memory_service.format_recalled_episodes(input_text)
+            if recalled_episodes:
+                context_sections.append(recalled_episodes)
+                logger.info("事件记忆命中相似历史事件，已注入规划上下文")
+        except Exception as e:
+            logger.warning(f"检索历史相似事件失败（跳过，不影响规划）: {e}")
 
-                ---
-            """).strip()
-        else:
-            experience_context = ""
+        # Skill Registry（P0-1）：优先匹配可执行 Skill；命中时后续会跳过 LLM 拆解
+        top_skill_match = None
+        try:
+            from app.agent.skills import get_skill_registry
+
+            skill_registry = get_skill_registry()
+            skill_matches = skill_registry.match(input_text)
+            if skill_matches:
+                top_skill_match = skill_matches[0]
+                context_sections.append(
+                    skill_registry.format_matched_skills(input_text)
+                )
+                logger.info(
+                    f"Skill 命中：{top_skill_match.skill.skill_id} "
+                    f"(score={top_skill_match.score}, reasons={top_skill_match.reasons})"
+                )
+        except Exception as e:
+            logger.warning(f"Skill 匹配失败（跳过，不影响规划）: {e}")
+
+        try:
+            from app.services.playbook_service import get_playbook_service
+
+            matched_playbooks = get_playbook_service().format_matched_playbooks(input_text)
+            if matched_playbooks:
+                context_sections.append(matched_playbooks)
+                logger.info("预案库命中匹配预案，已注入规划上下文")
+        except Exception as e:
+            logger.warning(f"检索匹配预案失败（跳过，不影响规划）: {e}")
+        experience_context = "\n\n---\n\n".join(context_sections)
+
+        # 命中 Skill：直接把 skill.steps 作为结构化 plan 返回，跳过 LLM 拆解
+        if top_skill_match is not None:
+            skill = top_skill_match.skill
+            skill_plan = normalize_plan(skill.to_plan_step_dicts())
+            if skill_plan:
+                logger.info(
+                    f"计划直接采用 Skill '{skill.skill_id}'，共 {len(skill_plan)} 个步骤"
+                )
+                try:
+                    from app.agent.skills import get_skill_registry as _reg
+                    _reg().record_activation(skill.skill_id)
+                except Exception:
+                    pass
+                return {
+                    "plan": skill_plan,
+                    "degraded": False,
+                    "skill_id": skill.skill_id,
+                    "skill_context": {
+                        "skill_id": skill.skill_id,
+                        "match_score": top_skill_match.score,
+                        "match_reasons": list(top_skill_match.reasons),
+                        "verifications": [
+                            v.model_dump() for v in skill.verifications
+                        ],
+                        "required_role": skill.required_role,
+                    },
+                }
 
         # 步骤4: 创建 LLM 并生成计划
         llm = llm_factory.create_chat_model(
@@ -133,7 +208,7 @@ async def planner(state: PlanExecuteState) -> dict[str, Any]:
             max_tokens=1024,
         )
 
-        planner_chain = planner_prompt | llm.with_structured_output(Plan)
+        planner_chain = planner_prompt | structured_output(llm, Plan)
 
         try:
             # 首选：structured output 方式生成计划
@@ -158,19 +233,25 @@ async def planner(state: PlanExecuteState) -> dict[str, Any]:
                 llm, input_text, tools_description, experience_context
             )
 
+        # 归一化为结构化步骤（稳定 step_id + 依赖翻译），空计划视为失败
+        plan_steps = normalize_plan(plan_steps)
         if not plan_steps:
             raise RuntimeError("LLM 返回的计划步骤为空")
 
         logger.info(f"计划已生成，共 {len(plan_steps)} 个步骤")
-        for i, step in enumerate(plan_steps, 1):
-            logger.info(f"  步骤{i}: {step}")
+        for step in plan_steps:
+            deps = step.get("depends_on") or []
+            logger.info(
+                f"  步骤{step['step_id']}: {step['description']}"
+                + (f" (依赖: {', '.join(deps)})" if deps else " (可并行)")
+            )
 
         return {"plan": plan_steps, "degraded": False}
 
     except Exception as e:
         # 重试后仍失败：返回默认计划，并显式标记 degraded，便于调用方/前端感知
         logger.warning(f"生成计划失败（重试后仍失败），使用默认降级计划: {e}", exc_info=True)
-        return {"plan": DEFAULT_PLAN, "degraded": True}
+        return {"plan": normalize_plan(DEFAULT_PLAN), "degraded": True}
 
 
 async def _plan_with_plain_text(

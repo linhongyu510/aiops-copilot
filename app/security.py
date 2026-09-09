@@ -53,6 +53,8 @@ def required_role(path: str, method: str) -> str | None:
         return None
     if path in {"/api/upload", "/api/index_directory"}:
         return "admin"
+    if path == "/api/rag/search":
+        return "viewer"
     if path == "/api/chat/clear":
         return "operator"
     if method.upper() in {"POST", "PUT", "PATCH", "DELETE"}:

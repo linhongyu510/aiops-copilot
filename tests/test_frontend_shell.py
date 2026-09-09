@@ -74,7 +74,34 @@ def test_frontend_uses_windos_design_tokens_and_safe_rendering() -> None:
     assert "style=" not in INDEX_HTML
 
 
+def test_hidden_attribute_overrides_component_display_rules() -> None:
+    """Regression: elements toggled via the `hidden` property must actually hide.
+
+    `.upload-status` and the modals set `display` in their base rule, so without a
+    global `[hidden]` override the "正在上传…" banner stayed on screen permanently
+    even though JS had set `hidden = true`.
+    """
+    assert "[hidden] { display: none !important; }" in STYLES
+
+    # Every element that JS hides via the `hidden` property must be declared
+    # `hidden` in the markup so it does not flash before scripts run.
+    for element_id in ("uploadStatus", "apiKeyModal", "ragInspectorModal"):
+        pattern = rf'id="{element_id}"[^>]*>'
+        match = re.search(pattern, INDEX_HTML)
+        assert match is not None, f"{element_id} 必须存在于 index.html"
+        assert " hidden" in match.group(0), f"{element_id} 初始必须带 hidden 属性"
+
+
 def test_frontend_assets_are_versioned_and_local() -> None:
-    assert 'href="/static/styles.css?v=4.0.0"' in INDEX_HTML
-    assert 'src="/static/app.js?v=4.0.0"' in INDEX_HTML
+    # Assert the cache-busting contract rather than one hardcoded version, so
+    # bumping assets does not require editing this test. Both local assets must
+    # carry the same ?v= query string.
+    style_versions = re.findall(r'href="/static/styles\.css\?v=([^"]+)"', INDEX_HTML)
+    script_versions = re.findall(r'src="/static/app\.js\?v=([^"]+)"', INDEX_HTML)
+
+    assert len(style_versions) == 1, "styles.css 必须以带版本号的本地路径引入一次"
+    assert len(script_versions) == 1, "app.js 必须以带版本号的本地路径引入一次"
+    assert style_versions == script_versions, "CSS 与 JS 的版本号必须同步递增"
+    assert re.fullmatch(r"\d+\.\d+\.\d+", style_versions[0]), "版本号应为 x.y.z"
+
     assert "WINDOS" in INDEX_HTML

@@ -7,7 +7,7 @@
     <meta name="description" content="与 WINDOS 联动的证据驱动智能运维与 OnCall 诊断工作台">
     <title>AIOps Copilot · WINDOS 可靠性控制面</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="stylesheet" href="/static/styles.css?v=4.0.0">
+    <link rel="stylesheet" href="/static/styles.css?v=4.1.0">
     <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
@@ -64,6 +64,10 @@
                     <button class="sidebar-workspace" type="button" data-prompt="请使用 windos_diagnose_overview 工具检查 WINDOS 当前运行状态，严格基于工具结果说明健康、生产就绪、队列和治理状态">
                         <span class="nav-glyph" aria-hidden="true">W</span>
                         <span><strong>WINDOS 体检</strong><small>只读可靠性快照</small></span>
+                    </button>
+                    <button class="sidebar-workspace" id="ragInspectorBtn" type="button">
+                        <span class="nav-glyph" aria-hidden="true">R2</span>
+                        <span><strong>RAG 检索实验台</strong><small>Rewrite · RRF · Reranker</small></span>
                     </button>
 
                     <div class="chat-history-section">
@@ -241,6 +245,25 @@
         </div>
     </div>
 
-    <script src="/static/app.js?v=4.0.0"></script>
+    <div class="modal-backdrop" id="ragInspectorModal" hidden role="dialog" aria-modal="true" aria-labelledby="ragInspectorTitle">
+        <div class="modal-card rag-inspector-card">
+            <div class="modal-head">
+                <strong id="ragInspectorTitle">RAG 2.0 检索实验台</strong>
+                <button class="modal-close-btn" id="ragInspectorClose" type="button" aria-label="关闭">×</button>
+            </div>
+            <p class="modal-desc">展示 Query Rewrite、多路召回、RRF 与 BGE Reranker 的公开检索轨迹；不展示模型思维链。</p>
+            <label class="modal-label" for="ragInspectorInput">检索问题</label>
+            <textarea id="ragInspectorInput" class="modal-input rag-inspector-input" maxlength="2000" placeholder="例如：Pod 因内存限制反复重启应该如何排查？"></textarea>
+            <div class="modal-actions">
+                <button class="modal-btn ghost" id="ragInspectorClear" type="button">清空结果</button>
+                <button class="modal-btn primary" id="ragInspectorSearch" type="button">运行检索</button>
+            </div>
+            <div class="rag-inspector-results" id="ragInspectorResults" aria-live="polite">
+                <div class="rag-inspector-empty">等待检索</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js?v=4.1.0"></script>
 </body>
 </html>

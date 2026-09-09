@@ -7,7 +7,12 @@ from app.observability.tool_metrics import ToolMetricsRegistry
 
 def test_tool_metrics_aggregates_success_and_latency() -> None:
     registry = ToolMetricsRegistry()
-    registry.record("search_log", True, 10)
+    registry.record(
+        "search_log",
+        True,
+        10,
+        arguments={"topic_id": "topic-1", "start_time": 1},
+    )
     registry.record("search_log", False, 30, error_class="timeout")
     registry.record("query_cpu_metrics", True, 20)
 
@@ -19,6 +24,11 @@ def test_tool_metrics_aggregates_success_and_latency() -> None:
     assert snapshot["p50_latency_ms"] == 20
     assert snapshot["tools"]["search_log"]["success_rate"] == 0.5
     assert snapshot["tools"]["search_log"]["error_classes"] == {"timeout": 1}
+    assert snapshot["recent_calls"][0]["argument_schema"] == {
+        "start_time": "int",
+        "topic_id": "str",
+    }
+    assert "topic-1" not in str(snapshot["recent_calls"])
     prometheus = registry.render_prometheus()
     assert 'aiops_tool_calls_total{tool="search_log",outcome="success"} 1' in prometheus
     assert 'aiops_tool_calls_total{tool="search_log",outcome="failure"} 1' in prometheus

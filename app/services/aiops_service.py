@@ -14,6 +14,7 @@ from loguru import logger
 
 from app.agent.aiops import PlanExecuteState, executor, planner, replanner
 from app.config import config
+from app.services.incident_memory_service import incident_memory_service
 
 # 节点名称常量
 NODE_PLANNER = "planner"
@@ -94,18 +95,24 @@ class AIOpsService:
         """
         执行 Plan-Execute-Replan 流程
 
-        诊断是无状态批式任务：每次执行都生成全新的 uuid4 thread_id，
-        不复用调用方的 session_id 作为 thread_id，避免跨请求 checkpoint 状态污染
-        （past_steps 使用 operator.add reducer，相同 thread_id 会把历史增量 merge 进来）。
+        thread_id 策略：
+        - 调用方提供有效 session_id 时复用为 thread_id：同一 session 的多次诊断只占一个
+          checkpoint 槽位，避免 MemorySaver 中 thread 无限增长；
+        - 复用前先删除该 thread 的历史 checkpoint：past_steps 使用 operator.add reducer，
+          旧状态会追加进新一轮诊断，必须重置以保证每轮从干净状态开始；
+        - 未提供 session_id（"default"）时保持 uuid4 新会话行为。
 
         Args:
             user_input: 用户的任务描述
-            session_id: 调用方会话ID（仅用于日志关联，不作为 thread_id）
+            session_id: 调用方会话ID（提供时复用为 thread_id，并用于日志关联）
 
         Yields:
             Dict[str, Any]: 流式事件
         """
-        thread_id = uuid.uuid4().hex
+        reuse_session = bool(session_id) and session_id != "default"
+        thread_id = session_id if reuse_session else uuid.uuid4().hex
+        if reuse_session:
+            await self._reset_thread_checkpoint(thread_id)
         total_timeout = config.aiops_total_timeout_seconds
         logger.info(
             f"[会话 {session_id}] 开始执行任务（thread_id={thread_id}, "
@@ -163,6 +170,16 @@ class AIOpsService:
             # 确保超时/异常时关闭内部流，终止图的执行
             await stream.aclose()
 
+    async def _reset_thread_checkpoint(self, thread_id: str) -> None:
+        """删除指定 thread 的历史 checkpoint，使复用 thread_id 的新诊断从干净状态开始。"""
+        adelete_thread = getattr(self.checkpointer, "adelete_thread", None)
+        if adelete_thread is None:
+            return
+        try:
+            await adelete_thread(thread_id)
+        except Exception as e:
+            logger.warning(f"清理 thread {thread_id} 的历史 checkpoint 失败: {e}")
+
     async def _stream_graph(
         self, user_input: str, session_id: str, thread_id: str
     ) -> AsyncGenerator[dict[str, Any], None]:
@@ -181,7 +198,9 @@ class AIOpsService:
         initial_state: PlanExecuteState = {
             "input": user_input,
             "plan": [],
+            "completed_steps": [],
             "past_steps": [],
+            "artifacts": {},
             "degraded": False,
             "response": "",
         }
@@ -212,10 +231,53 @@ class AIOpsService:
         # 获取最终状态
         final_state = await self.graph.aget_state(config_dict)
         final_response = ""
+        past_steps: list[tuple[str, str]] = []
+        skill_id_final = ""
+        outcome_label = ""
+        verification_passed: bool | None = None
 
         # 安全地获取响应（处理 values 可能为 None 的情况）
         if final_state and final_state.values:
             final_response = final_state.values.get("response", "")
+            past_steps = list(final_state.values.get("past_steps", []))
+            skill_id_final = str(final_state.values.get("skill_id", "") or "")
+            skill_context_final = final_state.values.get("skill_context") or {}
+            diagnosis_outcome = final_state.values.get("diagnosis_outcome") or {}
+            # verification_status 由 replanner 写入 skill_context / diagnosis_outcome
+            verification_status = ""
+            if isinstance(skill_context_final, dict):
+                verification_status = str(
+                    skill_context_final.get("verification_status") or ""
+                ).lower()
+            if not verification_status and isinstance(diagnosis_outcome, dict):
+                verification_status = str(
+                    diagnosis_outcome.get("verification_status") or ""
+                ).lower()
+            if verification_status == "passed":
+                verification_passed = True
+                outcome_label = "success"
+            elif verification_status == "failed":
+                verification_passed = False
+                outcome_label = "failed"
+            elif verification_status == "partial":
+                verification_passed = False
+                outcome_label = "partial"
+
+        # 事件记忆（P0.3）：诊断产出报告后自动沉淀，供下次相似诊断检索；
+        # 沉淀失败只记日志，不影响诊断结果
+        if final_response:
+            try:
+                await incident_memory_service.record_episode(
+                    input_text=user_input,
+                    past_steps=past_steps,
+                    response=final_response,
+                    session_id=session_id,
+                    skill_id=skill_id_final,
+                    outcome=outcome_label,
+                    verification_passed=verification_passed,
+                )
+            except Exception as exc:
+                logger.warning(f"沉淀事件记忆失败（不影响诊断主流程）: {exc}")
 
         # 发送完成事件
         yield {
@@ -334,6 +396,11 @@ class AIOpsService:
 
         plan = state.get("plan", [])
         degraded = bool(state.get("degraded", False))
+        # 前端按字符串步骤渲染；结构化字段（step_id/depends_on）保留在内部状态
+        plan_display = [
+            step if isinstance(step, str) else str(step.get("description", ""))
+            for step in plan
+        ]
 
         if degraded:
             # 降级计划：在事件与 message 中显式标注，前端可据此提示用户
@@ -341,7 +408,7 @@ class AIOpsService:
                 "type": "plan",
                 "stage": "plan_created",
                 "message": f"智能规划失败，已使用默认降级计划，共 {len(plan)} 个步骤",
-                "plan": plan,
+                "plan": plan_display,
                 "degraded": True,
             }
 
@@ -349,7 +416,7 @@ class AIOpsService:
             "type": "plan",
             "stage": "plan_created",
             "message": f"执行计划已制定，共 {len(plan)} 个步骤",
-            "plan": plan,
+            "plan": plan_display,
             "degraded": False,
         }
 

@@ -43,6 +43,7 @@ def test_identity_and_session_are_scoped_to_key(monkeypatch) -> None:
 
 def test_role_matrix_protects_mutations_and_admin_routes() -> None:
     assert required_role("/api/metrics/tools", "GET") == "viewer"
+    assert required_role("/api/rag/search", "POST") == "viewer"
     assert required_role("/api/chat", "POST") == "operator"
     assert required_role("/api/upload", "POST") == "admin"
     assert role_allows("admin", "operator")

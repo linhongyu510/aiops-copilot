@@ -23,11 +23,25 @@ if not defined MCP_OPS_PORT set "MCP_OPS_PORT=8005"
 if not defined LLM_PROVIDER (
     for /f "tokens=1,* delims==" %%a in ('findstr /B /I "LLM_PROVIDER=" .env 2^>nul') do set "LLM_PROVIDER=%%b"
 )
-if not defined LLM_PROVIDER set "LLM_PROVIDER=ollama"
+if not defined LLM_PROVIDER set "LLM_PROVIDER=deepseek"
 if not defined LLM_MODEL (
     for /f "tokens=1,* delims==" %%a in ('findstr /B /I "LLM_MODEL=" .env 2^>nul') do set "LLM_MODEL=%%b"
 )
-if not defined LLM_MODEL set "LLM_MODEL=qwen3:8b"
+if not defined LLM_MODEL set "LLM_MODEL=deepseek-v4-flash"
+
+rem Fail closed when an existing .env still points at the legacy 512-dimension
+rem collection.  The script never rewrites .env because it may contain secrets.
+if exist .env (
+    findstr /B /I /C:"EMBEDDING_DIMENSIONS=1024" .env >nul
+    if errorlevel 1 (
+        echo [error] Existing .env still uses the legacy embedding contract.
+        echo [info] Set EMBEDDING_DIMENSIONS=1024 and LOCAL_EMBEDDING_MODEL=BAAI/bge-large-zh-v1.5.
+        echo [info] Also use MILVUS_COLLECTION_NAME=aiops_kb_bge_large_zh_v1_5_v1.
+        echo [info] The old collection is intentionally not deleted automatically.
+        pause
+        exit /b 1
+    )
+)
 
 rem Keep the API client configuration aligned with the local MCP processes.
 set "AIOPS_PORT=!AIOPS_API_PORT!"
@@ -140,6 +154,11 @@ echo [ok] Milvus is healthy.
 echo.
 
 if /i "!LLM_PROVIDER!"=="ollama" (
+    rem An 8GB GPU cannot safely keep the local 8B LLM, BGE Large and reranker
+    rem resident together. Keep retrieval models on CPU in this explicit mode.
+    set "LOCAL_EMBEDDING_DEVICE=cpu"
+    set "RAG_RERANKER_DEVICE=cpu"
+    echo [info] Local Ollama mode: BGE embedding/reranker are pinned to CPU.
     echo [info] Checking local Ollama service...
     set "OLLAMA_IN_CONTAINER=0"
     curl -fsS http://127.0.0.1:11434/api/tags >nul 2>&1
@@ -237,6 +256,11 @@ echo [9/9] Uploading documents to vector database...
 for %%f in (aiops-docs\*.md) do (
     echo   Uploading: %%~nxf
     curl -fsS -X POST http://localhost:!AIOPS_API_PORT!/api/upload -F "file=@%%f" >nul 2>&1
+)
+curl -fsS -X POST http://localhost:!AIOPS_API_PORT!/api/index_directory >nul 2>&1
+if errorlevel 1 (
+    echo [error] Corpus rebuild failed; the previous Milvus alias remains active.
+    goto :done
 )
 echo [ok] Document upload finished.
 

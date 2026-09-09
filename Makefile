@@ -509,6 +509,9 @@ upload:
 	if [ $$failed -gt 0 ]; then \
 		echo "   $(RED)失败: $$failed$(NC)"; \
 	fi
+	@echo "$(YELLOW)原子发布完整语料索引 alias...$(NC)"
+	@curl -s -f -X POST "$(SERVER_URL)/api/index_directory" > /dev/null || \
+		(echo "$(RED)索引重建失败，旧 alias 保持不变$(NC)" && exit 1)
 
 # 列出文档
 list-docs:

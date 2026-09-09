@@ -1,0 +1,139 @@
+# MkDocs 配置：给 aiops-docs 搭一个可搜索的 Wiki 阅读站。
+# 语料原文保持不动（Git 是 SoT），Milvus 索引不受影响。
+#
+# 本地预览：
+#   uv run mkdocs serve
+#   → http://127.0.0.1:8000
+#
+# 构建静态站点：
+#   uv run mkdocs build         # 输出到 site/
+#
+# 部署到 GitHub Pages：
+#   uv run mkdocs gh-deploy     # 自动推到 gh-pages 分支
+
+site_name: AIOps Runbook Wiki
+site_description: OnCall Agent 语料库 —— 40 篇生产级运维预案
+# site_url 留空以便本地开发时挂到根路径；部署到 GitHub Pages 时可通过
+# 环境变量或 CI 步骤覆盖：`mkdocs build -f mkdocs.yml -d site --site-dir site`
+# 然后在 CI 里 sed 注入正式 URL；此处保留占位以避免误发到公开域。
+# site_url: https://example.com/aiops-runbook/
+docs_dir: aiops-docs
+site_dir: site
+exclude_docs: |
+  CORPUS_MANIFEST.json
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - navigation.tracking
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      toggle:
+        icon: material/brightness-7
+        name: 切换到夜间模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      toggle:
+        icon: material/brightness-4
+        name: 切换到日间模式
+
+# 侧边栏按业务分类组织；Home 使用 index.md，被 corpus 脚本显式排除，不进 RAG
+nav:
+  - Home: index.md
+  - Kubernetes:
+      - Pod 崩溃循环: kubernetes_crashloop.md
+      - OOMKilled: kubernetes_oomkilled.md
+      - Pod Pending: kubernetes_pending.md
+      - 探针失败: kubernetes_probe_failure.md
+      - 滚动升级失败: kubernetes_rollout_failure.md
+      - HPA 失效: kubernetes_hpa_failure.md
+      - Ingress 故障: kubernetes_ingress_failure.md
+      - 网络策略: kubernetes_network_policy.md
+      - 节点压力: kubernetes_node_pressure.md
+  - 数据库:
+      - 连接池耗尽: database_connection_pool.md
+      - MySQL 慢查询: mysql_slow_query.md
+      - MySQL 锁等待: mysql_lock_wait.md
+      - MySQL 主从延迟: mysql_replication_lag.md
+  - 消息队列:
+      - Kafka Consumer Lag: kafka_consumer_lag.md
+      - Kafka ISR 收缩: kafka_isr_shrink.md
+      - Kafka Rebalance: kafka_rebalance.md
+      - RabbitMQ 队列积压: rabbitmq_queue_backlog.md
+      - 通用消息积压: message_queue_backlog.md
+  - 缓存:
+      - Redis 内存压力: redis_memory_pressure.md
+      - Redis 慢日志: redis_slowlog.md
+  - Linux 系统:
+      - CPU 高: cpu_high_usage.md
+      - 内存高: memory_high_usage.md
+      - 磁盘高: disk_high_usage.md
+      - Load 高: linux_load_high.md
+      - IO Wait: linux_io_wait.md
+      - Inode 耗尽: inode_exhaustion.md
+      - 文件描述符耗尽: file_descriptor_exhaustion.md
+  - 网络:
+      - DNS 故障: dns_network_failure.md
+      - 丢包: packet_loss.md
+      - 端口连通性: port_connectivity.md
+      - 证书过期: certificate_expiry.md
+  - 应用层:
+      - 内存泄漏: application_memory_leak.md
+      - JVM GC 停顿: jvm_gc_pause.md
+      - 线程池耗尽: thread_pool_exhaustion.md
+      - 慢响应: slow_response.md
+      - 5xx 突增: http_5xx_spike.md
+      - 限流异常: rate_limit_anomaly.md
+  - 治理与依赖:
+      - 熔断打开: circuit_breaker_open.md
+      - 服务不可用: service_unavailable.md
+  - Elasticsearch:
+      - 集群变红: elasticsearch_cluster_red.md
+  - AI-Native:
+      - Quickstart（跳转项目 docs/）: ai_native_quickstart.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: 复制章节链接
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+plugins:
+  - search:
+      lang:
+        - zh
+        - en
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/

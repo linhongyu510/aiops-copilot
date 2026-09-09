@@ -24,6 +24,7 @@ from loguru import logger
 from typing_extensions import TypedDict
 
 from app.agent.mcp_client import get_mcp_client_with_retry
+from app.agent.tool_router import dynamic_tool_router
 from app.config import config
 from app.core.llm_factory import llm_factory
 from app.tools import get_current_time, retrieve_knowledge
@@ -146,7 +147,7 @@ class RagAgentService:
                 # 避免同一 thread 每轮对话重复累积 SystemMessage
                 system_prompt=self.system_prompt,
                 # 挂载消息修剪中间件，防止长会话超出上下文窗口
-                middleware=[trim_messages_middleware],
+                middleware=[trim_messages_middleware, dynamic_tool_router],
                 checkpointer=self.checkpointer,
             )
             self._agent_initialized = True
@@ -220,8 +221,9 @@ class RagAgentService:
         messages = [
             SystemMessage(
                 content=(
-                    "你是 OnCall 助手。只根据给定内部知识回答，控制在 200 字以内；"
-                    "给出排查顺序、证据或止损动作，不得补充外部厂商信息。"
+                    "你是 OnCall 助手。只根据给定内部知识回答，控制在 300 字以内；"
+                    "每个事实使用资料编号 [1] 至 [5] 引证。给出排查顺序、证据或止损动作；"
+                    "证据不足时明确说明，不得补充外部厂商信息或编造结论。"
                 )
             ),
             HumanMessage(content=f"问题：{question}\n\n内部知识：\n{context}"),

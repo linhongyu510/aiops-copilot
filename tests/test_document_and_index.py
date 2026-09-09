@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from langchain_core.documents import Document
 
 from app.config import config
 from app.services.document_splitter_service import DocumentSplitterService
@@ -26,3 +27,28 @@ def test_index_directory_is_restricted_to_upload_root(tmp_path: Path) -> None:
     assert service.resolve_index_directory() == upload_root.resolve()
     with pytest.raises(ValueError, match="仅允许索引上传目录"):
         service.resolve_index_directory(str(tmp_path.parent))
+
+
+def test_index_file_upserts_before_stale_chunk_cleanup(tmp_path: Path, monkeypatch) -> None:
+    source = tmp_path / "runbook.md"
+    source.write_text("# Runbook\n\nEvidence", encoding="utf-8")
+    document = Document(
+        page_content="Evidence",
+        metadata={"chunk_id": "stable-chunk"},
+    )
+    calls: list[str] = []
+    monkeypatch.setattr(
+        "app.services.vector_index_service.document_splitter_service.split_document",
+        lambda content, path: [document],
+    )
+    monkeypatch.setattr(
+        "app.services.vector_index_service.vector_store_manager.add_documents",
+        lambda documents: calls.append("upsert"),
+    )
+    monkeypatch.setattr(
+        "app.services.vector_index_service.vector_store_manager.delete_stale_by_source",
+        lambda path, active_ids: calls.append(f"cleanup:{','.join(sorted(active_ids))}"),
+    )
+
+    VectorIndexService().index_single_file(str(source))
+    assert calls == ["upsert", "cleanup:stable-chunk"]

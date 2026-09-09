@@ -1,0 +1,66 @@
+skill_id: aiops.kafka_lag
+version: 1.0.0
+domain: aiops
+title: Kafka 消费组积压排障
+description: consumer lag 突增 / 消费速率跌落时的分层排查预案
+review_status: demo
+required_role: viewer
+required_tools:
+  - prom_query
+  - prom_query_range
+  - loki_query
+  - prom_active_alerts
+tags:
+  - kafka
+  - streaming
+  - backlog
+runbook_refs:
+  - kafka_consumer_lag
+  - kafka_rebalance
+  - kafka_isr_shrink
+trigger:
+  symptoms:
+    - "kafka lag"
+    - "消费积压"
+    - "consumer group lag"
+    - "消息堆积"
+    - "处理延迟上升"
+  alert_names:
+    - "KafkaConsumerLagHigh"
+    - "KafkaConsumerGroupLag"
+  label_selectors:
+    system: "kafka"
+  min_score: 0.15
+steps:
+  - id: lag_trend
+    description: "查询消费组 lag 趋势，确认是突增还是缓增"
+    tool_hint: prom_query_range
+    tool_args_template:
+      query: "sum by (consumergroup) (kafka_consumergroup_lag{consumergroup=\"{{ context.consumergroup }}\"})"
+      duration: "30m"
+    depends_on: []
+  - id: produce_vs_consume
+    description: "对比生产速率与消费速率，判断上游流量突增还是消费变慢"
+    tool_hint: prom_query
+    tool_args_template:
+      query: "rate(kafka_server_brokertopicmetrics_messagesinpersec{topic=\"{{ context.topic }}\"}[5m]) - rate(kafka_consumer_records_consumed_total{consumergroup=\"{{ context.consumergroup }}\"}[5m])"
+    depends_on: []
+  - id: consumer_log
+    description: "检查消费者日志是否有 rebalance/超时/异常"
+    tool_hint: loki_query
+    tool_args_template:
+      query: "{app=\"{{ context.consumer_app }}\"} |~ \"rebalance|timeout|Exception\""
+    depends_on: []
+  - id: broker_alerts
+    description: "检查消费组是否触发 ISR 收缩或 broker 异常"
+    tool_hint: prom_active_alerts
+    tool_args_template:
+      matchers:
+        alertname: "Kafka.*"
+    depends_on: []
+verifications:
+  - tool: prom_query
+    args:
+      query: "sum by (consumergroup) (kafka_consumergroup_lag{consumergroup=\"{{ context.consumergroup }}\"})"
+    success_expr: "result.value < context.baseline_lag"
+    description: "lag 回落到基线以下"

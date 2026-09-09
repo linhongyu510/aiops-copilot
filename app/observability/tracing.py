@@ -1,4 +1,8 @@
-"""Optional OpenTelemetry wiring and manual dependency spans."""
+"""Optional OpenTelemetry wiring and manual dependency spans.
+
+需要 ``[obs]`` extra（``opentelemetry-*``）与 ``[server]`` extra（``fastapi``）。
+缺失时抛 :class:`aiops_core._optional.OptionalDependencyMissing`。
+"""
 
 from __future__ import annotations
 
@@ -6,9 +10,27 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from typing import Any
 
-from fastapi import FastAPI
+try:
+    from fastapi import FastAPI
+except ImportError as _exc:  # pragma: no cover - depends on install profile
+    from aiops_core._optional import OptionalDependencyMissing
+
+    raise OptionalDependencyMissing(
+        "app.observability.tracing 需要 `[server]` extra（fastapi）。"
+        "\n    pip install 'aiops-copilot[server]'"
+    ) from _exc
+
 from loguru import logger
-from opentelemetry import trace
+
+try:
+    from opentelemetry import trace
+except ImportError as _exc:  # pragma: no cover - depends on install profile
+    from aiops_core._optional import OptionalDependencyMissing
+
+    raise OptionalDependencyMissing(
+        "app.observability.tracing 需要 `[obs]` extra（opentelemetry-api/sdk）。"
+        "\n    pip install 'aiops-copilot[obs]'"
+    ) from _exc
 
 from app.config import config
 

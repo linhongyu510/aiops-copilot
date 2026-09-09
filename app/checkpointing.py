@@ -1,10 +1,24 @@
-"""Lifecycle-managed LangGraph checkpoint backends."""
+"""Lifecycle-managed LangGraph checkpoint backends.
+
+需要 ``[llm]`` extra（``langgraph``）；Postgres 后端还需要 ``[state]`` extra
+（``langgraph-checkpoint-postgres``）。缺失时抛
+:class:`aiops_core._optional.OptionalDependencyMissing`。
+"""
 
 from __future__ import annotations
 
 from typing import Any
 
-from langgraph.checkpoint.memory import MemorySaver
+try:
+    from langgraph.checkpoint.memory import MemorySaver
+except ImportError as _exc:  # pragma: no cover - depends on install profile
+    from aiops_core._optional import OptionalDependencyMissing
+
+    raise OptionalDependencyMissing(
+        "app.checkpointing 需要 `[llm]` extra（langgraph）。"
+        "\n    pip install 'aiops-copilot[llm]'"
+    ) from _exc
+
 from loguru import logger
 
 from app.config import config

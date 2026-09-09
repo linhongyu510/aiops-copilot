@@ -5,6 +5,7 @@ import importlib
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableLambda
 
+from app.agent.aiops.models import normalize_plan
 from app.agent.aiops.planner import DEFAULT_PLAN, _parse_plan_steps
 
 # app.agent.aiops.__init__ 将 planner 导出为函数，遮蔽了模块名，需显式导入模块
@@ -29,7 +30,7 @@ class _FakeMCPClient:
 class _AlwaysFailingLLM:
     """structured output 与纯文本调用都失败的 LLM"""
 
-    def with_structured_output(self, schema):  # noqa: ARG002
+    def with_structured_output(self, schema, **_kwargs):  # noqa: ARG002
         async def _fail(_input):
             raise RuntimeError("structured output 不受支持")
 
@@ -46,7 +47,7 @@ class _PlainTextFallbackLLM:
         self._text = text
         self.ainvoke_calls = 0
 
-    def with_structured_output(self, schema):  # noqa: ARG002
+    def with_structured_output(self, schema, **_kwargs):  # noqa: ARG002
         async def _fail(_input):
             raise RuntimeError("structured output 不受支持")
 
@@ -82,7 +83,7 @@ async def test_planner_returns_default_plan_with_degraded_flag_after_retry(monke
 
     result = await planner_module.planner(_state())
 
-    assert result["plan"] == DEFAULT_PLAN
+    assert result["plan"] == normalize_plan(DEFAULT_PLAN)
     assert result["degraded"] is True
 
 
@@ -93,7 +94,9 @@ async def test_planner_plain_text_retry_succeeds_without_degraded(monkeypatch):
 
     result = await planner_module.planner(_state())
 
-    assert result["plan"] == ["查询当前活跃告警", "分析告警日志", "生成诊断报告"]
+    assert result["plan"] == normalize_plan(
+        ["查询当前活跃告警", "分析告警日志", "生成诊断报告"]
+    )
     assert result["degraded"] is False
     # 确认确实走了纯文本重试路径
     assert llm.ainvoke_calls == 1

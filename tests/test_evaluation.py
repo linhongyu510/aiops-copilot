@@ -2,7 +2,13 @@ from collections import Counter
 
 from langchain_core.documents import Document
 
-from evaluation.agent_eval import failure_reason, summarize_tools, tool_deltas
+from evaluation.agent_eval import (
+    call_event_delta,
+    failure_reason,
+    parameter_correctness,
+    summarize_tools,
+    tool_deltas,
+)
 from evaluation.generate_datasets import build_agent_dataset, build_rag_dataset
 from evaluation.rag_baselines import BM25Index, diversify_ranked_sources
 from evaluation.rag_eval import hashing_embedding
@@ -87,6 +93,37 @@ def test_tool_delta_keeps_legacy_totals_and_adds_per_tool_detail() -> None:
     assert (called, calls, successes) == (["search_log"], 1, 0)
     assert details == {"search_log": {"calls": 1, "successes": 0, "failures": 1}}
     assert failure_reason({"success": False, "error": "read timed out"}) == "timeout"
+
+
+def test_parameter_correctness_uses_value_free_call_schemas() -> None:
+    events = call_event_delta(
+        {"recent_calls": [{"sequence": 3}]},
+        {
+            "recent_calls": [
+                {"sequence": 3, "tool": "old"},
+                {
+                    "sequence": 4,
+                    "tool": "search_log",
+                    "argument_schema": {
+                        "topic_id": "str",
+                        "start_time": "int",
+                        "end_time": "int",
+                    },
+                },
+            ]
+        },
+    )
+    assert parameter_correctness(
+        {
+            "search_log": {
+                "topic_id": "str",
+                "start_time": "int",
+                "end_time": "int",
+            }
+        },
+        events,
+    )
+    assert all("arguments" not in event for event in events)
 
 
 def test_hashing_embedding_is_normalized() -> None:

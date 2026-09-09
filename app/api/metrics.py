@@ -6,7 +6,7 @@ from opentelemetry import trace
 
 from app.agent.mcp_client import get_mcp_client_with_retry
 from app.config import config
-from app.observability import request_metrics, tool_metrics
+from app.observability import llm_metrics, request_metrics, retrieval_metrics, tool_metrics
 from app.observability.tracing import dependency_span
 from app.reliability import dependency_guards
 
@@ -49,7 +49,24 @@ async def get_reliability_summary() -> dict:
 @router.get("/metrics", response_class=PlainTextResponse)
 async def get_prometheus_metrics() -> str:
     """Return Prometheus-compatible request and tool metrics."""
-    return request_metrics.render_prometheus() + tool_metrics.render_prometheus()
+    return (
+        request_metrics.render_prometheus()
+        + tool_metrics.render_prometheus()
+        + retrieval_metrics.render_prometheus()
+        + llm_metrics.render_prometheus()
+    )
+
+
+@router.get("/metrics/llm")
+async def get_llm_metrics() -> dict:
+    """Return per-model LLM call, latency, token and cost metrics."""
+    return llm_metrics.snapshot()
+
+
+@router.get("/metrics/retrieval")
+async def get_retrieval_metrics() -> dict:
+    """Return bounded RAG stage latency and degradation samples."""
+    return retrieval_metrics.snapshot()
 
 
 @router.get("/observability/trace-probe")

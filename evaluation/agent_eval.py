@@ -49,6 +49,34 @@ def tool_deltas(before: dict, after: dict) -> tuple[list[str], int, int, dict[st
     return sorted(called), calls, successes, details
 
 
+def call_event_delta(before: dict, after: dict) -> list[dict]:
+    """Return value-free call schemas recorded after the pre-task snapshot."""
+    before_sequence = max(
+        (int(item.get("sequence", 0)) for item in before.get("recent_calls", [])),
+        default=0,
+    )
+    return [
+        item
+        for item in after.get("recent_calls", [])
+        if int(item.get("sequence", 0)) > before_sequence
+    ]
+
+
+def parameter_correctness(expected: dict[str, dict[str, str]], events: list[dict]) -> bool | None:
+    if not expected:
+        return None
+    for tool, required_schema in expected.items():
+        matching = [item for item in events if item.get("tool") == tool]
+        if not matching:
+            return False
+        if not any(
+            all(item.get("argument_schema", {}).get(key) == value for key, value in required_schema.items())
+            for item in matching
+        ):
+            return False
+    return True
+
+
 def failure_reason(result: dict) -> str | None:
     if result.get("success"):
         return None
@@ -104,6 +132,41 @@ def summarize_tools(results: list[dict]) -> list[dict]:
     return summaries
 
 
+def tool_selection_metrics(results: list[dict]) -> dict:
+    """Micro-averaged selection quality and unnecessary-call count."""
+    true_positive = false_positive = false_negative = 0
+    unnecessary_calls = 0
+    for result in results:
+        expected = set(result.get("expected_tools", []))
+        called = set(result.get("called_tools", []))
+        true_positive += len(expected & called)
+        false_positive += len(called - expected)
+        false_negative += len(expected - called)
+        unnecessary_calls += sum(
+            int(detail.get("calls", 0))
+            for name, detail in result.get("tool_details", {}).items()
+            if name not in expected
+        )
+    precision = (
+        true_positive / (true_positive + false_positive)
+        if true_positive + false_positive
+        else 1.0
+    )
+    recall = (
+        true_positive / (true_positive + false_negative)
+        if true_positive + false_negative
+        else 1.0
+    )
+    return {
+        "precision": round(precision, 4),
+        "recall": round(recall, 4),
+        "true_positive": true_positive,
+        "false_positive": false_positive,
+        "false_negative": false_negative,
+        "unnecessary_tool_calls": unnecessary_calls,
+    }
+
+
 async def run_task(client: httpx.AsyncClient, base_url: str, task: dict, run_index: int) -> dict:
     before = (await client.get(f"{base_url}/api/metrics/tools")).json()
     started = time.perf_counter()
@@ -116,6 +179,11 @@ async def run_task(client: httpx.AsyncClient, base_url: str, task: dict, run_ind
     answer = payload.get("data", {}).get("answer") or ""
     after = (await client.get(f"{base_url}/api/metrics/tools")).json()
     called_tools, tool_calls, tool_successes, tool_details = tool_deltas(before, after)
+    call_events = call_event_delta(before, after)
+    arguments_ok = parameter_correctness(
+        task.get("expected_argument_schemas", {}),
+        call_events,
+    )
     expected_tools = set(task.get("expected_tools", []))
     expected_keywords = task.get("expected_keywords", [])
     keyword_hits = [keyword for keyword in expected_keywords if keyword.lower() in answer.lower()]
@@ -136,6 +204,8 @@ async def run_task(client: httpx.AsyncClient, base_url: str, task: dict, run_ind
         "tool_calls": tool_calls,
         "tool_successes": tool_successes,
         "tool_details": tool_details,
+        "tool_call_schemas": call_events,
+        "parameter_correct": arguments_ok,
         "keyword_coverage": round(keyword_coverage, 4),
         "matched_keywords": keyword_hits,
         "latency_ms": round(latency_ms, 2),
@@ -185,6 +255,9 @@ async def run(args: argparse.Namespace) -> dict:
     tool_calls = sum(item.get("tool_calls", 0) for item in results)
     tool_successes = sum(item.get("tool_successes", 0) for item in results)
     successes = sum(bool(item["success"]) for item in results)
+    parameter_rows = [
+        item for item in results if item.get("parameter_correct") is not None
+    ]
     run_summaries = []
     for run_index in range(1, args.runs + 1):
         run_results = [item for item in results if item["run"] == run_index]
@@ -213,6 +286,14 @@ async def run(args: argparse.Namespace) -> dict:
         "task_success_rate": round(successes / len(results), 4) if results else 0.0,
         "tool_calls": tool_calls,
         "tool_call_success_rate": round(tool_successes / tool_calls, 4) if tool_calls else 0.0,
+        "tool_selection": tool_selection_metrics(results),
+        "parameter_correctness": round(
+            sum(bool(item["parameter_correct"]) for item in parameter_rows)
+            / len(parameter_rows),
+            4,
+        )
+        if parameter_rows
+        else None,
         "average_latency_ms": round(statistics.mean(latencies), 2) if latencies else 0.0,
         "p50_latency_ms": percentile(latencies, 0.50),
         "p95_latency_ms": percentile(latencies, 0.95),
@@ -233,6 +314,14 @@ def markdown_report(report: dict) -> str:
             f"- Unique tasks / repeated runs: {report['unique_task_count']} / {report['runs']}",
             f"- Task success rate: {report['task_success_rate']:.2%}",
             f"- Tool call success rate: {report['tool_call_success_rate']:.2%}",
+            f"- Tool selection precision / recall: "
+            f"{report['tool_selection']['precision']:.2%} / "
+            f"{report['tool_selection']['recall']:.2%}",
+            f"- Unnecessary tool calls: {report['tool_selection']['unnecessary_tool_calls']}",
+            f"- Parameter correctness: "
+            f"{report['parameter_correctness']:.2%}"
+            if report["parameter_correctness"] is not None
+            else "- Parameter correctness: not labeled",
             f"- Average latency: {report['average_latency_ms'] / 1000:.2f}s",
             f"- P50 / P95 latency: {report['p50_latency_ms'] / 1000:.2f}s / {report['p95_latency_ms'] / 1000:.2f}s",
             "",

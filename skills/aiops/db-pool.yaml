@@ -1,0 +1,65 @@
+skill_id: aiops.db_pool
+version: 1.0.0
+domain: aiops
+title: 数据库连接池耗尽排障
+description: connection pool exhausted / too many connections / 获取连接超时的标准排查预案
+review_status: demo
+required_role: viewer
+required_tools:
+  - mysql_read_query
+  - search_log
+tags:
+  - mysql
+  - connection
+  - saturation
+runbook_refs:
+  - database_connection_pool
+  - mysql_slow_query
+  - mysql_lock_wait
+trigger:
+  symptoms:
+    - "连接池耗尽"
+    - "connection pool exhausted"
+    - "too many connections"
+    - "获取连接超时"
+    - "数据库报错"
+  alert_names:
+    - "MySQLTooManyConnections"
+    - "MySQLConnectionPoolExhausted"
+  label_selectors:
+    system: "mysql|db"
+  min_score: 0.15
+steps:
+  - id: current_connections
+    description: "查询当前连接数与最大连接数"
+    tool_hint: mysql_read_query
+    tool_args_template:
+      sql: "SHOW STATUS LIKE 'Threads_connected'; SHOW VARIABLES LIKE 'max_connections'"
+    depends_on: []
+  - id: long_sessions
+    description: "找出占用连接的会话与长事务"
+    tool_hint: mysql_read_query
+    tool_args_template:
+      sql: "SELECT id, user, host, db, command, time, state, info FROM information_schema.processlist ORDER BY time DESC LIMIT 20"
+    depends_on:
+      - current_connections
+  - id: app_log
+    description: "关联应用日志中获取连接超时的时段"
+    tool_hint: search_log
+    tool_args_template:
+      keyword: "获取连接超时|acquire connection timeout|pool exhausted"
+      service: "{{ context.app }}"
+    depends_on: []
+  - id: slow_queries
+    description: "检查慢查询是否堆积导致连接释放变慢"
+    tool_hint: mysql_read_query
+    tool_args_template:
+      sql: "SELECT query_time, lock_time, rows_examined, sql_text FROM mysql.slow_log ORDER BY start_time DESC LIMIT 20"
+    depends_on:
+      - long_sessions
+verifications:
+  - tool: mysql_read_query
+    args:
+      sql: "SHOW STATUS LIKE 'Threads_connected'"
+    success_expr: "result.rows[0].Value < context.max_connections * 0.8"
+    description: "活跃连接数回落到 80% 阈值以下"

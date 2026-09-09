@@ -1,9 +1,11 @@
-"""F1/F3/F5：AIOpsService 跨请求状态隔离、降级计划事件、recursion_limit 与总超时"""
+"""F1/F3/F5：AIOpsService 会话复用、checkpoint 清理、降级计划事件、recursion_limit 与总超时"""
 
 import asyncio
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import pytest
+from langgraph.checkpoint.base import empty_checkpoint
 from langgraph.checkpoint.memory import MemorySaver
 
 from app.config import config
@@ -35,10 +37,11 @@ class _SlowGraph:
         return SimpleNamespace(values={})
 
 
-def _make_service(graph) -> AIOpsService:
-    """绕过 __init__（避免构建真实图），直接注入假图"""
+def _make_service(graph, checkpointer=None) -> AIOpsService:
+    """绕过 __init__（避免构建真实图），直接注入假图与 checkpointer"""
     service = AIOpsService.__new__(AIOpsService)
     service.graph = graph
+    service.checkpointer = checkpointer if checkpointer is not None else MemorySaver()
     return service
 
 
@@ -52,10 +55,16 @@ def test_configure_checkpointer_rebuilds_real_diagnosis_graph() -> None:
     assert service.graph.checkpointer is replacement
 
 
-async def test_each_execute_uses_unique_uuid_thread_id():
-    """F1：同一 session_id 连续两次诊断必须使用不同的 uuid4 thread_id"""
+async def test_execute_reuses_session_id_as_thread_id_and_cleans_old_checkpoint():
+    """F1：提供 session_id 时复用为 thread_id，且每轮执行前清空旧 checkpoint 不泄漏"""
     graph = _FakeGraph()
-    service = _make_service(graph)
+    checkpointer = MemorySaver()
+    service = _make_service(graph, checkpointer)
+
+    # 预置一个属于该 session 的旧 checkpoint，模拟上一轮诊断的残留状态
+    old_config = {"configurable": {"thread_id": "same-session", "checkpoint_ns": ""}}
+    checkpointer.put(old_config, empty_checkpoint(), {}, {})
+    assert checkpointer.get_tuple(old_config) is not None
 
     events1 = [event async for event in service.execute("task", session_id="same-session")]
     events2 = [event async for event in service.execute("task", session_id="same-session")]
@@ -63,14 +72,8 @@ async def test_each_execute_uses_unique_uuid_thread_id():
     tid1 = graph.configs[0]["configurable"]["thread_id"]
     tid2 = graph.configs[1]["configurable"]["thread_id"]
 
-    # 两次诊断 thread_id 不同，且不复用调用方 session_id
-    assert tid1 != tid2
-    assert tid1 != "same-session"
-    assert tid2 != "same-session"
-    # uuid4().hex 为 32 位十六进制
-    for tid in (tid1, tid2):
-        assert len(tid) == 32
-        assert all(c in "0123456789abcdef" for c in tid)
+    # 两次诊断复用同一个 thread_id（即 session_id），MemorySaver 中只占一个槽位
+    assert tid1 == tid2 == "same-session"
 
     # thread_id 通过事件透出，便于调用方追踪
     assert events1[0]["type"] == "status"
@@ -78,6 +81,52 @@ async def test_each_execute_uses_unique_uuid_thread_id():
     assert events1[-1]["type"] == "complete"
     assert events1[-1]["thread_id"] == tid1
     assert events2[0]["thread_id"] == tid2
+
+    # 旧 checkpoint 在新一轮执行前被删除（假图不产生新 checkpoint，因此最终为空）
+    assert checkpointer.get_tuple(old_config) is None
+
+
+async def test_execute_without_session_id_keeps_uuid4_behavior():
+    """F1：未提供 session_id（default）时保持 uuid4 新会话行为，且不触碰历史 checkpoint"""
+    graph = _FakeGraph()
+    checkpointer = SimpleNamespace(adelete_thread=AsyncMock())
+    service = _make_service(graph, checkpointer)
+
+    events1 = [event async for event in service.execute("task")]
+    events2 = [event async for event in service.execute("task", session_id="default")]
+
+    tid1 = graph.configs[0]["configurable"]["thread_id"]
+    tid2 = graph.configs[1]["configurable"]["thread_id"]
+
+    # 两次诊断 thread_id 不同，且为 uuid4().hex（32 位十六进制）
+    assert tid1 != tid2
+    for tid in (tid1, tid2):
+        assert len(tid) == 32
+        assert all(c in "0123456789abcdef" for c in tid)
+
+    assert events1[0]["type"] == "status"
+    assert events1[0]["thread_id"] == tid1
+    assert events1[-1]["type"] == "complete"
+
+    # session_id="default" 走同一条新会话路径：事件结构一致，thread_id 对应第二次调用
+    assert events2[0]["type"] == "status"
+    assert events2[0]["thread_id"] == tid2
+    assert events2[-1]["type"] == "complete"
+
+    # 未复用会话时不做任何 checkpoint 清理
+    checkpointer.adelete_thread.assert_not_called()
+
+
+async def test_execute_survives_checkpoint_reset_failure():
+    """清理历史 checkpoint 失败时仅告警，诊断流程仍正常完成"""
+    graph = _FakeGraph()
+    checkpointer = SimpleNamespace(adelete_thread=AsyncMock(side_effect=RuntimeError("boom")))
+    service = _make_service(graph, checkpointer)
+
+    events = [event async for event in service.execute("task", session_id="sess-1")]
+
+    checkpointer.adelete_thread.assert_awaited_once_with("sess-1")
+    assert events[-1]["type"] == "complete"
 
 
 async def test_execute_passes_recursion_limit_to_graph():

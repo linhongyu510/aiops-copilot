@@ -1,0 +1,63 @@
+skill_id: aiops.es_red
+version: 1.0.0
+domain: aiops
+title: Elasticsearch 集群 red 排障
+description: 集群状态 red / unassigned_shards / 搜索超时时的标准排查与恢复路径
+review_status: demo
+required_role: viewer
+required_tools:
+  - prom_query
+  - loki_query
+  - analyze_topology
+tags:
+  - elasticsearch
+  - storage
+  - search
+runbook_refs:
+  - elasticsearch_cluster_red
+  - disk_high_usage
+trigger:
+  symptoms:
+    - "es red"
+    - "集群状态 red"
+    - "分片未分配"
+    - "unassigned_shards"
+    - "搜索超时"
+  alert_names:
+    - "ElasticsearchClusterRed"
+    - "ElasticsearchUnassignedShards"
+  label_selectors:
+    service: "es|elasticsearch"
+  min_score: 0.15
+steps:
+  - id: cluster_health
+    description: "查询集群健康与未分配分片数（当前 red 状态确认）"
+    tool_hint: prom_query
+    tool_args_template:
+      query: "elasticsearch_cluster_health_status{cluster=\"{{ context.cluster }}\"}"
+    depends_on: []
+  - id: disk_watermark
+    description: "检查磁盘水位是否触发 flood-stage 只读锁"
+    tool_hint: prom_query
+    tool_args_template:
+      query: "max(elasticsearch_filesystem_data_used_percent{cluster=\"{{ context.cluster }}\"})"
+    depends_on: []
+  - id: master_log
+    description: "查看 master 日志中的分片分配失败原因"
+    tool_hint: loki_query
+    tool_args_template:
+      query: "{app=\"elasticsearch\", role=\"master\"} |= \"failed to allocate\""
+    depends_on: []
+  - id: blast_radius
+    description: "评估影响面：哪些上游依赖搜索服务"
+    tool_hint: analyze_topology
+    tool_args_template:
+      service: "{{ context.service }}"
+    depends_on:
+      - cluster_health
+verifications:
+  - tool: prom_query
+    args:
+      query: "elasticsearch_cluster_health_status{cluster=\"{{ context.cluster }}\"}"
+    success_expr: "result.value in (0, 1)"
+    description: "cluster_health.status 恢复为 green(0) 或 yellow(1)"

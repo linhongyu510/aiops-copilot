@@ -17,7 +17,6 @@ class VectorStoreManager:
         """初始化向量存储管理器"""
         self.vector_store = None
         self.collection_name = config.milvus_collection_name
-        self._initialize_vector_store()
 
     def _initialize_vector_store(self):
         """初始化 Milvus VectorStore"""
@@ -62,16 +61,30 @@ class VectorStoreManager:
         """
         try:
             import time
-            import uuid
-
             start_time = time.time()
+            from app.core.milvus_client import milvus_manager
 
-            # 为每个文档生成唯一 id（因为 auto_id=False）
-            ids = [str(uuid.uuid4()) for _ in documents]
-
-            # LangChain Milvus 的 add_documents 会自动调用 embedding_function
-            # 并进行批量处理，性能更好
-            result_ids = self.vector_store.add_documents(documents, ids=ids)
+            ids = [str(doc.metadata["chunk_id"]) for doc in documents]
+            vectors = vector_embedding_service.embed_documents(
+                [doc.page_content for doc in documents]
+            )
+            entities = [
+                {
+                    "id": chunk_id,
+                    "vector": vector,
+                    "content": doc.page_content,
+                    "metadata": doc.metadata,
+                }
+                for chunk_id, vector, doc in zip(ids, vectors, documents, strict=True)
+            ]
+            try:
+                collection = milvus_manager.get_collection()
+            except RuntimeError:
+                milvus_manager.connect()
+                collection = milvus_manager.get_collection()
+            collection.upsert(entities)
+            collection.flush()
+            result_ids = ids
 
             elapsed = time.time() - start_time
             logger.info(
@@ -119,6 +132,39 @@ class VectorStoreManager:
             logger.warning(f"删除旧数据失败 (可能是首次索引): {e}")
             return 0
 
+    def delete_stale_by_source(self, file_path: str, active_ids: set[str]) -> int:
+        """Delete obsolete chunks only after their replacement upsert succeeded."""
+        from app.core.milvus_client import milvus_manager
+
+        try:
+            collection = milvus_manager.get_collection()
+            source_expr = (
+                f'metadata["_source"] == {json.dumps(file_path, ensure_ascii=False)}'
+            )
+            existing = collection.query(
+                expr=source_expr,
+                output_fields=["id"],
+                limit=16384,
+            )
+            stale_ids = [
+                str(row["id"])
+                for row in existing
+                if str(row.get("id", "")) not in active_ids
+            ]
+            if not stale_ids:
+                return 0
+            result = collection.delete(f"id in {json.dumps(stale_ids)}")
+            deleted_count = result.delete_count if hasattr(result, "delete_count") else 0
+            logger.info(
+                "清理来源文件的过期 chunks: {}, 删除数量: {}",
+                file_path,
+                deleted_count,
+            )
+            return deleted_count
+        except Exception as exc:
+            logger.warning("过期 chunk 清理失败，已保留新 upsert 数据: {}", exc)
+            return 0
+
     def get_vector_store(self) -> Milvus:
         """
         获取 VectorStore 实例
@@ -126,6 +172,8 @@ class VectorStoreManager:
         Returns:
             Milvus: VectorStore 实例
         """
+        if self.vector_store is None:
+            self._initialize_vector_store()
         return self.vector_store
 
     def similarity_search(self, query: str, k: int = 3) -> list[Document]:
@@ -140,7 +188,8 @@ class VectorStoreManager:
             List[Document]: 相关文档列表
         """
         try:
-            docs = self.vector_store.similarity_search(query, k=k)
+            vector_store = self.get_vector_store()
+            docs = vector_store.similarity_search(query, k=k)
             logger.debug(f"相似度搜索完成: query='{query}', 结果数={len(docs)}")
             return docs
         except Exception as e:

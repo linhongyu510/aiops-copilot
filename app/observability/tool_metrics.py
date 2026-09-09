@@ -18,6 +18,8 @@ class ToolMetricsRegistry:
         self._latencies: dict[str, deque[float]] = defaultdict(
             lambda: deque(maxlen=self._history_size)
         )
+        self._sequence = 0
+        self._recent_calls: deque[dict[str, Any]] = deque(maxlen=self._history_size)
 
     def record(
         self,
@@ -25,14 +27,45 @@ class ToolMetricsRegistry:
         success: bool,
         latency_ms: float,
         error_class: str = "none",
+        arguments: dict[str, Any] | None = None,
     ) -> None:
         with self._lock:
+            self._sequence += 1
             self._calls[tool_name] += 1
             self._successes[tool_name] += int(success)
             self._latencies[tool_name].append(float(latency_ms))
             if not success:
                 normalized = error_class.strip().lower() or "unknown"
                 self._errors[(tool_name, normalized)] += 1
+            self._recent_calls.append(
+                {
+                    "sequence": self._sequence,
+                    "tool": tool_name,
+                    "argument_schema": {
+                        str(key): self._type_name(value)
+                        for key, value in sorted((arguments or {}).items())
+                    },
+                    "success": bool(success),
+                }
+            )
+
+    @staticmethod
+    def _type_name(value: Any) -> str:
+        if value is None:
+            return "null"
+        if isinstance(value, bool):
+            return "bool"
+        if isinstance(value, int):
+            return "int"
+        if isinstance(value, float):
+            return "float"
+        if isinstance(value, str):
+            return "str"
+        if isinstance(value, list):
+            return "list"
+        if isinstance(value, dict):
+            return "dict"
+        return type(value).__name__
 
     @staticmethod
     def _percentile(values: list[float], percentile: float) -> float:
@@ -83,6 +116,9 @@ class ToolMetricsRegistry:
                 "p50_latency_ms": self._percentile(all_latencies, 0.50),
                 "p95_latency_ms": self._percentile(all_latencies, 0.95),
                 "tools": tools,
+                # Only names and value types are retained; argument values and secrets
+                # are intentionally excluded from the observability API.
+                "recent_calls": list(self._recent_calls),
             }
 
     def reset(self) -> None:
@@ -91,6 +127,8 @@ class ToolMetricsRegistry:
             self._successes.clear()
             self._latencies.clear()
             self._errors.clear()
+            self._recent_calls.clear()
+            self._sequence = 0
 
     def render_prometheus(self) -> str:
         snapshot = self.snapshot()

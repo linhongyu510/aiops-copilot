@@ -145,6 +145,7 @@ class AIOpsCopilotApp {
         this.sidebar = document.querySelector('.sidebar');
         this.newChatBtn = document.getElementById('newChatBtn');
         this.aiOpsSidebarBtn = document.getElementById('aiOpsSidebarBtn');
+        this.ragInspectorBtn = document.getElementById('ragInspectorBtn');
 
         this.messageInput = document.getElementById('messageInput');
         this.sendButton = document.getElementById('sendButton');
@@ -187,6 +188,12 @@ class AIOpsCopilotApp {
         this.apiKeyClear = document.getElementById('apiKeyClear');
         this.apiKeyCancel = document.getElementById('apiKeyCancel');
         this.apiKeyMasked = document.getElementById('apiKeyMasked');
+        this.ragInspectorModal = document.getElementById('ragInspectorModal');
+        this.ragInspectorClose = document.getElementById('ragInspectorClose');
+        this.ragInspectorInput = document.getElementById('ragInspectorInput');
+        this.ragInspectorSearch = document.getElementById('ragInspectorSearch');
+        this.ragInspectorClear = document.getElementById('ragInspectorClear');
+        this.ragInspectorResults = document.getElementById('ragInspectorResults');
 
         // 主题按钮在构造早期已初始化过文案，这里再同步一次
         this.applyTheme(this.theme);
@@ -200,6 +207,27 @@ class AIOpsCopilotApp {
         }
         if (this.aiOpsSidebarBtn) {
             this.aiOpsSidebarBtn.addEventListener('click', () => this.triggerAIOps());
+        }
+        if (this.ragInspectorBtn) {
+            this.ragInspectorBtn.addEventListener('click', () => this.openRagInspector());
+        }
+        if (this.ragInspectorClose) {
+            this.ragInspectorClose.addEventListener('click', () => this.closeRagInspector());
+        }
+        if (this.ragInspectorModal) {
+            this.ragInspectorModal.addEventListener('click', (e) => {
+                if (e.target === this.ragInspectorModal) this.closeRagInspector();
+            });
+        }
+        if (this.ragInspectorSearch) {
+            this.ragInspectorSearch.addEventListener('click', () => this.runRagInspector());
+        }
+        if (this.ragInspectorClear) {
+            this.ragInspectorClear.addEventListener('click', () => {
+                if (this.ragInspectorResults) {
+                    this.ragInspectorResults.innerHTML = '<div class="rag-inspector-empty">等待检索</div>';
+                }
+            });
         }
         if (this.themeToggleBtn) {
             this.themeToggleBtn.addEventListener('click', () => this.toggleTheme());
@@ -292,7 +320,9 @@ class AIOpsCopilotApp {
                 this.newChat();
             }
             if (e.key === 'Escape') {
-                if (this.apiKeyModal && !this.apiKeyModal.hidden) {
+                if (this.ragInspectorModal && !this.ragInspectorModal.hidden) {
+                    this.closeRagInspector();
+                } else if (this.apiKeyModal && !this.apiKeyModal.hidden) {
                     this.closeApiKeyModal();
                 } else if (this.isStreaming) {
                     this.cancelCurrentOperation();
@@ -411,6 +441,64 @@ class AIOpsCopilotApp {
         void this.refreshServiceStatus();
     }
 
+    // ===== RAG 2.0 检索实验台 =====
+    openRagInspector() {
+        if (!this.ragInspectorModal) return;
+        this.ragInspectorModal.hidden = false;
+        if (this.ragInspectorInput) this.ragInspectorInput.focus();
+    }
+
+    closeRagInspector() {
+        if (this.ragInspectorModal) this.ragInspectorModal.hidden = true;
+    }
+
+    async runRagInspector() {
+        const query = this.ragInspectorInput ? this.ragInspectorInput.value.trim() : '';
+        if (!query || !this.ragInspectorResults || !this.ragInspectorSearch) return;
+        this.ragInspectorSearch.disabled = true;
+        this.ragInspectorResults.innerHTML = '<div class="rag-inspector-empty">正在执行 8 路召回与精排…</div>';
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/rag/search`, {
+                method: 'POST',
+                headers: this.apiHeaders({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({ query, top_k: 5 })
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const payload = await response.json();
+            const trace = payload.trace || {};
+            const expansion = trace.expansion || {};
+            const alternatives = (expansion.alternative_queries || [])
+                .map((item) => `<li>${this.escapeHtml(item)}</li>`).join('');
+            const branches = Object.entries(trace.branch_counts || {})
+                .map(([name, count]) => {
+                    const ids = ((trace.branch_rankings || {})[name] || []).slice(0, 5).join(', ');
+                    return `<span>${this.escapeHtml(name)} · ${count}<small>${this.escapeHtml(ids)}</small></span>`;
+                }).join('');
+            const rrfRanking = (trace.rrf_ranking || []).slice(0, 10).join(' → ');
+            const rerankerRanking = (trace.reranker_ranking || []).slice(0, 10).join(' → ');
+            const candidates = (payload.candidates || []).map((item, index) => {
+                const source = item.metadata?._file_name || item.metadata?.source || '未知来源';
+                const score = item.reranker_score == null ? `RRF ${Number(item.rrf_score || 0).toFixed(4)}` : `Rerank ${Number(item.reranker_score).toFixed(4)}`;
+                return `<article class="rag-result-card"><header><b>[${index + 1}] ${this.escapeHtml(source)}</b><em>${score}</em></header><p>${this.escapeHtml(item.content || '').slice(0, 500)}</p></article>`;
+            }).join('');
+            this.ragInspectorResults.innerHTML = `
+                <section class="rag-trace-card">
+                    <label>REWRITE</label><p>${this.escapeHtml(expansion.rewritten_query || query)}</p>
+                    <label>MULTI QUERY</label><ul>${alternatives || '<li>已降级</li>'}</ul>
+                    <label>RECALL BRANCHES</label><div class="rag-branch-list">${branches || '<span>无结果</span>'}</div>
+                    <label>RRF TOP</label><p>${this.escapeHtml(rrfRanking || '无结果')}</p>
+                    <label>RERANK TOP</label><p>${this.escapeHtml(rerankerRanking || '未执行')}</p>
+                    <small>RRF 候选 ${trace.rrf_candidates || 0} · 最终 ${trace.final_candidates || 0} · 降级 ${(trace.degradations || []).join(', ') || '无'}</small>
+                </section>
+                ${candidates || '<div class="rag-inspector-empty">未找到超过相关性阈值的内部证据</div>'}
+            `;
+        } catch (error) {
+            this.ragInspectorResults.innerHTML = `<div class="rag-inspector-empty error">检索失败：${this.escapeHtml(error.message || String(error))}</div>`;
+        } finally {
+            this.ragInspectorSearch.disabled = false;
+        }
+    }
+
     // ===== 错误分级 =====
     describeHttpError(status) {
         if (status === 401 || status === 403) {
@@ -437,6 +525,16 @@ class AIOpsCopilotApp {
     }
 
     // ===== KPI 加载与轮询 =====
+    /**
+     * 给 KPI 数值加上可悬停的解释。降级状态必须说明「影响是什么、怎么恢复」，
+     * 否则新用户只能看到「异常」但不知道该做什么。
+     */
+    setKpiHint(element, hint) {
+        if (!element) return;
+        const card = element.closest('.system-kpi-card') || element;
+        card.title = hint;
+    }
+
     async refreshServiceStatus() {
         try {
             const [healthResult, metricsResult] = await Promise.allSettled([
@@ -459,12 +557,18 @@ class AIOpsCopilotApp {
 
             if (this.apiStatusValue) {
                 this.apiStatusValue.textContent = response.ok ? '在线' : '降级';
+                this.setKpiHint(this.apiStatusValue, response.ok
+                    ? 'FastAPI 控制面正常响应'
+                    : '控制面已启动但某项依赖不可用，诊断仍可继续；详情见 /health');
             }
             if (this.milvusStatusValue) {
-                this.milvusStatusValue.textContent = milvusConnected ? '已连接' : '异常';
+                this.milvusStatusValue.textContent = milvusConnected ? '已连接' : '未启用';
+                this.setKpiHint(this.milvusStatusValue, milvusConnected
+                    ? '向量检索可用，问答会引用知识库来源'
+                    : '未连接 Milvus，向量检索不可用。启动方式：docker compose -f vector-database.yml up -d');
             }
             if (this.serviceDetail) {
-                this.serviceDetail.textContent = `${milvusConnected ? 'Milvus' : 'Milvus 异常'} · MCP · ${provider}`;
+                this.serviceDetail.textContent = `${milvusConnected ? 'Milvus' : 'Milvus 未启用'} · MCP · ${provider}`;
             }
             if (this.connectionChip && !this.isStreaming) {
                 this.connectionChip.classList.toggle('busy', !response.ok);
@@ -478,16 +582,25 @@ class AIOpsCopilotApp {
                 const aggregate = metrics.aggregate || {};
                 const totalCalls = Number(aggregate.total_calls || 0);
                 const successRate = Number(aggregate.success_rate || 0);
-                if (this.toolCallsValue) this.toolCallsValue.textContent = String(totalCalls);
+                if (this.toolCallsValue) {
+                    this.toolCallsValue.textContent = String(totalCalls);
+                    this.setKpiHint(this.toolCallsValue,
+                        '本进程累计的 MCP 与本地工具调用次数，重启后归零');
+                }
                 if (this.toolSuccessValue) {
                     this.toolSuccessValue.textContent = totalCalls > 0
                         ? `${(successRate * 100).toFixed(1)}%`
                         : '暂无样本';
+                    this.setKpiHint(this.toolSuccessValue, totalCalls > 0
+                        ? `基于本进程 ${totalCalls} 次工具调用统计`
+                        : '尚未发生工具调用，先发起一次诊断即可产生样本');
                 }
                 if (this.errorBudgetValue) {
                     this.errorBudgetValue.textContent = totalCalls > 0
                         ? `${(Number(metrics.slo?.error_budget_remaining || 0) * 100).toFixed(0)}%`
                         : '暂无样本';
+                    this.setKpiHint(this.errorBudgetValue,
+                        '相对 99% 目标成功率的剩余错误预算；样本来自当前进程');
                 }
                 if (this.guardStatusValue) {
                     const guards = metrics.dependency_guards || [];
@@ -495,10 +608,19 @@ class AIOpsCopilotApp {
                     this.guardStatusValue.textContent = guards.length === 0
                         ? '未采样'
                         : openCount > 0 ? `${openCount} 个熔断` : '全部闭合';
+                    this.setKpiHint(this.guardStatusValue, guards.length === 0
+                        ? '尚未采样到依赖调用，熔断与舱壁状态待观测'
+                        : openCount > 0
+                            ? `${openCount} 个依赖处于熔断/半开，相关工具会快速失败而不是拖垮整体`
+                            : '全部依赖熔断器闭合，调用链路正常');
                 }
             }
         } catch (_error) {
-            if (this.apiStatusValue) this.apiStatusValue.textContent = '离线';
+            if (this.apiStatusValue) {
+                this.apiStatusValue.textContent = '离线';
+                this.setKpiHint(this.apiStatusValue,
+                    '无法访问 /health，请确认服务是否在运行：python quickstart.py');
+            }
             if (this.milvusStatusValue) this.milvusStatusValue.textContent = '未知';
             if (this.serviceDetail) this.serviceDetail.textContent = '服务状态暂不可用';
             if (this.connectionChip && !this.isStreaming) {

@@ -1,0 +1,18 @@
+{
+  "alerts": [
+    {
+      "labels": {
+        "alertname": "KafkaConsumerLagHigh",
+        "service": "checkout",
+        "consumergroup": "checkout-order",
+        "topic": "orders",
+        "severity": "critical"
+      },
+      "annotations": {
+        "summary": "Kafka 消费者滞后过高",
+        "description": "checkout-order 消费速度落后 orders topic"
+      },
+      "startsAt": "2026-08-23T12:00:00Z"
+    }
+  ]
+}

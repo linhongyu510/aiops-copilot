@@ -1,4 +1,8 @@
-"""Process-local and Redis-backed coordination primitives."""
+"""Process-local and Redis-backed coordination primitives.
+
+需要 ``[state]`` extra（``redis``）。缺失时抛
+:class:`aiops_core._optional.OptionalDependencyMissing`。
+"""
 
 from __future__ import annotations
 
@@ -11,7 +15,16 @@ import uuid
 from typing import Any
 
 from loguru import logger
-from redis.asyncio import Redis
+
+try:
+    from redis.asyncio import Redis
+except ImportError as _exc:  # pragma: no cover - depends on install profile
+    from aiops_core._optional import OptionalDependencyMissing
+
+    raise OptionalDependencyMissing(
+        "app.coordination 需要 `[state]` extra（redis）。"
+        "\n    pip install 'aiops-copilot[state]'"
+    ) from _exc
 
 from app.capacity import AgentCapacityError, AgentCapacityLimiter, agent_capacity
 from app.config import config

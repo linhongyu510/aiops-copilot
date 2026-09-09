@@ -122,6 +122,10 @@ class VectorIndexService:
                     logger.error(f"✗ 文件索引失败: {file_path.name}, 错误: {e}")
 
             result.success = result.fail_count == 0
+            if result.success and result.success_count:
+                from app.core.milvus_client import milvus_manager
+
+                milvus_manager.publish_alias()
             result.end_time = datetime.now()
 
             logger.info(
@@ -161,17 +165,18 @@ class VectorIndexService:
             content = path.read_text(encoding="utf-8")
             logger.info(f"读取文件: {path}, 内容长度: {len(content)} 字符")
 
-            # 2. 删除该文件的旧数据（如果存在）
+            # 2. 先构建稳定 chunk，再原子 upsert；失败时保留原索引证据。
             normalized_path = path.as_posix()
-            vector_store_manager.delete_by_source(normalized_path)
-
-            # 3. 使用新的文档分割器
             documents = document_splitter_service.split_document(content, normalized_path)
             logger.info(f"文档分割完成: {file_path} -> {len(documents)} 个分片")
 
-            # 4. 添加文档到向量存储
+            # 3. Upsert 成功后再清理同来源不再存在的旧 chunk。
             if documents:
                 vector_store_manager.add_documents(documents)
+                vector_store_manager.delete_stale_by_source(
+                    normalized_path,
+                    {str(document.metadata["chunk_id"]) for document in documents},
+                )
                 logger.info(f"文件索引完成: {file_path}, 共 {len(documents)} 个分片")
             else:
                 logger.warning(f"文件内容为空或无法分割: {file_path}")

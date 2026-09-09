@@ -5,6 +5,7 @@ from typing import Any
 from loguru import logger
 from pymilvus import Collection
 
+from app.config import config
 from app.core.milvus_client import milvus_manager
 from app.services.vector_embedding_service import vector_embedding_service
 
@@ -67,8 +68,8 @@ class VectorSearchService:
 
             # 3. 构建搜索参数
             search_params = {
-                "metric_type": "L2",  # 欧氏距离
-                "params": {"nprobe": 10},
+                "metric_type": config.milvus_metric_type,
+                "params": {"ef": 128},
             }
 
             # 4. 执行搜索
@@ -87,7 +88,7 @@ class VectorSearchService:
                     result = SearchResult(
                         id=hit.entity.get("id"),
                         content=hit.entity.get("content"),
-                        score=hit.distance,  # L2 距离，越小越相似
+                        score=hit.distance,
                         metadata=hit.entity.get("metadata", {}),
                     )
                     search_results.append(result)

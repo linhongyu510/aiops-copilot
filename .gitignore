@@ -1,22 +1,53 @@
+# ---- secrets ----
 .env
-.venv/
+.env.local
+*.pem
+*.key
+
+# ---- python ----
 __pycache__/
 *.py[cod]
 *.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# ---- tooling caches ----
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
-.sixth/
-.uploads/
-htmlcov/
 .coverage
+htmlcov/
+.sixth/
+.trae/
+
+# ---- runtime state / data ----
+.runtime/
+volumes/
+uploads/
+.uploads/
 logs/
 *.log
 *.pid
-volumes/
-.runtime/
-uploads/
-dist/
-.DS_Store
+site/
+
+# ---- generated evaluation output ----
 evaluation/cache/
+evaluation/reports/
 evaluation/datasets/*_review.csv
+
+# ---- generated benchmark / coverage evidence (regenerate locally) ----
+artifacts/
+
+# ---- private notes (personal interview prep, kept local only) ----
+面试展示指南.html
+docs/resume_project.md
+docs/agent_role_pitch.md
+docs/backend_internship_pitch.md
+docs/verification_*.md
+docs/reliability_validation_*.md
+
+# ---- os ----
+.DS_Store
+Thumbs.db

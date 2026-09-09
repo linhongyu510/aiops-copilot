@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from collections import OrderedDict
 from typing import Any
 
 from langchain_core.embeddings import Embeddings
@@ -81,6 +82,7 @@ class LocalSentenceTransformerEmbeddings(Embeddings):
         cache_dir: str = "",
         source: str = "huggingface",
         modelscope_model_id: str = "",
+        revision: str = "",
     ) -> None:
         self.model_name = model_name
         self.dimensions = dimensions
@@ -89,6 +91,7 @@ class LocalSentenceTransformerEmbeddings(Embeddings):
         self.cache_dir = cache_dir or None
         self.source = source.strip().lower()
         self.modelscope_model_id = modelscope_model_id or model_name
+        self.revision = revision or None
         self._model: Any | None = None
         self._device: str | None = None
         logger.info("本地 Embeddings 已配置: model={}, dim={}", model_name, dimensions)
@@ -134,6 +137,7 @@ class LocalSentenceTransformerEmbeddings(Embeddings):
             model_path,
             device=self._device,
             cache_folder=self.cache_dir,
+            revision=self.revision,
         )
         actual_dimension = self._model.get_sentence_embedding_dimension()
         if actual_dimension != self.dimensions:
@@ -147,9 +151,16 @@ class LocalSentenceTransformerEmbeddings(Embeddings):
         if not values:
             return []
         model = self._get_model()
-        method_name = "encode_query" if query else "encode_document"
-        encode = getattr(model, method_name, model.encode)
-        vectors = encode(
+        if query and config.embedding_query_instruction:
+            prefix = config.embedding_query_instruction.strip()
+            values = [
+                value if value.startswith(prefix) else f"{prefix}{value}"
+                for value in values
+            ]
+        # Use the same encoder explicitly: the query instruction above is part of
+        # the versioned retrieval contract, so SentenceTransformer prompts must not
+        # inject a second implicit prefix.
+        vectors = model.encode(
             values,
             batch_size=self.batch_size,
             normalize_embeddings=True,
@@ -171,11 +182,105 @@ class LocalSentenceTransformerEmbeddings(Embeddings):
         return self._encode([text], query=True)[0]
 
 
+class QueryEmbeddingCache(Embeddings):
+    """Wrap an embedding backend with a bounded LRU cache for query vectors.
+
+    Query embeddings are deterministic for a fixed model and instruction prefix,
+    so repeated queries (a retried alert, the same runbook phrasing, an ablation
+    rerun) can reuse the cached vector. Document embeddings are not cached: they
+    are seen once per ingest and would only evict useful query entries.
+
+    Vectors are copied on read and write so a caller mutating a returned list
+    cannot corrupt the cached entry.
+    """
+
+    def __init__(self, inner: Embeddings, max_size: int) -> None:
+        self._inner = inner
+        self._max_size = max(0, max_size)
+        self._cache: OrderedDict[str, list[float]] = OrderedDict()
+        self._hits = 0
+        self._misses = 0
+
+    @property
+    def inner(self) -> Embeddings:
+        return self._inner
+
+    @property
+    def stats(self) -> dict[str, int]:
+        return {"hits": self._hits, "misses": self._misses, "size": len(self._cache)}
+
+    def _get(self, text: str) -> list[float] | None:
+        if self._max_size == 0:
+            return None
+        cached = self._cache.get(text)
+        if cached is None:
+            return None
+        self._cache.move_to_end(text)
+        return list(cached)
+
+    def _put(self, text: str, vector: list[float]) -> None:
+        if self._max_size == 0:
+            return
+        self._cache[text] = list(vector)
+        self._cache.move_to_end(text)
+        while len(self._cache) > self._max_size:
+            self._cache.popitem(last=False)
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        return self._inner.embed_documents(texts)
+
+    def embed_query(self, text: str) -> list[float]:
+        cached = self._get(text)
+        if cached is not None:
+            self._hits += 1
+            return cached
+        self._misses += 1
+        vector = self._inner.embed_query(text)
+        self._put(text, vector)
+        return vector
+
+    def embed_queries(self, texts: list[str]) -> list[list[float]]:
+        """Batch query encoding that only sends cache misses to the backend."""
+        if not texts:
+            return []
+
+        results: list[list[float] | None] = [None] * len(texts)
+        pending: list[str] = []
+        pending_positions: list[int] = []
+        for index, text in enumerate(texts):
+            cached = self._get(text)
+            if cached is not None:
+                self._hits += 1
+                results[index] = cached
+            else:
+                self._misses += 1
+                pending.append(text)
+                pending_positions.append(index)
+
+        if pending:
+            batch_method = getattr(self._inner, "embed_queries", None)
+            if batch_method is not None:
+                vectors = batch_method(pending)
+            else:
+                vectors = [self._inner.embed_query(value) for value in pending]
+            for position, text, vector in zip(
+                pending_positions, pending, vectors, strict=True
+            ):
+                results[position] = vector
+                self._put(text, vector)
+
+        return [vector for vector in results if vector is not None]
+
+    def __getattr__(self, item: str) -> Any:
+        # Preserve backend-specific attributes (model_name, dimensions, ...).
+        return getattr(self._inner, item)
+
+
 def create_embedding_service() -> Embeddings:
     """按配置创建 Embedding 后端。"""
     provider = config.embedding_provider.strip().lower()
     if provider == "local":
-        return LocalSentenceTransformerEmbeddings(
+        backend: Embeddings = LocalSentenceTransformerEmbeddings(
             model_name=config.local_embedding_model,
             dimensions=config.embedding_dimensions,
             device=config.local_embedding_device,
@@ -183,14 +288,20 @@ def create_embedding_service() -> Embeddings:
             cache_dir=config.local_embedding_cache_dir,
             source=config.local_embedding_source,
             modelscope_model_id=config.modelscope_embedding_model,
+            revision=config.local_embedding_revision,
         )
-    if provider == "dashscope":
-        return DashScopeEmbeddings(
+    elif provider == "dashscope":
+        backend = DashScopeEmbeddings(
             api_key=config.dashscope_api_key,
             model=config.dashscope_embedding_model,
             dimensions=config.embedding_dimensions,
         )
-    raise ValueError("EMBEDDING_PROVIDER 仅支持 local 或 dashscope")
+    else:
+        raise ValueError("EMBEDDING_PROVIDER 仅支持 local 或 dashscope")
+
+    if config.embedding_query_cache_size > 0:
+        return QueryEmbeddingCache(backend, config.embedding_query_cache_size)
+    return backend
 
 
 vector_embedding_service = create_embedding_service()

@@ -8,7 +8,7 @@ from loguru import logger
 
 from app.config import config
 from app.observability import tool_metrics
-from app.services.vector_store_manager import vector_store_manager
+from app.services.hybrid_retrieval_service import hybrid_retrieval_service
 
 
 def diversify_by_source(docs: list[Document], limit: int) -> list[Document]:
@@ -34,7 +34,7 @@ def diversify_by_source(docs: list[Document], limit: int) -> list[Document]:
 
 
 @tool(response_format="content_and_artifact")
-def retrieve_knowledge(query: str) -> tuple[str, list[Document]]:
+async def retrieve_knowledge(query: str) -> tuple[str, list[Document]]:
     """从知识库中检索相关信息来回答问题
 
     当用户的问题涉及专业知识、文档内容或需要参考资料时，使用此工具。
@@ -49,13 +49,23 @@ def retrieve_knowledge(query: str) -> tuple[str, list[Document]]:
     try:
         logger.info(f"知识检索工具被调用: query='{query}'")
 
-        # 从向量存储中检索相关文档
-        vector_store = vector_store_manager.get_vector_store()
-        # 过采样 4 倍候选，供 diversify_by_source 按来源去重后截断到 rag_top_k
-        candidate_count = config.rag_top_k * 4
-        retriever = vector_store.as_retriever(search_kwargs={"k": candidate_count})
-
-        docs = diversify_by_source(retriever.invoke(query), config.rag_top_k)
+        candidates, trace = await hybrid_retrieval_service.search(query, config.rag_top_k)
+        docs = [
+            Document(
+                page_content=candidate.content,
+                metadata={
+                    **candidate.metadata,
+                    "_retrieval": {
+                        "rrf_score": candidate.rrf_score,
+                        "reranker_score": candidate.reranker_score,
+                        "branches": candidate.branch_ranks,
+                        "final_rank": candidate.final_rank,
+                        "degradations": trace.degradations,
+                    },
+                },
+            )
+            for candidate in candidates
+        ]
 
         if not docs:
             logger.warning("未检索到相关文档")
@@ -63,6 +73,7 @@ def retrieve_knowledge(query: str) -> tuple[str, list[Document]]:
                 "retrieve_knowledge",
                 success=False,
                 latency_ms=(time.perf_counter() - started) * 1000,
+                arguments={"query": query},
             )
             return "没有找到相关信息。", []
 
@@ -74,6 +85,7 @@ def retrieve_knowledge(query: str) -> tuple[str, list[Document]]:
             "retrieve_knowledge",
             success=True,
             latency_ms=(time.perf_counter() - started) * 1000,
+            arguments={"query": query},
         )
         return context, docs
 
@@ -83,6 +95,7 @@ def retrieve_knowledge(query: str) -> tuple[str, list[Document]]:
             "retrieve_knowledge",
             success=False,
             latency_ms=(time.perf_counter() - started) * 1000,
+            arguments={"query": query},
         )
         return (
             f"检索知识时发生错误: {str(e)}。知识库当前不可用，不要据此编造答案。",
@@ -116,7 +129,7 @@ def format_docs(docs: list[Document]) -> str:
         header_str = " > ".join(headers) if headers else ""
 
         # 构建格式化文本
-        formatted = f"【参考资料 {i}】"
+        formatted = f"[{i}]"
         if header_str:
             formatted += f"\n标题: {header_str}"
         formatted += f"\n来源: {source}"

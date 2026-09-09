@@ -87,7 +87,12 @@ async def retry_interceptor(
                 )
             if not bool(result.isError):
                 latency_ms = (time.perf_counter() - started) * 1000
-                tool_metrics.record(request.name, success=True, latency_ms=latency_ms)
+                tool_metrics.record(
+                    request.name,
+                    success=True,
+                    latency_ms=latency_ms,
+                    arguments=getattr(request, "args", None),
+                )
                 logger.info(f"MCP 工具 {request.name} 调用成功, latency_ms={latency_ms:.2f}")
                 return result
 
@@ -125,6 +130,7 @@ async def retry_interceptor(
         error_class=type(last_error).__name__
         if last_error is not None
         else "remote_error",
+        arguments=getattr(request, "args", None),
     )
     logger.error(error_msg)
     if last_error_result is not None:
@@ -202,8 +208,10 @@ async def get_mcp_client_with_retry(
     Returns:
         MultiServerMCPClient: 带重试功能的 MCP 客户端实例
     """
-    # 构建拦截器列表：重试拦截器在最前面
-    interceptors = [retry_interceptor]
+    # 构建拦截器列表：治理拦截器在最外层（权限拒绝不消耗重试预算），重试其次
+    from app.agent.tool_safety import governance_interceptor
+
+    interceptors = [governance_interceptor, retry_interceptor]
     if tool_interceptors:
         interceptors.extend(tool_interceptors)
 

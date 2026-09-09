@@ -11,7 +11,9 @@ from pymilvus import Collection, connections, utility
 )
 def test_milvus_container_collection_matches_runtime_contract() -> None:
     alias = "container-integration"
-    collection_name = os.getenv("AIOPS_MILVUS_COLLECTION", "biz_bge_small_zh")
+    collection_name = os.getenv(
+        "AIOPS_MILVUS_COLLECTION", "aiops_kb_bge_large_zh_v1_5_v1"
+    )
     connections.connect(
         alias=alias,
         host=os.getenv("AIOPS_MILVUS_HOST", "127.0.0.1"),
@@ -23,7 +25,8 @@ def test_milvus_container_collection_matches_runtime_contract() -> None:
         vector_field = next(
             field for field in collection.schema.fields if field.name == "vector"
         )
-        assert vector_field.params["dim"] == 512
+        assert vector_field.params["dim"] == 1024
+        assert any(field.name == "sparse_vector" for field in collection.schema.fields)
         assert collection.num_entities > 0
     finally:
         connections.disconnect(alias)

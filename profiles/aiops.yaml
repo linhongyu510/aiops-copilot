@@ -1,0 +1,71 @@
+name: aiops
+display_name: AIOps 智能 OnCall
+
+planner:
+  role_description: "专家级 SRE / AIOps 工程师"
+  language: zh
+  system_style: "先证据后结论，只读排查优先"
+
+executor:
+  role_description: "严格按步骤执行，不越权变更"
+
+replanner:
+  max_steps_before_force_respond: 5
+
+alert_ingest:
+  title_field: alertname
+  severity_field: severity
+  instance_field: instance
+
+# incident 归并窗口按 severity 分级（C6）；未列出的 severity 走
+# config.incident_dedup_window_seconds 全局默认（默认 300s）。
+incident:
+  dedup_windows_by_severity:
+    critical: 60
+    error: 120
+    warning: 300
+    info: 600
+
+# 工具关键词/描述本地化模式（C4）：zh（默认）/en/bilingual。
+tools:
+  locale: zh
+
+# 追加的注入模式（C7）；aiops 场景暂不追加，SecOps 等特化 profile 可覆盖。
+safety:
+  injection_patterns: []
+
+# tool_groups 与 default_tool_prefixes：与 app/agent/tool_registry.py 里的
+# TOOL_GROUPS / DEFAULT_TOOL_PREFIXES 保持字面等价；改动请同步更新兜底常量。
+tool_groups:
+  - keywords: ["知识库", "runbook", "手册", "方案", "怎么处理", "如何排查"]
+    prefixes: ["retrieve_knowledge"]
+  - keywords: ["日志", "log", "报错", "异常栈", "cls"]
+    prefixes: ["search_log", "search_topic_by_service_name", "get_topic_info_by_name"]
+  - keywords: ["cpu", "内存", "memory", "指标", "监控"]
+    prefixes: ["query_cpu_metrics", "query_memory_metrics", "prom_"]
+  - keywords: ["mysql", "sql", "数据库", "表", "锁", "慢查询"]
+    prefixes: ["mysql_"]
+  - keywords: ["k8s", "kubernetes", "pod", "deployment", "容器编排"]
+    prefixes: ["k8s_"]
+  - keywords: ["docker", "容器"]
+    prefixes: ["docker_"]
+  - keywords: ["redis", "缓存", "slowlog"]
+    prefixes: ["redis_"]
+  - keywords: ["dns", "网络", "证书", "tls", "http", "连通"]
+    prefixes: ["resolve_dns", "inspect_tls_certificate", "probe_http"]
+  - keywords: ["windos", "生产就绪", "排程", "治理"]
+    prefixes: ["windos_"]
+  - keywords: ["联网", "互联网", "最新", "搜索网页"]
+    prefixes: ["web_search"]
+
+default_tool_prefixes:
+  - retrieve_knowledge
+  - get_current_time
+  - search_log
+  - query_cpu_metrics
+  - query_memory_metrics
+  - prom_active_alerts
+  - windos_diagnose_overview
+  - web_search
+
+default_skills_dir: skills/aiops

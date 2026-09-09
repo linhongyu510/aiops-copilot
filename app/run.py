@@ -25,7 +25,15 @@ def selector_loop_factory() -> asyncio.AbstractEventLoop:
 def main() -> None:
     configure_event_loop()
 
-    import uvicorn
+    try:
+        import uvicorn
+    except ImportError as _exc:  # pragma: no cover - depends on install profile
+        from aiops_core._optional import OptionalDependencyMissing
+
+        raise OptionalDependencyMissing(
+            "app.run 需要 `[server]` extra（uvicorn/fastapi）。"
+            "\n    pip install 'aiops-copilot[server,llm]'"
+        ) from _exc
 
     from app.config import config
 

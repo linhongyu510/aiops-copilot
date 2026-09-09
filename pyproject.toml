@@ -1,53 +1,99 @@
 [project]
 name = "aiops-copilot"
-version = "1.4.0"
+version = "2.0.0"
 description = "Evidence-driven intelligent OnCall and WINDOS reliability control plane"
 authors = [{name = "hylin"}]
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
+# 默认依赖 = ``aiops_core`` 纯内核；仅需 pydantic + loguru + 标准库。
+# 完整 FastAPI + LangGraph + Milvus + Postgres 全家桶请安装 ``[full]`` extra，
+# 或按需组合 ``[llm] [server] [rag] [state] [obs] [mcp]``。
 dependencies = [
-    "fastapi>=0.128.0,<1.0.0",
-    "uvicorn[standard]>=0.27.0",
-    "sse-starlette>=2.1.0",
+    "pydantic>=2.12.0,<2.13.0",
+    "loguru>=0.7.2",
+]
+
+[project.optional-dependencies]
+# ---------- 分层 extras（按能力域切分）----------
+
+# LangChain / LangGraph / LLM SDK：只想让宿主 Agent（Codex/Trae）做决策时可不装。
+llm = [
     "langchain>=1.2.0,<1.3.0",
     "langchain-community>=0.4.0,<0.5.0",
     "langchain-core>=1.2.0,<1.3.0",
     "langchain-openai>=1.1.0,<1.2.0",
+    "langchain-text-splitters>=1.1.0",
+    "langchain-mcp-adapters>=0.2.1,<0.3.0",
     "langgraph>=1.0.0,<1.1.0",
-    "dashscope>=1.14.0",
     "openai>=1.10.0",
-    "pymilvus>=2.6.0,<2.7.0",
-    "pydantic>=2.12.0,<2.13.0",
+    "dashscope>=1.14.0",
+]
+
+# FastAPI 服务端 + 配置层（app.config / app.main / uvicorn 运行时需要）。
+server = [
+    "fastapi>=0.128.0,<1.0.0",
+    "uvicorn[standard]>=0.27.0",
+    "sse-starlette>=2.1.0",
     "pydantic-settings>=2.12.0,<2.13.0",
     "httpx>=0.26.0",
     "aiofiles>=23.2.0",
     "python-multipart>=0.0.6",
-    "loguru>=0.7.2",
     "python-dotenv>=1.0.0",
-    "langchain-milvus>=0.3.3",
-    "langchain-text-splitters>=1.1.0",
-    "langchain-mcp-adapters>=0.2.1,<0.3.0",
-    "fastmcp>=2.14.0,<2.15.0",
-    "sqlalchemy>=2.0.0,<3.0.0",
-    "pymysql>=1.1.0,<2.0.0",
-    "tavily-python>=0.7.0,<1.0.0",
-    "langgraph-checkpoint-postgres>=3.0.0,<4.0.0",
-    "psycopg[binary,pool]>=3.2.0,<4.0.0",
-    "opentelemetry-api>=1.30.0,<2.0.0",
-    "opentelemetry-sdk>=1.30.0,<2.0.0",
-    "opentelemetry-exporter-otlp-proto-http>=1.30.0,<2.0.0",
-    "opentelemetry-instrumentation-fastapi>=0.51b0,<1.0.0",
-    "opentelemetry-instrumentation-httpx>=0.51b0,<1.0.0",
-    "redis>=8.0.1,<9.0.0",
 ]
 
-[project.optional-dependencies]
+# RAG 检索栈（Milvus + langchain-milvus + embeddings 包装）。
+rag = [
+    "pymilvus>=2.6.0,<2.7.0",
+    "langchain-milvus>=0.3.3",
+]
+
+# 本地 embeddings 模型（bge-small-zh 等）；rag 场景可选叠加。
 local-embeddings = [
     "sentence-transformers>=5.1.0,<5.2.0",
     "transformers>=4.50.0,<5.0.0",
     "huggingface-hub>=0.30.0,<1.0.0",
     "modelscope>=1.20.0,<2.0.0",
 ]
+
+# 持久化 / checkpoint / 事件存储（Postgres + Redis + SQLAlchemy + langgraph-checkpoint）。
+state = [
+    "sqlalchemy>=2.0.0,<3.0.0",
+    "pymysql>=1.1.0,<2.0.0",
+    "redis>=8.0.1,<9.0.0",
+    "langgraph-checkpoint-postgres>=3.0.0,<4.0.0",
+    "psycopg[binary,pool]>=3.2.0,<4.0.0",
+]
+
+# OpenTelemetry 全套；SRE 场景可选。
+obs = [
+    "opentelemetry-api>=1.30.0,<2.0.0",
+    "opentelemetry-sdk>=1.30.0,<2.0.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.30.0,<2.0.0",
+    "opentelemetry-instrumentation-fastapi>=0.51b0,<1.0.0",
+    "opentelemetry-instrumentation-httpx>=0.51b0,<1.0.0",
+]
+
+# stdio MCP server：仅需 fastmcp 即可把 aiops_core 决策工具挂给 Codex/Trae。
+mcp = [
+    "fastmcp>=2.14.0,<2.15.0",
+]
+
+# 完整 MCP 生态：叠加 tavily 等外部搜索工具。
+mcp-full = [
+    "fastmcp>=2.14.0,<2.15.0",
+    "tavily-python>=0.7.0,<1.0.0",
+]
+
+# 一次装齐 —— 等价于旧版 2.0.0 的 dependencies 全集。
+full = [
+    "aiops-copilot[llm]",
+    "aiops-copilot[server]",
+    "aiops-copilot[rag]",
+    "aiops-copilot[state]",
+    "aiops-copilot[obs]",
+    "aiops-copilot[mcp-full]",
+]
+
 dev = [
     "pytest>=7.4.3",
     "pytest-asyncio>=0.23.0",
@@ -63,6 +109,17 @@ dev = [
     "matplotlib>=3.8.0,<4.0.0",
     "psutil>=6.0.0,<8.0.0",
 ]
+docs = [
+    "mkdocs-material>=9.5.0,<10.0.0",
+]
+
+[project.scripts]
+# 一次性 CLI（PR-4 完善子命令，PR-2 先绑定入口，避免装完立即缺入口）
+aiops-core = "aiops_core.__main__:main"
+# stdio MCP server：Codex / Trae 通过 `mcpServers` 配置一行挂载
+aiops-mcp = "aiops_core.mcp_server:main"
+# 一次性本地 OnCall 入口（PR-4）
+aiops-cli = "aiops_core.cli:main"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -70,7 +127,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["app*"]
+include = ["app*", "aiops_core*"]
 
 
 
@@ -113,9 +170,12 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]  # unused imports in __init__.py
+# Standalone evaluation entrypoint: it inserts the repository root into sys.path
+# before importing first-party modules, so those imports cannot sit at the top.
+"evaluation/aiops_eval.py" = ["E402"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["app"]
+known-first-party = ["app", "aiops_core"]
 combine-as-imports = true
 
 [tool.isort]
@@ -127,7 +187,7 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 split_on_trailing_comma = true
-known_first_party = ["app"]
+known_first_party = ["app", "aiops_core"]
 skip = [".venv", "venv", "__pycache__", "logs"]
 
 [tool.pytest.ini_options]
@@ -137,6 +197,7 @@ addopts = [
     "-q",
     "--strict-markers",
     "--cov=app",
+    "--cov=aiops_core",
     "--cov-report=term-missing",
     "--cov-report=html",
 ]
@@ -150,7 +211,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["app"]
+source = ["app", "aiops_core"]
 omit = [
     "*/tests/*",
     "*/test_*.py",
@@ -200,7 +261,7 @@ skips = ["B101", "B601"]
 skips = ["*/test_*.py", "*_test.py"]
 
 [tool.pyright]
-include = ["app"]
+include = ["app", "aiops_core"]
 exclude = ["**/node_modules", "**/__pycache__", ".git", ".venv", "venv", "logs"]
 pythonVersion = "3.11"
 pythonPlatform = "Darwin"

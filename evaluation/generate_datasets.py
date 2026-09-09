@@ -90,6 +90,13 @@ TOOL_SCENARIOS = [
     ("mysql", "mysql_read_query", "只读查询最近 5 条服务告警记录"),
     ("web_search", "web_search", "联网搜索 HTTP 503 的官方排障资料"),
 ]
+EXPECTED_ARGUMENT_SCHEMAS = {
+    "retrieve_knowledge": {"query": "str"},
+    "search_log": {"topic_id": "str", "start_time": "int", "end_time": "int"},
+    "query_cpu_metrics": {"service_name": "str"},
+    "mysql_read_query": {"sql": "str"},
+    "web_search": {"query": "str"},
+}
 SCENARIO_SUFFIXES = {
     "success": "，返回正常结果并总结关键证据。",
     "timeout": "。测试夹具将注入超时，请识别超时并给出降级说明。",
@@ -142,6 +149,9 @@ def build_agent_dataset() -> list[dict]:
                     "id": f"agent-{seed_index + 1:02d}-{task_index + 1:02d}",
                     "question": f"请基于内部运维知识库回答：{query}",
                     "expected_tools": ["retrieve_knowledge"],
+                    "expected_argument_schemas": {
+                        "retrieve_knowledge": EXPECTED_ARGUMENT_SCHEMAS["retrieve_knowledge"]
+                    },
                     "expected_keywords": seed["keywords"],
                     "category": seed["category"],
                     "review_status": "pending",
@@ -154,6 +164,9 @@ def build_agent_dataset() -> list[dict]:
                     "id": f"agent-tool-{tool_index:02d}-{scenario_index:02d}",
                     "question": question + SCENARIO_SUFFIXES[scenario],
                     "expected_tools": [tool],
+                    "expected_argument_schemas": {
+                        tool: EXPECTED_ARGUMENT_SCHEMAS[tool]
+                    },
                     "expected_keywords": [],
                     "category": category,
                     "scenario": scenario,
