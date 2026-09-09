@@ -175,6 +175,11 @@ class AIOpsCopilotApp {
         this.authConfigBtn = document.getElementById('authConfigBtn');
         this.themeToggleBtn = document.getElementById('themeToggleBtn');
 
+        this.degradeBanner = document.getElementById('degradeBanner');
+        this.degradeTitle = document.getElementById('degradeTitle');
+        this.degradeDetail = document.getElementById('degradeDetail');
+        this.degradeCopyBtn = document.getElementById('degradeCopyBtn');
+
         this.apiStatusValue = document.getElementById('apiStatusValue');
         this.milvusStatusValue = document.getElementById('milvusStatusValue');
         this.toolSuccessValue = document.getElementById('toolSuccessValue');
@@ -304,6 +309,9 @@ class AIOpsCopilotApp {
 
         if (this.sendButton) {
             this.sendButton.addEventListener('click', () => this.sendMessage());
+        }
+        if (this.degradeCopyBtn) {
+            this.degradeCopyBtn.addEventListener('click', () => void this.copyMilvusCommand());
         }
         if (this.messageInput) {
             this.messageInput.addEventListener('keydown', (e) => {
@@ -515,7 +523,9 @@ class AIOpsCopilotApp {
 
     describeNetworkError(error) {
         if (error && error.httpStatus) return this.describeHttpError(error.httpStatus);
-        return '网络连接中断：无法连接到后端服务，请确认服务已启动后重试。';
+        // 「请确认服务已启动」等于没说：给出可直接执行的命令。
+        return '无法连接到后端服务。请在项目目录执行 python quickstart.py 启动服务，'
+            + '再点下方「重试」。';
     }
 
     httpError(status) {
@@ -533,6 +543,37 @@ class AIOpsCopilotApp {
         if (!element) return;
         const card = element.closest('.system-kpi-card') || element;
         card.title = hint;
+    }
+
+    /**
+     * 在对话区顶部显式提示「检索不可用」。
+     *
+     * 之前只有右上角 KPI 卡写着「未启用」，而回答里说的是「知识库中没有相关内容」——
+     * 两个事实分处两地，用户会误以为语料缺失。实际 aiops-docs/ 里有对应 Runbook，
+     * 只是 Milvus 没起来。这条横幅把归因摆到读答案的位置上。
+     */
+    setRetrievalDegraded(isDegraded) {
+        if (!this.degradeBanner) return;
+        this.degradeBanner.hidden = !isDegraded;
+        if (!isDegraded) return;
+        if (this.degradeTitle) {
+            this.degradeTitle.textContent = '向量检索未启用，回答不引用知识库';
+        }
+        if (this.degradeDetail) {
+            this.degradeDetail.textContent =
+                'Milvus 未连接，检索链路已跳过。此时「知识库中没有相关内容」不代表语料缺失。';
+        }
+    }
+
+    async copyMilvusCommand() {
+        const command = 'docker compose -f vector-database.yml up -d';
+        try {
+            await navigator.clipboard.writeText(command);
+            this.showNotification('启动命令已复制', 'success');
+        } catch (_e) {
+            // 非安全上下文或无剪贴板权限时，退回到可手动复制的提示
+            this.showNotification(command, 'info');
+        }
     }
 
     async refreshServiceStatus() {
@@ -570,6 +611,7 @@ class AIOpsCopilotApp {
             if (this.serviceDetail) {
                 this.serviceDetail.textContent = `${milvusConnected ? 'Milvus' : 'Milvus 未启用'} · MCP · ${provider}`;
             }
+            this.setRetrievalDegraded(!milvusConnected);
             if (this.connectionChip && !this.isStreaming) {
                 this.connectionChip.classList.toggle('busy', !response.ok);
                 this.connectionChip.classList.remove('offline');
@@ -1037,8 +1079,10 @@ class AIOpsCopilotApp {
     }
 
     // ===== 发送消息 =====
-    async sendMessage() {
-        const message = this.messageInput ? this.messageInput.value.trim() : '';
+    async sendMessage(presetMessage) {
+        // presetMessage 支持重试等程序化重发；缺省时才读输入框。
+        const typed = this.messageInput ? this.messageInput.value.trim() : '';
+        const message = (typeof presetMessage === 'string' ? presetMessage : typed).trim();
         if (!message) {
             this.showNotification('请输入消息内容', 'warning');
             return;
@@ -1067,7 +1111,9 @@ class AIOpsCopilotApp {
         } catch (error) {
             if (error.name === 'AbortError') return;
             console.warn('发送消息失败:', error);
-            this.addMessage('assistant', this.describeNetworkError(error));
+            // 失败时把原问题交回用户手里：既给出可点的重试，也把文字放回输入框，
+            // 避免「报错 + 输入已清空」逼用户重新敲一遍。
+            this.addErrorMessage(this.describeNetworkError(error), message);
         } finally {
             this.isStreaming = false;
             this.endOperation();
@@ -1265,6 +1311,62 @@ class AIOpsCopilotApp {
             if (this.chatContainer) this.chatContainer.classList.remove('centered');
             this.scrollToBottom(true);
         }
+        return messageDiv;
+    }
+
+    /**
+     * 渲染一条失败消息，并附带「重试」按钮。
+     *
+     * 失败路径原本只丢一句文案、同时清空输入框，用户只能手打重来。这里保留原
+     * 问题：点重试直接重发，输入框也回填，两条路任选其一。
+     */
+    addErrorMessage(text, failedQuestion) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message assistant';
+
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.textContent = 'AI';
+        messageDiv.appendChild(avatar);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'message-content-wrapper';
+
+        const content = document.createElement('div');
+        content.className = 'message-content message-error';
+        content.textContent = text;
+        wrapper.appendChild(content);
+
+        if (failedQuestion) {
+            const actions = document.createElement('div');
+            actions.className = 'message-error-actions';
+
+            const retryBtn = document.createElement('button');
+            retryBtn.type = 'button';
+            retryBtn.className = 'message-retry-btn';
+            retryBtn.textContent = '重试';
+            retryBtn.addEventListener('click', () => {
+                if (this.isStreaming) return;
+                retryBtn.disabled = true;
+                messageDiv.remove();
+                this.sendMessage(failedQuestion);
+            });
+            actions.appendChild(retryBtn);
+            wrapper.appendChild(actions);
+
+            // 输入框回填，方便用户改写后再发（例如换个说法或缩小范围）
+            if (this.messageInput && !this.messageInput.value) {
+                this.messageInput.value = failedQuestion;
+            }
+        }
+
+        messageDiv.appendChild(wrapper);
+        if (this.chatMessages) {
+            this.chatMessages.appendChild(messageDiv);
+            if (this.chatContainer) this.chatContainer.classList.remove('centered');
+            this.scrollToBottom(true);
+        }
+        this.updateUI();
         return messageDiv;
     }
 

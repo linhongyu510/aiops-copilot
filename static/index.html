@@ -8,7 +8,7 @@
     <title>AIOps Copilot · 智能运维诊断工作台</title>
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="stylesheet" href="/static/styles.css?v=4.2.0">
+    <link rel="stylesheet" href="/static/styles.css?v=4.3.4">
     <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
@@ -123,6 +123,15 @@
                 </section>
 
                 <div class="chat-container">
+                    <div class="degrade-banner" id="degradeBanner" hidden role="status">
+                        <span class="degrade-dot" aria-hidden="true"></span>
+                        <div class="degrade-copy">
+                            <strong id="degradeTitle">向量检索未启用</strong>
+                            <small id="degradeDetail">回答将不引用知识库来源。</small>
+                        </div>
+                        <button class="degrade-action" id="degradeCopyBtn" type="button">复制启动命令</button>
+                    </div>
+
                     <section class="welcome-greeting" id="welcomeGreeting">
                         <div class="welcome-intro">
                             <h1>证据驱动的运维诊断</h1>
@@ -234,6 +243,6 @@
         </div>
     </div>
 
-    <script src="/static/app.js?v=4.2.0"></script>
+    <script src="/static/app.js?v=4.3.4"></script>
 </body>
 </html>

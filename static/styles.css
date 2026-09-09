@@ -412,6 +412,60 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--scheme); ou
     line-height: 1.75;
     word-break: break-word;
 }
+/* 失败消息与重试：用 --red 表示失败，但不做整块红底，避免抢走答案区注意力 */
+.message-content.message-error {
+    border-color: color-mix(in srgb, var(--red) 45%, var(--line));
+    background: var(--red-w);
+}
+.message-error-actions { display: flex; gap: 8px; margin-top: 8px; }
+.message-retry-btn {
+    min-height: 30px;
+    padding: 0 14px;
+    border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line));
+    border-radius: var(--r);
+    background: var(--surface);
+    color: var(--ink-1);
+    font: 600 12px var(--sans);
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease;
+}
+.message-retry-btn:hover:not(:disabled) { background: var(--surface-2); border-color: var(--red); }
+.message-retry-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* 检索降级横幅：贴在对话区顶部，与答案同屏可见 */
+.degrade-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 26px 0;
+    padding: 9px 12px;
+    border: 1px solid color-mix(in srgb, var(--amber) 40%, var(--line));
+    border-radius: var(--r);
+    background: var(--amber-w);
+}
+.degrade-dot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--amber);
+}
+.degrade-copy { flex: 1; min-width: 0; }
+.degrade-copy strong { display: block; color: var(--ink-1); font-size: 12.5px; }
+.degrade-copy small { display: block; margin-top: 2px; color: var(--ink-2); font-size: 11px; line-height: 1.6; }
+.degrade-action {
+    flex: 0 0 auto;
+    min-height: 28px;
+    padding: 0 11px;
+    border: 1px solid color-mix(in srgb, var(--amber) 45%, var(--line));
+    border-radius: var(--r);
+    background: var(--surface);
+    color: var(--ink-1);
+    font: 600 11.5px var(--mono);
+    cursor: pointer;
+}
+.degrade-action:hover { border-color: var(--amber); background: var(--surface-2); }
+
 .message.user { flex-direction: row-reverse; }
 .message.user .message-content { color: #fff; border-color: transparent; background: linear-gradient(135deg, var(--blue-2), var(--marine)); }
 .message.assistant.streaming .message-content { border-color: color-mix(in oklch, var(--scheme) 40%, var(--line)); }
@@ -514,7 +568,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--scheme); ou
 .aiops-error-card {
     margin: 10px 0;
     padding: 10px 13px;
-    border: 1px solid color-mix(in oklch, var(--red) 45%, var(--line));
+    border: 1px solid color-mix(in srgb, var(--red) 45%, var(--line));
     border-radius: var(--r-lg);
     color: var(--red);
     background: var(--red-w);
@@ -558,7 +612,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--scheme); ou
     cursor: pointer;
     font-size: 11px;
 }
-.cancel-btn:hover { color: var(--red); border-color: color-mix(in oklch, var(--red) 40%, var(--line)); background: var(--red-w); }
+.cancel-btn:hover { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); background: var(--red-w); }
 
 /* ===== 输入区 ===== */
 .chat-input-container { padding: 10px 26px 14px; }
@@ -574,7 +628,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--scheme); ou
     color: var(--ink-2);
     background: var(--scheme-w);
     font-size: 11.5px;
-}.upload-status.error { border-color: color-mix(in oklch, var(--red) 45%, var(--line)); color: var(--red); background: var(--red-w); }
+}.upload-status.error { border-color: color-mix(in srgb, var(--red) 45%, var(--line)); color: var(--red); background: var(--red-w); }
 .upload-status.success { border-color: color-mix(in oklch, var(--ok) 45%, var(--line)); color: var(--ok); background: var(--ok-w); }
 .upload-status-icon { font-size: 13px; }
 .input-wrapper {
@@ -744,8 +798,8 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--scheme); ou
     animation: message-in .25s ease;
 }
 .notification.success { border-color: color-mix(in oklch, var(--ok) 50%, var(--line)); color: var(--ok); }
-.notification.error { border-color: color-mix(in oklch, var(--red) 50%, var(--line)); color: var(--red); }
-.notification.warning { border-color: color-mix(in oklch, var(--amber) 50%, var(--line)); color: var(--amber); }
+.notification.error { border-color: color-mix(in srgb, var(--red) 50%, var(--line)); color: var(--red); }
+.notification.warning { border-color: color-mix(in srgb, var(--amber) 50%, var(--line)); color: var(--amber); }
 .notification.fade-out { opacity: 0; transition: opacity .3s ease; }
 
 /* ===== API Key 模态框 ===== */
@@ -808,7 +862,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--scheme); ou
     font-size: 12px;
 }
 .modal-btn.ghost { color: var(--ink-2); background: var(--surface-2); }
-.modal-btn.ghost:hover { color: var(--red); border-color: color-mix(in oklch, var(--red) 40%, var(--line)); background: var(--red-w); }
+.modal-btn.ghost:hover { color: var(--red); border-color: color-mix(in srgb, var(--red) 40%, var(--line)); background: var(--red-w); }
 .modal-btn.primary { border: none; color: #fff; background: linear-gradient(135deg, var(--blue), var(--marine)); font-weight: 600; }
 .modal-btn.primary:hover { filter: brightness(1.08); }
 
