@@ -3,7 +3,7 @@
 ## 演示前检查
 
 1. 使用 `.env.example` 的 BGE Large、1024 维、Milvus 2.6 和版本化 collection 配置。
-2. 运行 `start-windows.bat`，确认 40 份 Runbook 上传完成且 `aiops_kb_current` alias 已发布。
+2. 运行 `python quickstart.py`，确认 Runbook 上传完成且 `aiops_kb_current` alias 已发布。
 3. 打开 Web 工作台，进入“RAG 检索实验台”；同时准备 `/api/metrics/retrieval`。
 
 ## 主演示
