@@ -8,6 +8,7 @@
 
 from typing import Any
 
+from loguru import logger
 from pydantic import Field, field_validator
 
 try:
@@ -79,9 +80,7 @@ class Settings(BaseSettings):
     aiops_total_timeout_seconds: int = 1800  # 单次 AIOps 诊断的总时间预算（秒）
     # Domain Profile（P0-3）：切换 profile 会改变工具关键词分组与 prompt 风格；
     # 内置 aiops profile 与原硬编码常量等价，改名请同步 profiles/<name>.yaml。
-    aiops_domain_profile: str = Field(
-        "aiops", validation_alias="AIOPS_DOMAIN_PROFILE"
-    )
+    aiops_domain_profile: str = Field("aiops", validation_alias="AIOPS_DOMAIN_PROFILE")
     # 事件记忆（P0.3）：诊断结束自动沉淀 episode，规划前检索相似历史事件
     aiops_incident_memory_enabled: bool = Field(
         True, validation_alias="AIOPS_INCIDENT_MEMORY_ENABLED"
@@ -89,9 +88,7 @@ class Settings(BaseSettings):
     aiops_incident_memory_path: str = Field(
         ".runtime/incident_memory.jsonl", validation_alias="AIOPS_INCIDENT_MEMORY_PATH"
     )
-    aiops_incident_memory_top_k: int = Field(
-        2, validation_alias="AIOPS_INCIDENT_MEMORY_TOP_K"
-    )
+    aiops_incident_memory_top_k: int = Field(2, validation_alias="AIOPS_INCIDENT_MEMORY_TOP_K")
     aiops_incident_memory_max_episodes: int = Field(
         500, validation_alias="AIOPS_INCIDENT_MEMORY_MAX_EPISODES"
     )
@@ -107,9 +104,7 @@ class Settings(BaseSettings):
     # 预案库（P2.4）：预案 JSONL 路径；空 = 内置演示预案（显式标注来源）
     aiops_playbooks_path: str = Field("", validation_alias="AIOPS_PLAYBOOKS_PATH")
     aiops_playbook_top_k: int = Field(2, validation_alias="AIOPS_PLAYBOOK_TOP_K")
-    aiops_playbook_min_score: float = Field(
-        0.15, validation_alias="AIOPS_PLAYBOOK_MIN_SCORE"
-    )
+    aiops_playbook_min_score: float = Field(0.15, validation_alias="AIOPS_PLAYBOOK_MIN_SCORE")
     incident_autonomous_diagnosis_enabled: bool = Field(
         True, validation_alias="AIOPS_INCIDENT_AUTONOMOUS_DIAGNOSIS_ENABLED"
     )
@@ -122,9 +117,7 @@ class Settings(BaseSettings):
     #: 启用的通知渠道，逗号分隔（webhook,slack,feishu）；空串时若配置了
     #: `incident_notify_webhook_url` 会自动回退到单 webhook（legacy 行为）。
     incident_notifiers: str = Field("", validation_alias="AIOPS_INCIDENT_NOTIFIERS")
-    incident_slack_webhook_url: str = Field(
-        "", validation_alias="AIOPS_INCIDENT_SLACK_WEBHOOK_URL"
-    )
+    incident_slack_webhook_url: str = Field("", validation_alias="AIOPS_INCIDENT_SLACK_WEBHOOK_URL")
     incident_feishu_webhook_url: str = Field(
         "", validation_alias="AIOPS_INCIDENT_FEISHU_WEBHOOK_URL"
     )
@@ -212,6 +205,9 @@ class Settings(BaseSettings):
     milvus_collection_name: str = "aiops_kb_bge_large_zh_v1_5_v1"
     milvus_collection_alias: str = "aiops_kb_current"
     milvus_metric_type: str = "COSINE"
+    # 检索后端选择：local_wiki（默认，SQLite FTS5/BM25，零依赖）或
+    # milvus（稠密 + BM25）。无效值回退到 local_wiki 并告警。
+    retrieval_backend: str = Field("local_wiki", validation_alias="AIOPS_RETRIEVAL_BACKEND")
 
     # RAG 配置
     rag_top_k: int = 5
@@ -271,6 +267,17 @@ class Settings(BaseSettings):
             if normalized in {"prod", "production", "release"}:
                 return False
         return value
+
+    @field_validator("retrieval_backend", mode="before")
+    @classmethod
+    def normalize_retrieval_backend(cls, value: Any) -> Any:
+        """小写化后校验，无效值回退到 local_wiki 并告警。"""
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized in {"local_wiki", "milvus"}:
+                return normalized
+            logger.warning(f"无效的 AIOPS_RETRIEVAL_BACKEND={value!r}，回退到 local_wiki")
+        return "local_wiki"
 
     @property
     def mcp_servers(self) -> dict[str, dict[str, Any]]:

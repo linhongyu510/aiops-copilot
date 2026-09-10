@@ -15,7 +15,7 @@ Design rules:
 Modes:
   auto   (default) detect what is available and start the best tier
   demo   offline CLI diagnosis only, no LLM key and no Docker needed
-  full   API + MCP servers + Milvus (requires Docker for vector search)
+  full   API + MCP servers + 本地 Wiki 检索（默认无需 Docker；可选 Milvus 向量后端）
 """
 
 from __future__ import annotations
@@ -89,8 +89,11 @@ def info(text: str) -> None:
 
 def venv_python() -> Path:
     """Return the interpreter to run services with."""
-    candidate = PROJECT_ROOT / ".venv" / ("Scripts" if IS_WINDOWS else "bin") / (
-        "python.exe" if IS_WINDOWS else "python"
+    candidate = (
+        PROJECT_ROOT
+        / ".venv"
+        / ("Scripts" if IS_WINDOWS else "bin")
+        / ("python.exe" if IS_WINDOWS else "python")
     )
     return candidate if candidate.exists() else Path(sys.executable)
 
@@ -198,15 +201,11 @@ def install_core_requirements(python: Path) -> bool:
         [str(python), "-m", "pip", "install", "--quiet", *packages],
     ]
     if shutil.which("uv"):
-        attempts.append(
-            ["uv", "pip", "install", "--quiet", "--python", str(python), *packages]
-        )
+        attempts.append(["uv", "pip", "install", "--quiet", "--python", str(python), *packages])
 
     last_output = ""
     for command in attempts:
-        result = subprocess.run(
-            command, cwd=PROJECT_ROOT, capture_output=True, text=True
-        )
+        result = subprocess.run(command, cwd=PROJECT_ROOT, capture_output=True, text=True)
         if result.returncode == 0:
             ok("离线内核依赖安装完成")
             return True
@@ -271,8 +270,8 @@ def start_milvus() -> bool:
         ok("Milvus 已在 19530 端口运行")
         return True
     if not docker_available():
-        warn("Docker 不可用，跳过 Milvus")
-        info("影响：向量检索不可用；其余诊断能力与页面仍可正常使用")
+        warn("Docker 不可用，跳过 Milvus（将使用本地 Wiki 检索后端）")
+        info("影响：使用本地 Wiki 检索后端（SQLite FTS5/BM25），无需向量数据库")
         return False
 
     compose_file = PROJECT_ROOT / "vector-database.yml"
@@ -392,7 +391,7 @@ def index_documents(port: int) -> None:
         warn(f"索引接口返回 {exc.code}，可稍后在页面上传 Runbook")
     except Exception as exc:  # noqa: BLE001 - indexing is best-effort
         warn(f"索引跳过：{type(exc).__name__}")
-        info("向量检索需要 Milvus 与 Embedding 模型；页面其余功能不受影响")
+        info("索引失败，可稍后在页面上传 Runbook；当前检索后端可能尚未就绪")
 
 
 # --------------------------------------------------------------------------- #
@@ -400,7 +399,13 @@ def index_documents(port: int) -> None:
 # --------------------------------------------------------------------------- #
 
 
-def print_summary(port: int, milvus: bool, mcp: list[str], llm: bool) -> None:
+def print_summary(
+    port: int,
+    milvus: bool,
+    mcp: list[str],
+    llm: bool,
+    retrieval_backend: str = "local_wiki",
+) -> None:
     line = "─" * 58
     print(_paint(f"\n{line}", "36"))
     print(_paint("  AIOps Copilot 已启动", "1;32"))
@@ -410,12 +415,17 @@ def print_summary(port: int, milvus: bool, mcp: list[str], llm: bool) -> None:
     print(f"  健康检查   http://127.0.0.1:{port}/health")
 
     print(_paint("\n  当前能力", "1"))
-    print(f"    {'✓' if llm else '—'} LLM 对话与诊断"
-          f"{'' if llm else '（未配置 LLM_API_KEY，将走确定性降级路径）'}")
-    print(f"    {'✓' if milvus else '—'} 向量检索 RAG"
-          f"{'' if milvus else '（Milvus 未运行）'}")
-    print(f"    {'✓' if mcp else '—'} MCP 工具服务"
-          f"{'（' + ', '.join(mcp) + '）' if mcp else ''}")
+    print(
+        f"    {'✓' if llm else '—'} LLM 对话与诊断"
+        f"{'' if llm else '（未配置 LLM_API_KEY，将走确定性降级路径）'}"
+    )
+    if retrieval_backend == "local_wiki":
+        print("    ✓ 本地 Wiki 检索（SQLite FTS5/BM25，42 篇内置 Runbook）")
+    elif retrieval_backend == "milvus" and milvus:
+        print("    ✓ 向量检索 RAG（Milvus · BGE）")
+    else:
+        print("    — 向量检索 RAG（Milvus 未运行）")
+    print(f"    {'✓' if mcp else '—'} MCP 工具服务{'（' + ', '.join(mcp) + '）' if mcp else ''}")
 
     if not llm:
         print(_paint("\n  提示", "33"))
@@ -574,14 +584,13 @@ def main() -> int:
     if not start_api(python, args.port):
         return 1
 
-    if milvus and not args.no_index:
+    retrieval_backend = read_env_value("AIOPS_RETRIEVAL_BACKEND") or "local_wiki"
+    if not args.no_index:
+        info(f"检索后端：{retrieval_backend}")
         index_documents(args.port)
-    elif not milvus:
-        step("索引运维知识库")
-        warn("Milvus 未运行，跳过索引")
 
     llm = has_llm_key()
-    print_summary(args.port, milvus, mcp, llm)
+    print_summary(args.port, milvus, mcp, llm, retrieval_backend=retrieval_backend)
 
     if not args.no_browser:
         try:

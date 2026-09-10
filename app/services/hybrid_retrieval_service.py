@@ -6,12 +6,10 @@ import asyncio
 import time
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Any
 
 from loguru import logger
 
 from app.config import config
-from app.core.milvus_client import milvus_manager
 from app.models.retrieval import (
     QueryExpansion,
     RetrievalCandidate,
@@ -20,6 +18,7 @@ from app.models.retrieval import (
 from app.observability import retrieval_metrics
 from app.services.query_expansion_service import query_expansion_service
 from app.services.reranker_service import bge_reranker_service
+from app.services.retrieval_backend import get_retrieval_backend
 from app.services.vector_embedding_service import vector_embedding_service
 
 
@@ -34,6 +33,9 @@ class RetrievalOptions:
 
 
 class HybridRetrievalService:
+    def __init__(self) -> None:
+        self.backend = get_retrieval_backend()
+
     @staticmethod
     def _embed_queries_sync(values: list[str]) -> list[list[float]]:
         batch_method = getattr(vector_embedding_service, "embed_queries", None)
@@ -50,85 +52,6 @@ class HybridRetrievalService:
         elapsed = (time.perf_counter() - started) * 1000
         trace.stage_latencies_ms[stage] = round(elapsed, 3)
         retrieval_metrics.record_stage(stage, elapsed)
-
-    @staticmethod
-    def _entity_value(hit: Any, field: str, default: Any = None) -> Any:
-        entity = getattr(hit, "entity", None)
-        if entity is not None:
-            try:
-                return entity.get(field)
-            except Exception:
-                pass
-        if isinstance(hit, dict):
-            return hit.get("entity", {}).get(field, hit.get(field, default))
-        return default
-
-    @classmethod
-    def _candidate_from_hit(
-        cls,
-        hit: Any,
-        branch: str,
-        rank: int,
-    ) -> RetrievalCandidate:
-        metadata = cls._entity_value(hit, "metadata", {}) or {}
-        chunk_id = str(
-            metadata.get("chunk_id")
-            or cls._entity_value(hit, "id")
-            or getattr(hit, "id", "")
-        )
-        distance = (
-            hit.get("distance", hit.get("score", 0.0))
-            if isinstance(hit, dict)
-            else getattr(hit, "distance", getattr(hit, "score", 0.0))
-        )
-        return RetrievalCandidate(
-            chunk_id=chunk_id,
-            content=str(cls._entity_value(hit, "content", "") or ""),
-            metadata=metadata,
-            branch_ranks={branch: rank},
-            raw_scores={branch: float(distance or 0.0)},
-        )
-
-    def _dense_search_sync(
-        self,
-        vector: list[float],
-        branch: str,
-    ) -> list[RetrievalCandidate]:
-        collection = milvus_manager.get_read_collection()
-        result = collection.search(
-            data=[vector],
-            anns_field="vector",
-            param={
-                "metric_type": config.milvus_metric_type,
-                "params": {"ef": 128},
-            },
-            limit=config.rag_branch_top_k,
-            output_fields=["id", "content", "metadata"],
-        )
-        hits = result[0] if result else []
-        return [
-            self._candidate_from_hit(hit, branch, rank)
-            for rank, hit in enumerate(hits, start=1)
-        ]
-
-    def _bm25_search_sync(
-        self,
-        query: str,
-        branch: str,
-    ) -> list[RetrievalCandidate]:
-        collection = milvus_manager.get_read_collection()
-        result = collection.search(
-            data=[query],
-            anns_field="sparse_vector",
-            param={"metric_type": "BM25", "params": {}},
-            limit=config.rag_branch_top_k,
-            output_fields=["id", "content", "metadata"],
-        )
-        hits = result[0] if result else []
-        return [
-            self._candidate_from_hit(hit, branch, rank)
-            for rank, hit in enumerate(hits, start=1)
-        ]
 
     @staticmethod
     def reciprocal_rank_fusion(
@@ -209,8 +132,7 @@ class HybridRetrievalService:
             if source_counts.get(source, 0) >= config.rag_max_chunks_per_source:
                 continue
             if any(
-                cls._near_duplicate(candidate.content, existing.content)
-                for existing in selected
+                cls._near_duplicate(candidate.content, existing.content) for existing in selected
             ):
                 continue
             candidate.final_rank = len(selected) + 1
@@ -243,15 +165,21 @@ class HybridRetrievalService:
         is dispatched (embedding backend down) degrades the whole dense stage and
         leaves BM25 evidence untouched.
         """
+        if not self.backend.supports_dense:
+            # 后端不支持稠密检索（如 local_wiki）：预期行为，不记录 degradation。
+            return [], []
+
         expansion_available = not expansion.degraded
         dense_queries = [("dense_original", expansion.original_query)]
         if options.rewrite and expansion_available:
             dense_queries.append(("dense_rewrite", expansion.rewritten_query))
         if options.multi_query and expansion_available:
-            dense_queries.extend([
-                (f"dense_multi_{index + 1}", value)
-                for index, value in enumerate(expansion.alternative_queries)
-            ])
+            dense_queries.extend(
+                [
+                    (f"dense_multi_{index + 1}", value)
+                    for index, value in enumerate(expansion.alternative_queries)
+                ]
+            )
 
         ranked_lists: list[list[RetrievalCandidate]] = []
         degradations: list[str] = []
@@ -261,7 +189,12 @@ class HybridRetrievalService:
                 [value for _, value in dense_queries],
             )
             dense_tasks = [
-                asyncio.to_thread(self._dense_search_sync, vector, branch)
+                asyncio.to_thread(
+                    self.backend.dense_search,
+                    vector,
+                    config.rag_branch_top_k,
+                    branch,
+                )
                 for (branch, _), vector in zip(dense_queries, vectors, strict=True)
             ]
             if options.hyde and expansion_available and expansion.hypothetical_document:
@@ -272,7 +205,12 @@ class HybridRetrievalService:
                     )
                 )[0]
                 dense_tasks.append(
-                    asyncio.to_thread(self._dense_search_sync, hyde_vector, "dense_hyde")
+                    asyncio.to_thread(
+                        self.backend.dense_search,
+                        hyde_vector,
+                        config.rag_branch_top_k,
+                        "dense_hyde",
+                    )
                 )
             dense_results = await asyncio.gather(*dense_tasks, return_exceptions=True)
             for result in dense_results:
@@ -298,8 +236,9 @@ class HybridRetrievalService:
         expansion_available = not expansion.degraded
         bm25_tasks = [
             asyncio.to_thread(
-                self._bm25_search_sync,
+                self.backend.bm25_search,
                 expansion.original_query,
+                config.rag_branch_top_k,
                 "bm25_original",
             )
         ]
@@ -310,8 +249,9 @@ class HybridRetrievalService:
         ):
             bm25_tasks.append(
                 asyncio.to_thread(
-                    self._bm25_search_sync,
+                    self.backend.bm25_search,
                     expansion.rewritten_query,
+                    config.rag_branch_top_k,
                     "bm25_rewrite",
                 )
             )
@@ -362,11 +302,9 @@ class HybridRetrievalService:
         # so they run concurrently instead of one after the other. Results are
         # merged in a fixed dense-then-BM25 order to keep fusion deterministic.
         retrieval_started = time.perf_counter()
-        (dense_lists, dense_degradations), (bm25_lists, bm25_degradations) = (
-            await asyncio.gather(
-                self._dense_stage(expansion, options),
-                self._bm25_stage(expansion, options),
-            )
+        (dense_lists, dense_degradations), (bm25_lists, bm25_degradations) = await asyncio.gather(
+            self._dense_stage(expansion, options),
+            self._bm25_stage(expansion, options),
         )
         retrieval_elapsed = (time.perf_counter() - retrieval_started) * 1000
         for stage in ("dense_retrieval", "bm25_retrieval"):

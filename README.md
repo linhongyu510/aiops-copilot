@@ -31,7 +31,7 @@ python quickstart.py --mode demo
 
 它会读入一条 Kafka 积压告警，输出「Skill 匹配 → 执行计划 → 验收清单 → Runbook 依据」的完整诊断报告。整条链路确定性、可复现，不调用任何大模型。缺少内核依赖（`pydantic`、`loguru`）时脚本会自动补装。
 
-完整服务栈（Web 控制台 + MCP 工具 + 向量检索）：
+完整服务栈（Web 控制台 + MCP 工具 + 本地 Wiki 检索）：
 
 ```bash
 pip install -e '.[full]'        # 或 uv sync --extra full
@@ -39,7 +39,7 @@ python quickstart.py            # 打开 http://127.0.0.1:9900
 python quickstart.py --stop     # 停止
 ```
 
-> 单项依赖缺失不会导致启动失败：没有 Docker 就跳过 Milvus（向量检索不可用，其余照常）；没有 `LLM_API_KEY` 就走确定性降级路径。页面上的每个状态卡片都会说明「当前影响是什么、怎么恢复」。
+> 单项依赖缺失不会导致启动失败：没有 Docker 也能运行——默认使用本地 Wiki 检索后端（SQLite FTS5/BM25），内置 42 篇运维 Runbook；需要 Dense 向量检索时再设置 AIOPS_RETRIEVAL_BACKEND=milvus 并启动 Docker；没有 `LLM_API_KEY` 就走确定性降级路径。页面上的每个状态卡片都会说明「当前影响是什么、怎么恢复」。
 
 ---
 
@@ -68,7 +68,7 @@ flowchart LR
     P --> T
     T --> R["RAG 2.0"]
     R --> H["Rewrite + Multi-Query + HyDE"]
-    H --> V["BGE Dense + 中文 BM25"]
+    H --> V["本地 Wiki FTS5/BM25（默认）· BGE Dense（可选 Milvus）"]
     V --> F["RRF → BGE Reranker → Top-5 引证"]
     T --> M["MCP 工具：日志 / 指标 / K8s / Prometheus / Redis"]
     M --> DB["只读 MySQL"]
@@ -94,6 +94,8 @@ Query ─┬─ 原始 ────────┬─ BGE Dense ─┐
 
 Dense 与 BM25 **并发**执行（互不依赖）；任一分支失败只降级自己，其余证据保留，并在 `trace.degradations` 中如实标记。重复查询命中 embedding LRU 缓存，不重复编码。
 
+> 这条八路召回 + RRF + Reranker 的完整链路对应 **Milvus 后端**。默认的 `local_wiki` 后端只做 SQLite FTS5/BM25（中文 bigram 分词）检索，不跑 dense 向量、RRF 与 Reranker；需要完整链路时按下方「检索后端」切换。
+
 ### 三层记忆
 
 | 层 | 内容 | 作用 |
@@ -109,6 +111,23 @@ Dense 与 BM25 **并发**执行（互不依赖）；任一分支失败只降级�
 - **工具级 RBAC**：viewer / operator / admin 按工具元数据校验，viewer 无法触发数据外发类工具。
 - **Prompt 注入防御**：工具输出统一围栏包裹并清除注入行；红队评测集（36 样本 × 5 类攻击）要求 ASR=0。
 - **SQL 只读**：仅接受 `SELECT / SHOW / DESCRIBE / EXPLAIN`，拒绝多语句、注释和写入关键字，限制返回行数。生产环境仍必须使用数据库侧只读账号——应用层校验只是第二道防线。
+
+### 检索后端
+
+项目支持两种检索后端，通过 `AIOPS_RETRIEVAL_BACKEND` 环境变量切换：
+
+| 后端 | 默认 | 依赖 | 特点 |
+|---|---|---|---|
+| `local_wiki` | ✅ | 零外部依赖（Python stdlib SQLite） | 启动时编译 `aiops-docs/` 下 42 篇 Runbook，基于 FTS5/BM25 + 中文 bigram 分词，确定性可复现 |
+| `milvus` | | Docker + Milvus + BGE 嵌入模型 | Dense 向量检索 + BM25 稀疏检索，八路召回 + RRF + Reranker |
+
+```bash
+# 默认：本地 Wiki，无需 Docker
+python quickstart.py
+
+# 可选：Milvus 向量后端
+AIOPS_RETRIEVAL_BACKEND=milvus python quickstart.py
+```
 
 ---
 

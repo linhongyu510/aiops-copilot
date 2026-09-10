@@ -18,6 +18,7 @@ from app.services.hybrid_retrieval_service import (
     RetrievalOptions,
 )
 from app.services.query_expansion_service import QueryExpansionService
+from app.services.retrieval_backend import reset_retrieval_backend
 from evaluation.generate_rag_v2_dataset import build_dataset
 from evaluation.rag_generation_eval import deterministic_scores, parse_judge
 from evaluation.rag_v2_eval import evaluate
@@ -120,6 +121,8 @@ def test_diversify_limits_sources_and_near_duplicates(monkeypatch) -> None:
 
 @pytest.mark.asyncio
 async def test_hybrid_search_executes_all_eight_recall_branches(monkeypatch) -> None:
+    monkeypatch.setattr(config, "retrieval_backend", "milvus")
+    reset_retrieval_backend()
     service = HybridRetrievalService()
     expansion = QueryExpansion(
         original_query="原始问题",
@@ -134,11 +137,11 @@ async def test_hybrid_search_executes_all_eight_recall_branches(monkeypatch) -> 
     dense_branches: list[str] = []
     bm25_branches: list[str] = []
 
-    def fake_dense(vector, branch: str):
+    def fake_dense(vector, top_k, branch: str):
         dense_branches.append(branch)
         return [_candidate("shared", branch, 1, "shared.md")]
 
-    def fake_bm25(query: str, branch: str):
+    def fake_bm25(query: str, top_k, branch: str):
         bm25_branches.append(branch)
         return [_candidate("shared", branch, 1, "shared.md")]
 
@@ -160,8 +163,8 @@ async def test_hybrid_search_executes_all_eight_recall_branches(monkeypatch) -> 
         "app.services.hybrid_retrieval_service.vector_embedding_service.embed_documents",
         lambda values: [[0.2] * 4 for _ in values],
     )
-    monkeypatch.setattr(service, "_dense_search_sync", fake_dense)
-    monkeypatch.setattr(service, "_bm25_search_sync", fake_bm25)
+    monkeypatch.setattr(service.backend, "dense_search", fake_dense)
+    monkeypatch.setattr(service.backend, "bm25_search", fake_bm25)
     monkeypatch.setattr(
         "app.services.hybrid_retrieval_service.bge_reranker_service.rerank",
         fake_rerank,
@@ -183,10 +186,13 @@ async def test_hybrid_search_executes_all_eight_recall_branches(monkeypatch) -> 
     assert trace.reranker_ranking == ["shared"]
     assert len(candidates) == 1
     assert len(candidates[0].branch_ranks) == 8
+    reset_retrieval_backend()
 
 
 @pytest.mark.asyncio
 async def test_expansion_failure_uses_only_original_dense_and_bm25(monkeypatch) -> None:
+    monkeypatch.setattr(config, "retrieval_backend", "milvus")
+    reset_retrieval_backend()
     service = HybridRetrievalService()
     expansion = QueryExpansion(
         original_query="原始问题",
@@ -201,11 +207,11 @@ async def test_expansion_failure_uses_only_original_dense_and_bm25(monkeypatch) 
     dense_branches: list[str] = []
     bm25_branches: list[str] = []
 
-    def fake_dense(vector, branch: str):
+    def fake_dense(vector, top_k, branch: str):
         dense_branches.append(branch)
         return [_candidate("dense", branch, 1, "dense.md")]
 
-    def fake_bm25(query: str, branch: str):
+    def fake_bm25(query: str, top_k, branch: str):
         bm25_branches.append(branch)
         return [_candidate("bm25", branch, 1, "bm25.md")]
 
@@ -214,8 +220,8 @@ async def test_expansion_failure_uses_only_original_dense_and_bm25(monkeypatch) 
         fake_expand,
     )
     monkeypatch.setattr(service, "_embed_queries_sync", lambda values: [[0.1] * 4])
-    monkeypatch.setattr(service, "_dense_search_sync", fake_dense)
-    monkeypatch.setattr(service, "_bm25_search_sync", fake_bm25)
+    monkeypatch.setattr(service.backend, "dense_search", fake_dense)
+    monkeypatch.setattr(service.backend, "bm25_search", fake_bm25)
     candidates, trace = await service.search(
         "原始问题",
         options=RetrievalOptions(reranker=False),
@@ -224,16 +230,19 @@ async def test_expansion_failure_uses_only_original_dense_and_bm25(monkeypatch) 
     assert bm25_branches == ["bm25_original"]
     assert "query_expansion" in trace.degradations
     assert len(candidates) == 2
+    reset_retrieval_backend()
 
 
 @pytest.mark.asyncio
 async def test_bm25_and_reranker_failures_keep_dense_results(monkeypatch) -> None:
+    monkeypatch.setattr(config, "retrieval_backend", "milvus")
+    reset_retrieval_backend()
     service = HybridRetrievalService()
 
-    def fake_dense(vector, branch: str):
+    def fake_dense(vector, top_k, branch: str):
         return [_candidate(branch, branch, 1, f"{branch}.md")]
 
-    def broken_bm25(query: str, branch: str):
+    def broken_bm25(query: str, top_k, branch: str):
         raise ConnectionError("fixture bm25 unavailable")
 
     async def broken_rerank(query: str, candidates):
@@ -244,8 +253,8 @@ async def test_bm25_and_reranker_failures_keep_dense_results(monkeypatch) -> Non
         "_embed_queries_sync",
         lambda values: [[0.1] * 4 for _ in values],
     )
-    monkeypatch.setattr(service, "_dense_search_sync", fake_dense)
-    monkeypatch.setattr(service, "_bm25_search_sync", broken_bm25)
+    monkeypatch.setattr(service.backend, "dense_search", fake_dense)
+    monkeypatch.setattr(service.backend, "bm25_search", broken_bm25)
     monkeypatch.setattr(
         "app.services.hybrid_retrieval_service.bge_reranker_service.rerank",
         broken_rerank,
@@ -256,20 +265,23 @@ async def test_bm25_and_reranker_failures_keep_dense_results(monkeypatch) -> Non
     )
     assert [candidate.chunk_id for candidate in candidates] == ["dense_original"]
     assert {"bm25", "reranker", "gpu_oom"}.issubset(trace.degradations)
+    reset_retrieval_backend()
 
 
 @pytest.mark.asyncio
 async def test_dense_failure_keeps_bm25_evidence(monkeypatch) -> None:
+    monkeypatch.setattr(config, "retrieval_backend", "milvus")
+    reset_retrieval_backend()
     service = HybridRetrievalService()
 
     def broken_embeddings(values):
         raise RuntimeError("fixture embedding unavailable")
 
-    def fake_bm25(query: str, branch: str):
+    def fake_bm25(query: str, top_k, branch: str):
         return [_candidate("bm25-evidence", branch, 1, "runbook.md")]
 
     monkeypatch.setattr(service, "_embed_queries_sync", broken_embeddings)
-    monkeypatch.setattr(service, "_bm25_search_sync", fake_bm25)
+    monkeypatch.setattr(service.backend, "bm25_search", fake_bm25)
     candidates, trace = await service.search(
         "原始问题",
         options=RetrievalOptions(
@@ -281,6 +293,7 @@ async def test_dense_failure_keeps_bm25_evidence(monkeypatch) -> None:
     )
     assert [candidate.chunk_id for candidate in candidates] == ["bm25-evidence"]
     assert "dense_all" in trace.degradations
+    reset_retrieval_backend()
 
 
 def test_tool_router_exposes_at_most_eight_relevant_tools() -> None:

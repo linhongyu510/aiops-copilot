@@ -10,9 +10,9 @@ from loguru import logger
 from app.checkpointing import checkpoint_runtime
 from app.config import config
 from app.coordination import coordination_runtime
-from app.core.milvus_client import milvus_manager
 from app.observability.tracing import telemetry_status
 from app.reliability import dependency_guards
+from app.services.retrieval_backend import get_retrieval_backend
 
 router = APIRouter()
 
@@ -20,7 +20,7 @@ router = APIRouter()
 @router.get("/health")
 async def health_check():
     """健康检查接口
-    检查服务状态和数据库连接状态
+    检查服务状态和检索后端连接状态
 
     Returns:
         JSONResponse: 健康检查结果
@@ -38,25 +38,44 @@ async def health_check():
         },
     }
 
-    # 检查 Milvus 连接状态
-    try:
-        milvus_healthy = await run_in_threadpool(milvus_manager.health_check)
-        milvus_status: str = "connected" if milvus_healthy else "disconnected"
-        milvus_message: str = "Milvus 连接正常" if milvus_healthy else "Milvus 连接异常"
-        health_data["milvus"] = {"status": milvus_status, "message": milvus_message}
-    except Exception as e:
-        logger.warning(f"Milvus 健康检查失败: {e}")
-        health_data["milvus"] = {"status": "error", "message": f"Milvus 检查失败: {str(e)}"}
+    backend = get_retrieval_backend()
+    health_data["retrieval_backend"] = backend.backend_type
+
+    retrieval_healthy = False
+    if backend.backend_type == "local_wiki":
+        wiki_health = await run_in_threadpool(backend.health)
+        health_data["local_wiki"] = wiki_health
+        health_data["milvus"] = {
+            "status": "disabled",
+            "message": "未启用 Milvus 后端",
+        }
+        retrieval_healthy = wiki_health.get("status") == "ready"
+    else:
+        # Milvus 后端：保留原有的连接检查逻辑
+        try:
+            milvus_healthy = await run_in_threadpool(backend.health)
+            milvus_status: str = milvus_healthy.get("status", "disconnected")
+            milvus_message: str = milvus_healthy.get("message", "Milvus 检查失败")
+            health_data["milvus"] = {"status": milvus_status, "message": milvus_message}
+        except Exception as e:
+            logger.warning(f"Milvus 健康检查失败: {e}")
+            milvus_status = "error"
+            health_data["milvus"] = {"status": "error", "message": f"Milvus 检查失败: {str(e)}"}
+        health_data["local_wiki"] = {
+            "status": "disabled",
+            "message": "未启用本地 Wiki",
+        }
+        retrieval_healthy = milvus_status == "connected"
 
     # 判断整体健康状态
-    overall_status = "healthy"
-    status_code = 200
+    overall_status = "healthy" if retrieval_healthy else "unhealthy"
+    status_code = 200 if retrieval_healthy else 503
 
-    # 如果 Milvus 不可用，服务不可用
-    if health_data["milvus"]["status"] != "connected":
-        overall_status = "unhealthy"
-        status_code = 503
-        health_data["error"] = "数据库不可用"
+    if not retrieval_healthy:
+        if backend.backend_type == "local_wiki":
+            health_data["error"] = "本地 Wiki 未就绪"
+        else:
+            health_data["error"] = "数据库不可用"
 
     health_data["status"] = overall_status
 

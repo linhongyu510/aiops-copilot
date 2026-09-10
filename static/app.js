@@ -21,6 +21,8 @@ class AIOpsCopilotApp {
         this.userScrolledUp = false;
         // KPI 轮询
         this.kpiTimerId = null;
+        // 检索后端类型：local_wiki | milvus，由 /health 的 retrieval_backend 决定
+        this.retrievalBackend = 'milvus';
         // AIOps 结构化诊断状态
         this.aiopsSteps = [];
         this.aiopsStepCursor = 0;
@@ -311,7 +313,7 @@ class AIOpsCopilotApp {
             this.sendButton.addEventListener('click', () => this.sendMessage());
         }
         if (this.degradeCopyBtn) {
-            this.degradeCopyBtn.addEventListener('click', () => void this.copyMilvusCommand());
+            this.degradeCopyBtn.addEventListener('click', () => void this.copyRetrievalCommand());
         }
         if (this.messageInput) {
             this.messageInput.addEventListener('keydown', (e) => {
@@ -556,17 +558,23 @@ class AIOpsCopilotApp {
         if (!this.degradeBanner) return;
         this.degradeBanner.hidden = !isDegraded;
         if (!isDegraded) return;
+        const isLocalWiki = this.retrievalBackend === 'local_wiki';
         if (this.degradeTitle) {
-            this.degradeTitle.textContent = '向量检索未启用，回答不引用知识库';
+            this.degradeTitle.textContent = isLocalWiki
+                ? '本地 Wiki 未就绪'
+                : '向量检索未启用，回答不引用知识库';
         }
         if (this.degradeDetail) {
-            this.degradeDetail.textContent =
-                'Milvus 未连接，检索链路已跳过。此时「知识库中没有相关内容」不代表语料缺失。';
+            this.degradeDetail.textContent = isLocalWiki
+                ? '本地 Wiki 尚未编译完成，检索可能不返回知识库结果。'
+                : 'Milvus 未连接，检索链路已跳过。此时「知识库中没有相关内容」不代表语料缺失。';
         }
     }
 
-    async copyMilvusCommand() {
-        const command = 'docker compose -f vector-database.yml up -d';
+    async copyRetrievalCommand() {
+        const command = this.retrievalBackend === 'local_wiki'
+            ? 'python quickstart.py'
+            : 'docker compose -f vector-database.yml up -d';
         try {
             await navigator.clipboard.writeText(command);
             this.showNotification('启动命令已复制', 'success');
@@ -594,7 +602,16 @@ class AIOpsCopilotApp {
             const data = payload.data || {};
             const llm = data.llm || {};
             const provider = llm.provider ? `${llm.provider} · ${llm.model}` : 'LLM';
-            const milvusConnected = data.milvus?.status === 'connected';
+            // 后端通过 retrieval_backend 声明检索实现；旧响应缺该字段时回退到 Milvus
+            const backend = data.retrieval_backend || 'milvus';
+            this.retrievalBackend = backend;
+            const localWiki = data.local_wiki || {};
+            const milvus = data.milvus || {};
+            const retrievalReady = backend === 'local_wiki'
+                ? localWiki.status === 'ready'
+                : milvus.status === 'connected';
+            // 保留旧变量名，与 KPI/横幅共用同一份就绪判定
+            const milvusConnected = retrievalReady;
 
             if (this.apiStatusValue) {
                 this.apiStatusValue.textContent = response.ok ? '在线' : '降级';
@@ -603,13 +620,21 @@ class AIOpsCopilotApp {
                     : '控制面已启动但某项依赖不可用，诊断仍可继续；详情见 /health');
             }
             if (this.milvusStatusValue) {
-                this.milvusStatusValue.textContent = milvusConnected ? '已连接' : '未启用';
-                this.setKpiHint(this.milvusStatusValue, milvusConnected
-                    ? '向量检索可用，问答会引用知识库来源'
-                    : '未连接 Milvus，向量检索不可用。启动方式：docker compose -f vector-database.yml up -d');
+                if (backend === 'local_wiki') {
+                    this.milvusStatusValue.textContent = retrievalReady ? '本地 Wiki' : '未就绪';
+                    this.setKpiHint(this.milvusStatusValue, retrievalReady
+                        ? `本地 Wiki 已编译 ${localWiki.pages ?? 0} 篇 Runbook，基于 SQLite FTS5/BM25 检索`
+                        : '本地 Wiki 尚未编译，请检查 aiops-docs 目录');
+                } else {
+                    this.milvusStatusValue.textContent = milvusConnected ? '已连接' : '未启用';
+                    this.setKpiHint(this.milvusStatusValue, milvusConnected
+                        ? '向量检索可用，问答会引用知识库来源'
+                        : '未连接 Milvus，向量检索不可用。启动方式：docker compose -f vector-database.yml up -d');
+                }
             }
             if (this.serviceDetail) {
-                this.serviceDetail.textContent = `${milvusConnected ? 'Milvus' : 'Milvus 未启用'} · MCP · ${provider}`;
+                const backendLabel = backend === 'local_wiki' ? '本地 Wiki' : `${milvusConnected ? 'Milvus' : 'Milvus 未启用'}`;
+                this.serviceDetail.textContent = `${backendLabel} · MCP · ${provider}`;
             }
             this.setRetrievalDegraded(!milvusConnected);
             if (this.connectionChip && !this.isStreaming) {

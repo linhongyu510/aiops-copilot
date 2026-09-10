@@ -34,7 +34,6 @@ from app.api import actions, aiops, chat, events, file, health, metrics, playboo
 from app.checkpointing import checkpoint_runtime
 from app.config import config
 from app.coordination import coordination_runtime
-from app.core.milvus_client import milvus_manager
 from app.observability import request_metrics
 from app.observability.tracing import configure_telemetry, shutdown_telemetry
 from app.security import required_role, resolve_identity, role_allows
@@ -63,21 +62,22 @@ async def lifespan(app: FastAPI):
         from app.state_store import RedisStateStore, state_store_runtime
 
         state_store_runtime.configure(
-            RedisStateStore(
-                coordination_runtime.client, config.coordination_key_prefix
-            ),
+            RedisStateStore(coordination_runtime.client, config.coordination_key_prefix),
             "redis",
         )
         logger.info("incident/提案状态已切换到 Redis 存储")
 
-    # 连接 Milvus
-    logger.info("🔌 正在连接 Milvus...")
+    # 初始化检索后端（local_wiki 编译 Wiki，milvus 连接向量库）
+    from app.services.retrieval_backend import get_retrieval_backend
+
+    retrieval_backend = get_retrieval_backend()
+    logger.info(f"📚 检索后端: {retrieval_backend.backend_type}")
     try:
-        await run_in_threadpool(milvus_manager.connect)
-        logger.info("✅ Milvus 连接成功")
+        await run_in_threadpool(retrieval_backend.initialize)
+        logger.info(f"✅ 检索后端初始化成功: {retrieval_backend.backend_type}")
     except Exception as exc:
-        logger.warning(f"Milvus 启动连接失败，非 RAG 诊断仍可使用: {exc}")
-        if config.milvus_required_on_startup:
+        logger.warning(f"检索后端初始化失败: {exc}")
+        if config.retrieval_backend == "milvus" and config.milvus_required_on_startup:
             raise
 
     logger.info("=" * 60)
@@ -86,11 +86,11 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         # 关闭时执行
-        logger.info("🔌 正在关闭持久化与 Milvus 连接...")
+        logger.info("🔌 正在关闭持久化与检索后端连接...")
         await events.incident_service.shutdown()
         await coordination_runtime.close()
         await checkpoint_runtime.close()
-        milvus_manager.close()
+        retrieval_backend.close()
         shutdown_telemetry()
         logger.info(f"👋 {config.app_name} 关闭")
 

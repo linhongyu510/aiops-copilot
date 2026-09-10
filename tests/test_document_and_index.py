@@ -4,6 +4,7 @@ import pytest
 from langchain_core.documents import Document
 
 from app.config import config
+from app.services import retrieval_backend
 from app.services.document_splitter_service import DocumentSplitterService
 from app.services.vector_index_service import VectorIndexService
 
@@ -30,6 +31,9 @@ def test_index_directory_is_restricted_to_upload_root(tmp_path: Path) -> None:
 
 
 def test_index_file_upserts_before_stale_chunk_cleanup(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(config, "retrieval_backend", "milvus")
+    retrieval_backend.reset_retrieval_backend()
+
     source = tmp_path / "runbook.md"
     source.write_text("# Runbook\n\nEvidence", encoding="utf-8")
     document = Document(
@@ -38,17 +42,20 @@ def test_index_file_upserts_before_stale_chunk_cleanup(tmp_path: Path, monkeypat
     )
     calls: list[str] = []
     monkeypatch.setattr(
-        "app.services.vector_index_service.document_splitter_service.split_document",
+        "app.services.retrieval_backend.document_splitter_service.split_document",
         lambda content, path: [document],
     )
     monkeypatch.setattr(
-        "app.services.vector_index_service.vector_store_manager.add_documents",
+        "app.services.retrieval_backend.vector_store_manager.add_documents",
         lambda documents: calls.append("upsert"),
     )
     monkeypatch.setattr(
-        "app.services.vector_index_service.vector_store_manager.delete_stale_by_source",
+        "app.services.retrieval_backend.vector_store_manager.delete_stale_by_source",
         lambda path, active_ids: calls.append(f"cleanup:{','.join(sorted(active_ids))}"),
     )
 
-    VectorIndexService().index_single_file(str(source))
-    assert calls == ["upsert", "cleanup:stable-chunk"]
+    try:
+        VectorIndexService().index_single_file(str(source))
+        assert calls == ["upsert", "cleanup:stable-chunk"]
+    finally:
+        retrieval_backend.reset_retrieval_backend()
