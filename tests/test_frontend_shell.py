@@ -193,3 +193,51 @@ def test_banner_text_does_not_rely_on_inherited_color() -> None:
     assert "color:" in strong_rule, (
         "标题必须显式指定颜色，否则主题切换时可能继承到错误的文字色"
     )
+
+
+def test_answers_render_without_bubble_chrome() -> None:
+    """助手回答必须是纯文字，不套气泡。
+
+    气泡+描边+阴影会让长回答变成"一块 UI"，而阅读长文时边框只是噪声。
+    这里锁定：.message-content 基础规则不带 border/background，气泡只出现在
+    用户提问（.message.user）和失败消息（.message-error）上。
+    """
+    base = STYLES.split(".message-content {")[1].split("}")[0]
+    assert "border:" not in base, "助手回答不应有描边"
+    assert "background:" not in base, "助手回答不应有气泡底色"
+    assert "box-shadow:" not in base, "助手回答不应有阴影"
+    # 但用户气泡与错误提示仍需要各自的容器
+    assert ".message.user .message-content" in STYLES
+    assert "padding:" in STYLES.split(".message-content.message-error {")[1].split("}")[0], (
+        "错误消息自带内距，否则基础规则去掉 padding 后文字会贴边"
+    )
+
+
+def test_reading_column_is_constrained() -> None:
+    """对话与欢迎区必须共用同一受限阅读列宽。
+
+    正文横跨整屏时每行字数过多，长回答很难读。欢迎区与消息区若各用一套宽度，
+    发第一条消息时内容会左右跳动。
+    """
+    assert "--read-w:" in STYLES, "阅读列宽应定义为变量，便于统一调整"
+    message_rule = STYLES.split("\n.message {")[1].split("}")[0]
+    assert "max-width: var(--read-w)" in message_rule
+    assert "margin: 0 auto" in message_rule, "消息需水平居中"
+
+
+def test_no_dead_grid_rules_after_flex_migration() -> None:
+    """状态条与场景卡改为 flex 后，响应式里的 grid-template-columns 必须同步删除。
+
+    这类残留不会报错，只会静默失效——窄屏下看起来"没生效"却查不到原因。
+    """
+    assert "grid-template-columns" not in STYLES, (
+        "已无 grid 容器，grid-template-columns 属于死规则"
+    )
+
+
+def test_serif_headings_are_tokenized() -> None:
+    """标题字体走 --serif token，不要在各处硬编码字体栈。"""
+    assert "--serif:" in STYLES
+    for selector in (".welcome-intro h1", ".brand-title"):
+        rule = STYLES.split(selector)[1].split("}")[0]
+        assert "var(--serif)" in rule, f"{selector} 应使用 --serif token"
