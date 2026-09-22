@@ -43,6 +43,52 @@ python quickstart.py --stop     # 停止
 
 ---
 
+## 效果展示：离线 demo 的真实输出
+
+下面是在**全新克隆、无 API Key、无 Docker、无网络依赖**的环境里直接运行 `python quickstart.py --mode demo` 的真实输出（已节选）。同一条告警每次运行都得到**逐字一致**的报告——这正是「证据驱动、可复现」的含义。
+
+```text
+▸ 离线诊断演示（无需密钥、无需 Docker）
+  ✓ 输入告警：tests/fixtures/kafka_lag_alert.json
+
+# 诊断报告
+
+## 触发
+- 标题：KafkaConsumerLagHigh
+- 描述：checkout-order 消费速度落后 orders topic
+- Labels：alertname=KafkaConsumerLagHigh, consumergroup=checkout-order,
+          service=checkout, severity=critical, topic=orders
+- 指纹：KafkaConsumerLagHigh@unknown
+
+## 匹配到的 Skill
+- skill_id：aiops.kafka_lag
+- 标题：Kafka 消费组积压排障
+- 匹配度：0.8179   命中理由：alertname=KafkaConsumerLagHigh；symptoms≈0.36
+
+## 执行计划
+1. [sk:lag_trend]          查询消费组 lag 趋势，确认突增还是缓增   → prom_query_range
+2. [sk:produce_vs_consume] 对比生产/消费速率，判断上游突增还是消费变慢 → prom_query
+3. [sk:consumer_log]       检查消费者日志 rebalance/超时/异常        → loki_query
+4. [sk:broker_alerts]      检查是否触发 ISR 收缩或 broker 异常       → prom_active_alerts
+
+## 验收清单
+1. prom_query → result.value < context.baseline_lag  —— lag 回落到基线以下
+
+## Runbook 参考
+### kafka_consumer_lag / 排查顺序
+> 1. 按 topic/partition 查看 current offset、log end offset 和 lag 斜率。
+> 2. 检查消费者实例数、活跃成员、消费速率和错误率。
+> 3. 对齐下游数据库、外部 API、GC 和线程池耗尽。
+> ...
+
+  ✓ 离线诊断完成：Skill 匹配 → 计划编排 → 报告渲染，全程确定性、可复现
+    这条链路不依赖 LLM，可在无网络环境下复现同一份报告
+```
+
+要点：**计划里的每一步都绑定了具体工具与参数**，**验收清单给出可机器判定的成功条件**，**Runbook 依据直接引用知识库原文**——没有任何一句结论是「模型自由发挥」出来的。接上 `LLM_API_KEY` 后，同一套内核会在此基础上补充自然语言归因与对话式追问。
+
+---
+
 ## 三种使用姿势
 
 同一套决策内核（[`aiops_core/`](./aiops_core/)：Skill 匹配 / Runbook 抽取 / 计划渲染 / 指纹 / 报告渲染），三种出口，输出语义一致。
