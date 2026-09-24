@@ -1,5 +1,7 @@
 # AIOps Copilot
 
+[English](README_EN.md)
+
 面向故障排查的 AIOps Agent：把告警、运维知识库（RAG）、日志、监控指标和只读数据库编排成**可追溯**的诊断流程。
 
 诊断结论必须落在证据上——每条结论都能回溯到具体工具返回或知识库出处。查不到就明确说查不到，不猜测、不编造。
@@ -7,7 +9,7 @@
 [![CI](https://github.com/linhongyu510/aiops-copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/linhongyu510/aiops-copilot/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-499%20passed-brightgreen)
+![Tests](https://img.shields.io/badge/tests-583%20passed-brightgreen)
 
 ---
 
@@ -236,6 +238,8 @@ RBAC 与审批复用）、`TOOL_GROUPS`（路由关键词，启用时自动合�
 ## 相关项目
 
 - [mcp-lint](https://github.com/linhongyu510/mcp-lint) —— 同作者的 MCP 工具定义静态安全 linter：在把 MCP Server 接入 Agent 之前，先静态查出提示注入、工具投毒、无约束 schema 与配置卫生问题，零依赖、可接入 CI。
+- [agent-memory-benchmark](https://github.com/linhongyu510/agent-memory-benchmark) —— 同作者的 Agent 长期记忆评测基准。**与本项目的边界**：agent-memory-benchmark 是去**评测**一个记忆系统在六项能力上的召回与一致性；AIOps Copilot 则是把三层记忆（情节/语义/程序）作为诊断的一路输入去**使用**。一个衡量记忆，一个应用记忆。
+- [EvalForge](https://github.com/linhongyu510/EvalForge) —— 同作者的「证据链接」Agent 评测与失败诊断工作台。**与本项目的边界**：EvalForge 是**通用**的 Agent 评测/诊断框架（被测对象是任意 Agent）；AIOps Copilot 是**领域**Agent（SRE/故障排查），只是它本身以证据优先的方式构建。要评测一个 Agent 用 EvalForge，要排查一次故障用本项目。
 
 ---
 
