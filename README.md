@@ -219,29 +219,6 @@ RBAC 与审批复用）、`TOOL_GROUPS`（路由关键词，启用时自动合�
 
 ---
 
-## 开发
-
-```bash
-uv sync --extra dev --extra local-embeddings
-
-pytest tests -q --no-cov          # 499 passed, 3 skipped
-ruff check app aiops_core mcp_servers evaluation tests
-node --check static/app.js
-```
-
-评测（可复现离线查询集）：
-
-```bash
-python -m evaluation.rag_v2_eval --backend hashing --split dev   # 零依赖冒烟
-python -m evaluation.rag_v2_eval --backend local --split dev     # 真实 BGE
-python -m evaluation.rag_v2_ablation --split dev                 # 消融
-python -m evaluation.injection_redteam                           # 注入红队，要求 ASR=0
-```
-
-参数选择只看 dev，锁定配置后才用 test 汇报最终结果。
-
----
-
 ## 项目边界（如实声明）
 
 这些是当前实现的真实边界，不做夸大：
@@ -253,6 +230,12 @@ python -m evaluation.injection_redteam                           # 注入红队�
 - 自治诊断仅使用只读工具集，不执行任何变更。
 - 事件记忆检索使用 n-gram TF-IDF（无模型依赖、确定性），替换为 embedding 检索的接口已预留。
 - `integrations/windos/` 对接的是作者另一套独立自建系统，克隆者无法访问；它默认关闭，仅作为集成契约的参考实现保留。
+
+---
+
+## 相关项目
+
+- [mcp-lint](https://github.com/linhongyu510/mcp-lint) —— 同作者的 MCP 工具定义静态安全 linter：在把 MCP Server 接入 Agent 之前，先静态查出提示注入、工具投毒、无约束 schema 与配置卫生问题，零依赖、可接入 CI。
 
 ---
 
